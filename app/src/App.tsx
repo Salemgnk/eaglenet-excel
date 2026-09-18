@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { EntriesList } from './features/EntriesList'
 import { EntryForm } from './features/EntryForm'
 import { LoginForm } from './features/LoginForm'
+import { draftExists } from './lib/drafts'
 import { supabase } from './lib/supabase'
 import { useOnlineStatus } from './lib/useOnlineStatus'
 import { useProfile } from './lib/useProfile'
@@ -27,9 +28,10 @@ function App() {
     return <LoginForm />
   }
 
-  async function handleSaved() {
+  async function handleSaved(draftId: string): Promise<boolean> {
     await refreshPendingCount()
-    runSync()
+    await runSync()
+    return !(await draftExists(draftId))
   }
 
   return (

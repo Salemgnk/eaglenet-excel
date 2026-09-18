@@ -1,9 +1,9 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { saveDraft } from '../lib/drafts'
 import { validateNumberField } from '../lib/validation'
 
 interface EntryFormProps {
-  onSaved: () => void
+  onSaved: (draftId: string) => Promise<boolean>
 }
 
 type FieldName = 'bagsMilled' | 'revenue' | 'expenses' | 'other'
@@ -15,6 +15,8 @@ const REQUIRED: Record<FieldName, boolean> = {
   other: false,
 }
 
+type SavedStatus = 'local' | 'synced' | null
+
 export function EntryForm({ onSaved }: EntryFormProps) {
   const [bagsMilled, setBagsMilled] = useState('')
   const [revenue, setRevenue] = useState('')
@@ -23,7 +25,20 @@ export function EntryForm({ onSaved }: EntryFormProps) {
   const [notes, setNotes] = useState('')
   const [errors, setErrors] = useState<Partial<Record<FieldName, boolean>>>({})
   const [submitting, setSubmitting] = useState(false)
-  const [savedMessage, setSavedMessage] = useState(false)
+  const [savedStatus, setSavedStatus] = useState<SavedStatus>(null)
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (hideTimer.current) clearTimeout(hideTimer.current)
+    }
+  }, [])
+
+  function showStatus(status: SavedStatus) {
+    setSavedStatus(status)
+    if (hideTimer.current) clearTimeout(hideTimer.current)
+    hideTimer.current = setTimeout(() => setSavedStatus(null), 2000)
+  }
 
   const raw: Record<FieldName, string> = { bagsMilled, revenue, expenses, other }
 
@@ -49,7 +64,7 @@ export function EntryForm({ onSaved }: EntryFormProps) {
     if (hasError) return
 
     setSubmitting(true)
-    await saveDraft({
+    const draft = await saveDraft({
       bags_milled: results.bagsMilled.value,
       revenue: results.revenue.value,
       expenses: results.expenses.value,
@@ -62,10 +77,14 @@ export function EntryForm({ onSaved }: EntryFormProps) {
     setOther('')
     setNotes('')
     setErrors({})
-    onSaved()
     setSubmitting(false)
-    setSavedMessage(true)
-    setTimeout(() => setSavedMessage(false), 2000)
+    showStatus('local')
+
+    // Don't block the next entry on the sync round-trip — just upgrade the
+    // confirmation to "Synchronisé" if and when it actually lands.
+    onSaved(draft.id).then((synced) => {
+      if (synced) showStatus('synced')
+    })
   }
 
   function field(name: FieldName, label: string, required: boolean) {
@@ -113,9 +132,9 @@ export function EntryForm({ onSaved }: EntryFormProps) {
       <button type="submit" disabled={submitting}>
         {submitting ? 'Enregistrement…' : 'Enregistrer'}
       </button>
-      {savedMessage && (
-        <p className="saved" role="status">
-          Enregistré localement ✓
+      {savedStatus && (
+        <p className={`saved${savedStatus === 'synced' ? ' synced' : ''}`} role="status">
+          {savedStatus === 'synced' ? 'Synchronisé ✓' : 'Enregistré localement ✓'}
         </p>
       )}
     </form>

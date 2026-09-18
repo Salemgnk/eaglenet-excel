@@ -192,6 +192,10 @@ button.primary:disabled {
   font-size: 0.85rem;
 }
 
+.saved.synced {
+  font-weight: 700;
+}
+
 .pending-badge {
   background: var(--color-warning-bg);
   color: var(--color-warning-text);

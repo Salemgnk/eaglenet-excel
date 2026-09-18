@@ -41,6 +41,13 @@ interface EntriesListProps {
   online: boolean
 }
 
+function friendlyErrorMessage(message: string, online: boolean): string {
+  if (!online || /network|fetch/i.test(message)) {
+    return 'Connexion perdue — reconnectez-vous puis réessayez.'
+  }
+  return message
+}
+
 type ListItem =
   | { kind: 'synced'; id: string; createdAt: string; entry: Entry }
   | { kind: 'draft'; id: string; createdAt: string; draft: Draft }
@@ -101,6 +108,11 @@ export function EntriesList({ online }: EntriesListProps) {
   }
 
   async function saveEdit(id: string) {
+    if (!online) {
+      setError(friendlyErrorMessage('', false))
+      return
+    }
+
     const results = {
       bags_milled: validateNumberField(draftEdit.bags_milled, REQUIRED.bags_milled),
       revenue: validateNumberField(draftEdit.revenue, REQUIRED.revenue),
@@ -132,7 +144,7 @@ export function EntriesList({ online }: EntriesListProps) {
       .eq('id', id)
 
     if (error) {
-      setError(error.message)
+      setError(friendlyErrorMessage(error.message, online))
       setSaving(false)
       return
     }
@@ -254,7 +266,7 @@ export function EntriesList({ online }: EntriesListProps) {
                   <button
                     className="primary"
                     onClick={() => saveEdit(item.entry.id)}
-                    disabled={saving}
+                    disabled={saving || !online}
                   >
                     {saving ? 'Enregistrement…' : 'Enregistrer'}
                   </button>
@@ -266,6 +278,11 @@ export function EntriesList({ online }: EntriesListProps) {
                     Annuler
                   </button>
                 </div>
+                {!online && (
+                  <p className="field-hint">
+                    Hors-ligne : reconnectez-vous pour enregistrer cette correction.
+                  </p>
+                )}
               </>
             ) : (
               <>

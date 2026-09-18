@@ -50,3 +50,8 @@ export async function deleteDraft(id: string): Promise<void> {
   const db = await dbPromise
   await db.delete('drafts', id)
 }
+
+export async function draftExists(id: string): Promise<boolean> {
+  const db = await dbPromise
+  return (await db.get('drafts', id)) !== undefined
+}
