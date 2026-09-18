@@ -36,7 +36,11 @@ interface EditDraft {
   notes: string
 }
 
-export function EntriesList() {
+interface EntriesListProps {
+  online: boolean
+}
+
+export function EntriesList({ online }: EntriesListProps) {
   const [entries, setEntries] = useState<Entry[]>([])
   const [loading, setLoading] = useState(true)
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -120,7 +124,7 @@ export function EntriesList() {
     await loadEntries()
   }
 
-  function editField(name: FieldName) {
+  function editField(entry: Entry, name: FieldName) {
     return (
       <label>
         {FIELD_LABELS[name]}
@@ -133,6 +137,7 @@ export function EntriesList() {
           value={draftEdit[name]}
           onChange={(e) => setDraftEdit({ ...draftEdit, [name]: e.target.value })}
         />
+        <span className="field-hint">Actuellement : {entry[name]}</span>
         {errors[name] && (
           <span className="field-error">
             {draftEdit[name].trim() === ''
@@ -148,7 +153,7 @@ export function EntriesList() {
 
   return (
     <div className="entries-list">
-      {!navigator.onLine && (
+      {!online && (
         <p className="offline-note">
           Hors-ligne : la correction d'une entrée nécessite une connexion.
         </p>
@@ -159,10 +164,10 @@ export function EntriesList() {
         <div key={entry.id} className="entry-card">
           {editingId === entry.id ? (
             <>
-              {editField('bags_milled')}
-              {editField('revenue')}
-              {editField('expenses')}
-              {editField('other')}
+              {editField(entry, 'bags_milled')}
+              {editField(entry, 'revenue')}
+              {editField(entry, 'expenses')}
+              {editField(entry, 'other')}
               <label>
                 Notes
                 <textarea
@@ -170,6 +175,10 @@ export function EntriesList() {
                   onChange={(e) => setDraftEdit({ ...draftEdit, notes: e.target.value })}
                 />
               </label>
+              <p className="tracked-note">
+                Chaque modification est tracée : la valeur précédente reste
+                consultable.
+              </p>
               {error && (
                 <p className="error" role="alert">
                   {error}
@@ -211,7 +220,7 @@ export function EntriesList() {
               <button
                 className="secondary"
                 onClick={() => startEdit(entry)}
-                disabled={!navigator.onLine}
+                disabled={!online}
               >
                 Corriger
               </button>

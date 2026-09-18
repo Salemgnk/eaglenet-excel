@@ -3,6 +3,7 @@ import { EntriesList } from './features/EntriesList'
 import { EntryForm } from './features/EntryForm'
 import { LoginForm } from './features/LoginForm'
 import { supabase } from './lib/supabase'
+import { useOnlineStatus } from './lib/useOnlineStatus'
 import { useProfile } from './lib/useProfile'
 import { useSession } from './lib/useSession'
 import { useSync } from './lib/useSync'
@@ -15,6 +16,7 @@ function App() {
     session?.user.id,
     profile?.site_id,
   )
+  const online = useOnlineStatus()
   const [tab, setTab] = useState<'new' | 'list'>('new')
 
   if (sessionLoading) {
@@ -33,7 +35,13 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <span className="brand-mark">Eaglenet</span>
+        <div className="brand-group">
+          <span className="brand-mark">Eaglenet</span>
+          <span className={`status-indicator ${online ? 'online' : 'offline'}`}>
+            <span className="status-dot" />
+            {online ? 'En ligne' : 'Hors ligne'}
+          </span>
+        </div>
         <div className="app-header-user">
           <span>{session.user.email}</span>
           <button className="secondary" onClick={() => supabase.auth.signOut()}>
@@ -63,7 +71,11 @@ function App() {
         </button>
       </nav>
 
-      {tab === 'new' ? <EntryForm onSaved={handleSaved} /> : <EntriesList />}
+      {tab === 'new' ? (
+        <EntryForm onSaved={handleSaved} />
+      ) : (
+        <EntriesList online={online} />
+      )}
     </div>
   )
 }
