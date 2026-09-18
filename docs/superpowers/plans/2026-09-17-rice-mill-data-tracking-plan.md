@@ -56,11 +56,11 @@ team is more comfortable with; nothing above depends on the choice).
 
 ## Phase 4 — Owner dashboard
 
-- [ ] Read-only web page, authenticated as the owner role.
-- [ ] Live view of `submitted` entries for the site (Supabase realtime
+- [x] Read-only web page, authenticated as the owner role.
+- [x] Live view of `submitted` entries for the site (Supabase realtime
       subscription), with basic totals (bags milled, revenue, expenses
       over a selectable period).
-- [ ] Manual test: submit an entry from the PWA, confirm it appears on the
+- [x] Manual test: submit an entry from the PWA, confirm it appears on the
       dashboard within seconds without a page refresh.
 
 ## Phase 5 — Excel push worker
