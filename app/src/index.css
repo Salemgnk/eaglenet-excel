@@ -4,22 +4,56 @@
 
 :root {
   color-scheme: light;
+
+  /* Eaglenet — "The Weigh Station" (see DESIGN.md) */
+  --color-brass: #9c6b2e;
+  --color-brass-deep: #7d551f;
+  --color-ink: #1f1b16;
+  --color-text: #5c564c;
+  --color-paper: #faf8f4;
+  --color-surface: #ffffff;
+  --color-border: #d9d4cb;
+  --color-success: #2f6b3f;
+  --color-warning-bg: #fdf3de;
+  --color-warning-text: #7a5c1f;
+  --color-error: #b3402a;
+
+  --font-body: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --font-readout: ui-monospace, 'SF Mono', Consolas, monospace;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+
+  --shadow-resting: 0 1px 2px rgba(31, 27, 22, 0.08);
 }
 
 body {
   margin: 0;
-  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #fafafa;
-  color: #1a1a1a;
+  background: var(--color-paper);
+  color: var(--color-text);
 }
 
 h1,
 h2 {
   margin: 0;
+  color: var(--color-ink);
 }
 
 p {
   margin: 0;
+}
+
+::selection {
+  background: var(--color-brass);
+  color: var(--color-surface);
 }

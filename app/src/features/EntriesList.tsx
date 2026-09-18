@@ -134,7 +134,7 @@ export function EntriesList() {
               <p className="entry-date">
                 {new Date(entry.created_at).toLocaleString('fr-FR')}
               </p>
-              <p>
+              <p className="entry-readout">
                 Sacs: {entry.bags_milled} · Revenu: {entry.revenue} · Dépenses:{' '}
                 {entry.expenses} · Autre: {entry.other}
               </p>

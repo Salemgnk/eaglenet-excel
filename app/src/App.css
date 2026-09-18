@@ -1,95 +1,135 @@
 .app {
   max-width: 480px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: var(--space-lg);
 }
 
 .app-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-  color: #555;
+  margin-bottom: var(--space-lg);
+  font-size: 0.85rem;
+  color: var(--color-text);
 }
 
 .loading {
   text-align: center;
-  margin-top: 3rem;
+  margin-top: var(--space-xl);
+  color: var(--color-text);
 }
 
 .login-form,
 .entry-form {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--space-md);
   max-width: 360px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: var(--space-lg);
+}
+
+.login-form h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: var(--space-sm);
 }
 
 .login-form label,
 .entry-form label {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  font-size: 0.95rem;
+  gap: var(--space-xs);
+  font-size: 1rem;
+  color: var(--color-ink);
 }
 
 .login-form input,
 .entry-form input,
 .entry-form textarea {
-  padding: 0.6rem;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  padding: 10px 12px;
   font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  font-family: var(--font-body);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
 }
 
-.login-form button,
-.entry-form button {
-  padding: 0.7rem;
+.login-form input:focus,
+.entry-form input:focus,
+.entry-form textarea:focus {
+  outline: none;
+  border-color: var(--color-brass);
+}
+
+.login-form button[type='submit'],
+.entry-form button[type='submit'] {
+  padding: 12px 16px;
   font-size: 1rem;
+  font-weight: 600;
+  font-family: var(--font-body);
   border: none;
-  border-radius: 6px;
-  background: #1a7a3c;
-  color: white;
+  border-radius: var(--radius-md);
+  background: var(--color-brass);
+  color: var(--color-surface);
+  box-shadow: var(--shadow-resting);
   cursor: pointer;
+  transition:
+    background 0.15s ease-out,
+    transform 0.08s ease-out,
+    box-shadow 0.08s ease-out;
+}
+
+.login-form button[type='submit']:hover,
+.entry-form button[type='submit']:hover {
+  background: var(--color-brass-deep);
+}
+
+.login-form button[type='submit']:active,
+.entry-form button[type='submit']:active {
+  transform: translateY(1px);
+  box-shadow: none;
 }
 
 .login-form button:disabled {
   opacity: 0.6;
+  cursor: default;
 }
 
 .error {
-  color: #b00020;
-  font-size: 0.9rem;
+  color: var(--color-error);
+  font-size: 0.85rem;
 }
 
 .saved {
-  color: #1a7a3c;
-  font-size: 0.9rem;
+  color: var(--color-success);
+  font-size: 0.85rem;
 }
 
 .pending-badge {
-  background: #fff3cd;
-  color: #7a5c00;
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  margin-bottom: 0.75rem;
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: var(--space-md);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-sm);
 }
 
 .link-button {
   background: none;
   border: none;
-  color: #7a5c00;
+  color: var(--color-warning-text);
   text-decoration: underline;
   cursor: pointer;
   font-size: 0.85rem;
+  font-weight: 600;
   padding: 0;
 }
 
@@ -100,94 +140,125 @@
 
 .tabs {
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
 }
 
 .tabs button {
   flex: 1;
-  padding: 0.6rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background: white;
+  padding: 10px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-ink);
   cursor: pointer;
   font-size: 0.9rem;
+  font-weight: 600;
+  font-family: var(--font-body);
 }
 
 .tabs button.active {
-  background: #1a7a3c;
-  color: white;
-  border-color: #1a7a3c;
+  background: var(--color-brass);
+  color: var(--color-surface);
+  border-color: var(--color-brass);
 }
 
 .entries-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--space-md);
 }
 
 .entry-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 0.75rem;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-resting);
+  padding: var(--space-md);
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--space-sm);
 }
 
 .entry-date {
   font-size: 0.8rem;
-  color: #777;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.entry-readout {
+  font-family: var(--font-readout);
+  font-variant-numeric: tabular-nums;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-ink);
   margin: 0;
 }
 
 .entry-notes {
   font-style: italic;
-  color: #555;
+  color: var(--color-text);
   margin: 0;
 }
 
 .entry-card label {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: var(--space-xs);
   font-size: 0.9rem;
+  color: var(--color-ink);
 }
 
 .entry-card input,
 .entry-card textarea {
-  padding: 0.5rem;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  padding: 8px 10px;
   font-size: 0.95rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  font-family: var(--font-body);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.entry-card input:focus,
+.entry-card textarea:focus {
+  outline: none;
+  border-color: var(--color-brass);
 }
 
 .edit-actions {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-sm);
 }
 
 .offline-note {
-  background: #f0f0f0;
-  color: #555;
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
+  background: var(--color-border);
+  color: var(--color-ink);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
   font-size: 0.85rem;
 }
 
 button.secondary {
-  background: white;
-  color: #1a7a3c;
-  border: 1px solid #1a7a3c;
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
+  background: var(--color-surface);
+  color: var(--color-brass-deep);
+  border: 1.5px solid var(--color-border);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-weight: 600;
   cursor: pointer;
-  font-size: 0.9rem;
+  transition: border-color 0.15s ease-out;
+}
+
+button.secondary:hover:not(:disabled) {
+  border-color: var(--color-brass-deep);
 }
 
 button.secondary:disabled {
-  opacity: 0.5;
+  opacity: 0.6;
   cursor: default;
-  color: #999;
-  border-color: #ccc;
+  color: var(--color-text);
 }

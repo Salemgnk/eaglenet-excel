@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-18T00:00:00Z",
+  "title": "Design System: Eaglenet",
+  "extensions": {
+    "colorMeta": {
+      "brass": { "role": "primary", "displayName": "Brass Dial", "canonical": "#9C6B2E", "tonalRamp": ["#2E1F0E", "#4A331A", "#664526", "#7D551F", "#9C6B2E", "#B98847", "#D3AB77", "#E9D3B0"] },
+      "brass-deep": { "role": "primary-hover", "displayName": "Brass Dial, Deep", "canonical": "#7D551F" },
+      "ink": { "role": "neutral", "displayName": "Instrument Ink", "canonical": "#1F1B16", "tonalRamp": ["#000000", "#1F1B16", "#332C24", "#4D4238", "#66584C", "#807164", "#9C8F80", "#B8AE9F"] },
+      "text": { "role": "neutral", "displayName": "Graphite Text", "canonical": "#5C564C" },
+      "paper": { "role": "neutral", "displayName": "Ledger Paper", "canonical": "#FAF8F4", "tonalRamp": ["#1F1B16", "#3D362C", "#5C5445", "#8A8070", "#B8AF9F", "#D9D4CB", "#EFEBE2", "#FAF8F4"] },
+      "surface": { "role": "neutral", "displayName": "Panel White", "canonical": "#FFFFFF" },
+      "border": { "role": "neutral", "displayName": "Etched Border", "canonical": "#D9D4CB" },
+      "success": { "role": "semantic", "displayName": "Confirmed Green", "canonical": "#2F6B3F" },
+      "warning-bg": { "role": "semantic", "displayName": "Pending Gold (background)", "canonical": "#FDF3DE" },
+      "warning-text": { "role": "semantic", "displayName": "Pending Gold (text)", "canonical": "#7A5C1F" },
+      "error": { "role": "semantic", "displayName": "Oxide Red", "canonical": "#B3402A" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Screen/app title only." },
+      "title": { "displayName": "Title", "purpose": "Section headers." },
+      "body": { "displayName": "Body", "purpose": "Labels, inputs, body copy." },
+      "label": { "displayName": "Label", "purpose": "Meta text: dates, badges, helper captions." },
+      "readout": { "displayName": "Readout", "purpose": "Every numeric figure representing real quantities (bags, currency, counts); tabular-nums." }
+    },
+    "shadows": [
+      { "name": "resting-lift", "value": "0 1px 2px rgba(31,27,22,0.08)", "purpose": "Default state for cards and primary buttons." },
+      { "name": "pressed", "value": "none", "purpose": "Active/pressed state; paired with translateY(1px) instead of a shadow." }
+    ],
+    "motion": [
+      { "name": "press", "value": "transform 0.08s ease-out", "purpose": "Button/card press feedback (Pressed state)." }
+    ],
+    "breakpoints": [
+      { "name": "mobile", "value": "0px" },
+      { "name": "desktop", "value": "768px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single most important action on screen (submit, save, sync retry).",
+      "html": "<button class=\"ds-btn-primary\">Enregistrer</button>",
+      "css": ".ds-btn-primary { background: #9C6B2E; color: #FFFFFF; padding: 12px 16px; border: none; border-radius: 6px; font: 600 1rem system-ui, 'Segoe UI', Roboto, sans-serif; box-shadow: 0 1px 2px rgba(31,27,22,0.08); transition: background 0.15s ease-out, transform 0.08s ease-out, box-shadow 0.08s ease-out; cursor: pointer; } .ds-btn-primary:hover { background: #7D551F; } .ds-btn-primary:active { transform: translateY(1px); box-shadow: none; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "A lower-weight action alongside a primary one (cancel, correct).",
+      "html": "<button class=\"ds-btn-secondary\">Corriger</button>",
+      "css": ".ds-btn-secondary { background: #FFFFFF; color: #7D551F; padding: 8px 12px; border: 1.5px solid #D9D4CB; border-radius: 6px; font: 600 0.9rem system-ui, 'Segoe UI', Roboto, sans-serif; cursor: pointer; transition: border-color 0.15s ease-out; } .ds-btn-secondary:hover { border-color: #7D551F; } .ds-btn-secondary:disabled { color: #9C8F80; border-color: #D9D4CB; cursor: default; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Bordered field for form entry; focus is a border color shift, no glow ring.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"0\" />",
+      "css": ".ds-input { background: #FFFFFF; color: #1F1B16; border: 1.5px solid #D9D4CB; border-radius: 4px; padding: 10px 12px; font: 400 1rem system-ui, 'Segoe UI', Roboto, sans-serif; width: 100%; } .ds-input:focus { outline: none; border-color: #9C6B2E; } .ds-input:invalid:not(:placeholder-shown) { border-color: #B3402A; }"
+    },
+    {
+      "name": "Entry Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "One submitted entry in the operator's list, with its readout figures.",
+      "html": "<div class=\"ds-card\"><p class=\"ds-card-date\">18 sept. 2026, 09:20</p><p class=\"ds-card-readout\">Sacs: 10 &middot; Revenu: 500 &middot; D&eacute;penses: 100</p></div>",
+      "css": ".ds-card { background: #FFFFFF; border: 1.5px solid #D9D4CB; border-radius: 8px; padding: 12px; box-shadow: 0 1px 2px rgba(31,27,22,0.08); } .ds-card-date { color: #5C564C; font: 600 0.8rem system-ui, 'Segoe UI', Roboto, sans-serif; letter-spacing: 0.02em; margin: 0 0 4px; } .ds-card-readout { color: #1F1B16; font: 500 1rem ui-monospace, 'SF Mono', Consolas, monospace; font-variant-numeric: tabular-nums; margin: 0; }"
+    },
+    {
+      "name": "Pending Badge",
+      "kind": "chip",
+      "refersTo": "badge-warning",
+      "description": "Count of entries captured locally but not yet synced.",
+      "html": "<div class=\"ds-badge-pending\">2 entr&eacute;es non envoy&eacute;es</div>",
+      "css": ".ds-badge-pending { background: #FDF3DE; color: #7A5C1F; padding: 8px 12px; border-radius: 6px; font: 600 0.85rem system-ui, 'Segoe UI', Roboto, sans-serif; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Weigh Station",
+    "overview": "Eaglenet exists to put a number on the record the instant it's true, the way a mechanical scale commits a weight the moment the needle settles — not an estimate revised later. The system reads as industrial instrumentation, not office software: warm graphite ink on paper-toned surfaces, a single brass accent used the way a dial's needle or a stamped seal is used — sparingly, and only where it means \"this is the number that matters.\" Components are built solid: thicker borders than a typical SaaS card, a slight lift so buttons and inputs feel like physical controls you press rather than flat regions you tap, and numeric values set in a monospace readout face so a column of figures lines up the way it would on a scale's digital display.\n\nThis is a deliberate departure from generic dashboard software: no indigo-on-white gradient buttons, no floating soft-shadow cards on a pure white canvas, no rounded-full pills. Eaglenet is a tool bolted to the workflow of weighing and recording rice, used in direct sun on a phone and at a desk in an office — it should look like it belongs in both places.",
+    "keyCharacteristics": [
+      "A single warm brass accent, reserved for primary actions and confirmed states — never decorative.",
+      "Warm graphite ink and paper-toned neutrals instead of cool corporate gray-and-blue.",
+      "Solid, mechanical component language: visible borders, modest radius, a slight tactile lift.",
+      "Numeric data set in a monospace \"readout\" face wherever a figure is the point."
+    ],
+    "rules": [
+      { "name": "The One Accent Rule", "body": "Brass Dial appears only on the single most important action or state per screen. If two elements compete for brass, one of them is wrong.", "section": "colors" },
+      { "name": "The Tabular Readout Rule", "body": "Every number that represents a real quantity (bags, currency, counts) is set in the Readout face with font-variant-numeric: tabular-nums. Numbers used as ordinary language stay in Body.", "section": "typography" },
+      { "name": "The Pressable Rule", "body": "Anything the user taps to commit data (submit, save, sync retry) carries the Resting Lift at rest and the Pressed treatment on :active. Static, non-interactive surfaces stay flat.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do reserve Brass Dial for exactly one primary action or state per screen.",
+      "Do set every real numeric figure in the Readout monospace face with tabular numerals.",
+      "Do keep borders at 1.5px and radius at 4-8px — never a pill shape, never borderless flat cards."
+    ],
+    "donts": [
+      "Don't introduce a second accent color (indigo, blue, teal) alongside Brass Dial.",
+      "Don't use soft, diffuse \"floating card\" shadows — the Resting Lift is small and tight, not a SaaS ambient glow.",
+      "Don't set numeric data in the body/UI font — it breaks the \"mechanical readout\" character."
+    ]
+  }
+}

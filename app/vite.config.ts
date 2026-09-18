@@ -12,11 +12,11 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
       },
       manifest: {
-        name: 'Rice Mill Data Tracking',
-        short_name: 'Rice Mill',
-        description: 'Offline-first data entry for rice mill operators',
-        theme_color: '#1a1a1a',
-        background_color: '#ffffff',
+        name: 'Eaglenet',
+        short_name: 'Eaglenet',
+        description: 'Offline-first production tracking for rice mill operators',
+        theme_color: '#9c6b2e',
+        background_color: '#faf8f4',
         display: 'standalone',
         icons: [
           {

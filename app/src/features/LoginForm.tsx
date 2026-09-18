@@ -18,7 +18,7 @@ export function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit} className="login-form">
-      <h1>Rice Mill</h1>
+      <h1>Eaglenet</h1>
       <label>
         Email
         <input
