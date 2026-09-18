@@ -189,6 +189,13 @@ button.secondary:hover:not(:disabled) {
   margin: 0;
 }
 
+.section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 0 0 var(--space-sm);
+}
+
 .entries-table {
   width: 100%;
   background: var(--color-surface);
@@ -196,6 +203,11 @@ button.secondary:hover:not(:disabled) {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-resting);
   overflow: hidden;
+  margin-bottom: var(--space-xl);
+}
+
+.capitalize {
+  text-transform: capitalize;
 }
 
 .entries-table th,

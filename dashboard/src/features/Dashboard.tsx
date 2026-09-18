@@ -28,6 +28,42 @@ function sum(entries: Entry[], field: keyof Pick<Entry, 'bags_milled' | 'revenue
   return entries.reduce((total, entry) => total + entry[field], 0)
 }
 
+interface DailyTotal {
+  day: string
+  bags_milled: number
+  revenue: number
+  expenses: number
+  other: number
+}
+
+function dailyTotals(entries: Entry[]): DailyTotal[] {
+  const byDay = new Map<string, Entry[]>()
+  for (const entry of entries) {
+    const day = new Date(entry.created_at).toLocaleDateString('fr-CA') // YYYY-MM-DD, local time
+    const bucket = byDay.get(day)
+    if (bucket) bucket.push(entry)
+    else byDay.set(day, [entry])
+  }
+  return Array.from(byDay.entries())
+    .map(([day, dayEntries]) => ({
+      day,
+      bags_milled: sum(dayEntries, 'bags_milled'),
+      revenue: sum(dayEntries, 'revenue'),
+      expenses: sum(dayEntries, 'expenses'),
+      other: sum(dayEntries, 'other'),
+    }))
+    .sort((a, b) => b.day.localeCompare(a.day))
+}
+
+function formatDay(day: string): string {
+  const [year, month, date] = day.split('-').map(Number)
+  return new Date(year, month - 1, date).toLocaleDateString('fr-FR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  })
+}
+
 interface DashboardProps {
   siteId: string
 }
@@ -51,6 +87,8 @@ export function Dashboard({ siteId }: DashboardProps) {
     }),
     [filtered],
   )
+
+  const byDay = useMemo(() => dailyTotals(filtered), [filtered])
 
   if (loading) return <p className="loading">Chargement…</p>
 
@@ -90,30 +128,61 @@ export function Dashboard({ siteId }: DashboardProps) {
       {filtered.length === 0 ? (
         <p>Aucune entrée sur cette période.</p>
       ) : (
-        <table className="entries-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th className="numeric">Sacs</th>
-              <th className="numeric">Revenu</th>
-              <th className="numeric">Dépenses</th>
-              <th className="numeric">Autre</th>
-              <th>Notes</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((entry) => (
-              <tr key={entry.id}>
-                <td>{new Date(entry.created_at).toLocaleString('fr-FR')}</td>
-                <td className="numeric">{entry.bags_milled}</td>
-                <td className="numeric">{entry.revenue}</td>
-                <td className="numeric">{entry.expenses}</td>
-                <td className="numeric">{entry.other}</td>
-                <td>{entry.notes}</td>
+        <>
+          {byDay.length > 1 && (
+            <>
+              <h2 className="section-title">Par jour</h2>
+              <table className="entries-table">
+                <thead>
+                  <tr>
+                    <th>Jour</th>
+                    <th className="numeric">Sacs</th>
+                    <th className="numeric">Revenu</th>
+                    <th className="numeric">Dépenses</th>
+                    <th className="numeric">Autre</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {byDay.map((day) => (
+                    <tr key={day.day}>
+                      <td className="capitalize">{formatDay(day.day)}</td>
+                      <td className="numeric">{day.bags_milled}</td>
+                      <td className="numeric">{day.revenue}</td>
+                      <td className="numeric">{day.expenses}</td>
+                      <td className="numeric">{day.other}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
+
+          <h2 className="section-title">Détail des entrées</h2>
+          <table className="entries-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th className="numeric">Sacs</th>
+                <th className="numeric">Revenu</th>
+                <th className="numeric">Dépenses</th>
+                <th className="numeric">Autre</th>
+                <th>Notes</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filtered.map((entry) => (
+                <tr key={entry.id}>
+                  <td>{new Date(entry.created_at).toLocaleString('fr-FR')}</td>
+                  <td className="numeric">{entry.bags_milled}</td>
+                  <td className="numeric">{entry.revenue}</td>
+                  <td className="numeric">{entry.expenses}</td>
+                  <td className="numeric">{entry.other}</td>
+                  <td>{entry.notes}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
       )}
     </div>
   )
