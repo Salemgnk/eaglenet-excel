@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { listDrafts, type Draft } from '../lib/drafts'
+import { formatCount, formatCurrency } from '../lib/format'
 import { validateNumberField } from '../lib/validation'
 
 interface Entry {
@@ -46,6 +47,10 @@ function friendlyErrorMessage(message: string, online: boolean): string {
     return 'Connexion perdue — reconnectez-vous puis réessayez.'
   }
   return message
+}
+
+function formatField(name: FieldName, value: number): string {
+  return name === 'bags_milled' ? formatCount(value) : formatCurrency(value)
 }
 
 type ListItem =
@@ -167,7 +172,7 @@ export function EntriesList({ online }: EntriesListProps) {
           value={draftEdit[name]}
           onChange={(e) => setDraftEdit({ ...draftEdit, [name]: e.target.value })}
         />
-        <span className="field-hint">Actuellement : {entry[name]}</span>
+        <span className="field-hint">Actuellement : {formatField(name, entry[name])}</span>
         {errors[name] && (
           <span className="field-error">
             {draftEdit[name].trim() === ''
@@ -228,13 +233,13 @@ export function EntriesList({ online }: EntriesListProps) {
             </div>
             <dl className="entry-readout">
               <dt>Sacs</dt>
-              <dd>{item.draft.bags_milled}</dd>
+              <dd>{formatCount(item.draft.bags_milled)}</dd>
               <dt>Revenu</dt>
-              <dd>{item.draft.revenue}</dd>
+              <dd>{formatCurrency(item.draft.revenue)}</dd>
               <dt>Dépenses</dt>
-              <dd>{item.draft.expenses}</dd>
+              <dd>{formatCurrency(item.draft.expenses)}</dd>
               <dt>Autre</dt>
-              <dd>{item.draft.other}</dd>
+              <dd>{formatCurrency(item.draft.other)}</dd>
             </dl>
             {item.draft.notes && <p className="entry-notes">{item.draft.notes}</p>}
           </div>
@@ -291,13 +296,13 @@ export function EntriesList({ online }: EntriesListProps) {
                 </p>
                 <dl className="entry-readout">
                   <dt>Sacs</dt>
-                  <dd>{item.entry.bags_milled}</dd>
+                  <dd>{formatCount(item.entry.bags_milled)}</dd>
                   <dt>Revenu</dt>
-                  <dd>{item.entry.revenue}</dd>
+                  <dd>{formatCurrency(item.entry.revenue)}</dd>
                   <dt>Dépenses</dt>
-                  <dd>{item.entry.expenses}</dd>
+                  <dd>{formatCurrency(item.entry.expenses)}</dd>
                   <dt>Autre</dt>
-                  <dd>{item.entry.other}</dd>
+                  <dd>{formatCurrency(item.entry.other)}</dd>
                 </dl>
                 {item.entry.notes && <p className="entry-notes">{item.entry.notes}</p>}
                 <button

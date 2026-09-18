@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { saveDraft } from '../lib/drafts'
+import { formatCount, formatCurrency } from '../lib/format'
 import { validateNumberField } from '../lib/validation'
 
 interface EntryFormProps {
@@ -171,13 +172,13 @@ export function EntryForm({ onSaved }: EntryFormProps) {
           </p>
           <dl className="entry-readout">
             <dt>Sacs</dt>
-            <dd>{lastSaved.bagsMilled}</dd>
+            <dd>{formatCount(lastSaved.bagsMilled)}</dd>
             <dt>Revenu</dt>
-            <dd>{lastSaved.revenue}</dd>
+            <dd>{formatCurrency(lastSaved.revenue)}</dd>
             <dt>Dépenses</dt>
-            <dd>{lastSaved.expenses}</dd>
+            <dd>{formatCurrency(lastSaved.expenses)}</dd>
             <dt>Autre</dt>
-            <dd>{lastSaved.other}</dd>
+            <dd>{formatCurrency(lastSaved.other)}</dd>
           </dl>
         </div>
       )}

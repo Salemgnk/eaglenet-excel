@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { formatCount, formatCurrency } from '../lib/format'
 import { useLiveEntries, type Entry } from '../lib/useLiveEntries'
 
 type Period = 'today' | '7d' | '30d' | 'all'
@@ -109,19 +110,19 @@ export function Dashboard({ siteId }: DashboardProps) {
       <div className="stat-grid">
         <div className="stat-card">
           <p className="field-hint">Sacs moulus</p>
-          <p className="stat-readout">{totals.bags_milled}</p>
+          <p className="stat-readout">{formatCount(totals.bags_milled)}</p>
         </div>
         <div className="stat-card">
           <p className="field-hint">Revenu</p>
-          <p className="stat-readout">{totals.revenue}</p>
+          <p className="stat-readout">{formatCurrency(totals.revenue)}</p>
         </div>
         <div className="stat-card">
           <p className="field-hint">Dépenses</p>
-          <p className="stat-readout">{totals.expenses}</p>
+          <p className="stat-readout">{formatCurrency(totals.expenses)}</p>
         </div>
         <div className="stat-card">
           <p className="field-hint">Autre</p>
-          <p className="stat-readout">{totals.other}</p>
+          <p className="stat-readout">{formatCurrency(totals.other)}</p>
         </div>
       </div>
 
@@ -146,10 +147,10 @@ export function Dashboard({ siteId }: DashboardProps) {
                   {byDay.map((day) => (
                     <tr key={day.day}>
                       <td className="capitalize">{formatDay(day.day)}</td>
-                      <td className="numeric">{day.bags_milled}</td>
-                      <td className="numeric">{day.revenue}</td>
-                      <td className="numeric">{day.expenses}</td>
-                      <td className="numeric">{day.other}</td>
+                      <td className="numeric">{formatCount(day.bags_milled)}</td>
+                      <td className="numeric">{formatCurrency(day.revenue)}</td>
+                      <td className="numeric">{formatCurrency(day.expenses)}</td>
+                      <td className="numeric">{formatCurrency(day.other)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -173,10 +174,10 @@ export function Dashboard({ siteId }: DashboardProps) {
               {filtered.map((entry) => (
                 <tr key={entry.id}>
                   <td>{new Date(entry.created_at).toLocaleString('fr-FR')}</td>
-                  <td className="numeric">{entry.bags_milled}</td>
-                  <td className="numeric">{entry.revenue}</td>
-                  <td className="numeric">{entry.expenses}</td>
-                  <td className="numeric">{entry.other}</td>
+                  <td className="numeric">{formatCount(entry.bags_milled)}</td>
+                  <td className="numeric">{formatCurrency(entry.revenue)}</td>
+                  <td className="numeric">{formatCurrency(entry.expenses)}</td>
+                  <td className="numeric">{formatCurrency(entry.other)}</td>
                   <td>{entry.notes}</td>
                 </tr>
               ))}

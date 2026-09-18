@@ -22,15 +22,16 @@ Unlike Airtable or any connectivity-dependent spreadsheet tool, entries are neve
 
 ## Operating Context
 
-- Single rice mill site today, 1-2 field operators, personal Android/iOS smartphones, frequently on unstable or intermittent connections.
+- Single rice mill site today, in Ghana — 1-2 field operators, personal Android/iOS smartphones, frequently on unstable or intermittent connections.
+- All monetary figures (revenue, expenses, other) are in Ghana Cedis (GHS). Bags milled is a plain count, not a currency.
 - The owner reviews data mostly from a desktop computer.
 - Where the owner's Excel file actually lives (OneDrive/SharePoint, Google Sheets, or local-only) is still unconfirmed and blocks the automated Excel-push work. A live web dashboard is the interim/primary channel to the owner and does not depend on that answer.
 - Backend: Supabase (Postgres, Auth, row-level security). Offline drafts live in the browser's IndexedDB until synced.
 
 ## Capabilities and Constraints
 
-- Built: offline entry form (bags milled, revenue, expenses, other, notes); background sync on reconnect with idempotent retries (a dropped response after a successful sync never creates a duplicate); corrections restricted to the entry's original operator, with every field change logged to an immutable `entry_history` via a database trigger; role-based access (an operator sees/edits only their own entries, the owner has read-only access across the site).
-- Not yet built: owner-facing live dashboard; the Excel push worker.
+- Built: offline entry form (bags milled, revenue, expenses, other, notes); background sync on reconnect with idempotent retries (a dropped response after a successful sync never creates a duplicate); corrections restricted to the entry's original operator, with every field change logged to an immutable `entry_history` via a database trigger; role-based access (an operator sees/edits only their own entries, the owner has read-only access across the site); a read-only owner dashboard (period totals, a daily breakdown, and a live entries table via Supabase Realtime — no page refresh needed).
+- Not yet built: the Excel push worker.
 - Undecided: the exact Excel push mechanism (Microsoft Graph API vs. Google Sheets API vs. another route) — depends on the operating-context gap above.
 - Scope for v1: one site, 1-2 operators — not multi-tenant.
 
