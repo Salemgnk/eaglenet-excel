@@ -17,37 +17,39 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="login-form" noValidate>
-      <h1>Eaglenet</h1>
-      <p className="login-subtitle">Tableau de bord</p>
-      <label>
-        Email
-        <input
-          type="email"
-          autoComplete="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-      </label>
-      <label>
-        Mot de passe
-        <input
-          type="password"
-          autoComplete="current-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </label>
-      {error && (
-        <p className="error" role="alert">
-          {error}
-        </p>
-      )}
-      <button type="submit" disabled={submitting}>
-        {submitting ? 'Connexion…' : 'Se connecter'}
-      </button>
-    </form>
+    <div className="login-page">
+      <form onSubmit={handleSubmit} className="login-form" noValidate>
+        <h1>Eaglenet</h1>
+        <p className="login-subtitle">Tableau de bord</p>
+        <label>
+          Email
+          <input
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </label>
+        <label>
+          Mot de passe
+          <input
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </label>
+        {error && (
+          <p className="error" role="alert">
+            {error}
+          </p>
+        )}
+        <button type="submit" disabled={submitting}>
+          {submitting ? 'Connexion…' : 'Se connecter'}
+        </button>
+      </form>
+    </div>
   )
 }

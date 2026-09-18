@@ -189,20 +189,20 @@ export function Dashboard({ siteId }: DashboardProps) {
         ))}
       </nav>
 
-      <div className="stat-grid">
-        <div className="stat-card">
+      <div className="totals-band">
+        <div className="totals-band-item">
           <p className="field-hint">Sacs moulus</p>
           <p className="stat-readout">{formatCount(totals.bags_milled)}</p>
         </div>
-        <div className="stat-card">
+        <div className="totals-band-item">
           <p className="field-hint">Revenu</p>
           <p className="stat-readout">{formatCurrency(totals.revenue)}</p>
         </div>
-        <div className="stat-card">
+        <div className="totals-band-item">
           <p className="field-hint">Dépenses</p>
           <p className="stat-readout">{formatCurrency(totals.expenses)}</p>
         </div>
-        <div className="stat-card">
+        <div className="totals-band-item">
           <p className="field-hint">Autre</p>
           <p className="stat-readout">{formatCurrency(totals.other)}</p>
         </div>

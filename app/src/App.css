@@ -22,10 +22,10 @@
 }
 
 .brand-mark {
+  font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1rem;
-  color: var(--color-brass-deep);
-  letter-spacing: -0.01em;
+  font-size: 1.15rem;
+  color: var(--color-accent);
 }
 
 .status-indicator {
@@ -78,19 +78,29 @@
   padding: var(--space-lg);
 }
 
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100svh;
+  padding: var(--space-lg);
+}
+
 .login-form {
+  width: 100%;
   background: var(--color-surface);
   border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-top: 4px solid var(--color-accent);
   box-shadow: var(--shadow-resting);
-  margin-top: var(--space-xl);
+  margin: 0;
 }
 
 .login-form h1 {
-  font-size: 1.75rem;
+  font-size: 2.25rem;
   font-weight: 700;
-  letter-spacing: -0.01em;
-  margin-bottom: var(--space-sm);
+  padding-bottom: var(--space-sm);
+  border-bottom: 3px double var(--color-rule-strong);
+  margin-bottom: var(--space-xs);
 }
 
 .login-form label,
@@ -118,7 +128,17 @@
 .entry-form input:focus,
 .entry-form textarea:focus {
   outline: none;
-  border-color: var(--color-brass);
+  border-color: var(--color-accent);
+}
+
+.login-form input {
+  border: none;
+  border-bottom: 1.5px solid var(--color-border);
+  padding: 10px 2px;
+}
+
+.login-form input:focus {
+  border-bottom-width: 2px;
 }
 
 .login-form button[type='submit'],
@@ -130,7 +150,7 @@ button.primary {
   font-family: var(--font-body);
   border: none;
   border-radius: var(--radius-md);
-  background: var(--color-brass);
+  background: var(--color-accent);
   color: var(--color-surface);
   box-shadow: var(--shadow-resting);
   cursor: pointer;
@@ -143,7 +163,7 @@ button.primary {
 .login-form button[type='submit']:hover:not(:disabled),
 .entry-form button[type='submit']:hover:not(:disabled),
 button.primary:hover:not(:disabled) {
-  background: var(--color-brass-deep);
+  background: var(--color-accent-deep);
 }
 
 .login-form button[type='submit']:active:not(:disabled),
@@ -211,6 +231,7 @@ button.primary:disabled {
   color: var(--color-warning-text);
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-warning-text);
   font-size: 0.85rem;
   font-weight: 600;
   margin-bottom: var(--space-md);
@@ -256,8 +277,8 @@ button.primary:disabled {
 }
 
 .tabs button.active {
-  color: var(--color-brass-deep);
-  border-color: var(--color-brass-deep);
+  color: var(--color-accent-deep);
+  border-color: var(--color-accent-deep);
   font-weight: 700;
 }
 
@@ -294,13 +315,18 @@ button.primary:disabled {
 }
 
 .draft-badge {
-  background: var(--color-warning-bg);
+  background: transparent;
   color: var(--color-warning-text);
-  padding: 2px 8px;
-  border-radius: var(--radius-sm);
-  font-size: 0.75rem;
-  font-weight: 600;
+  padding: 3px 10px;
+  border: 1.5px solid var(--color-warning-text);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   white-space: nowrap;
+  transform: rotate(-3deg);
+  display: inline-block;
 }
 
 .entry-readout {
@@ -320,8 +346,8 @@ button.primary:disabled {
 .entry-readout dd {
   font-family: var(--font-readout);
   font-variant-numeric: tabular-nums;
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: 1.05rem;
+  font-weight: 600;
   color: var(--color-ink);
   margin: 0;
   text-align: right;
@@ -355,7 +381,7 @@ button.primary:disabled {
 .entry-card input:focus,
 .entry-card textarea:focus {
   outline: none;
-  border-color: var(--color-brass);
+  border-color: var(--color-accent);
 }
 
 .edit-actions {
@@ -373,7 +399,7 @@ button.primary:disabled {
 
 button.secondary {
   background: var(--color-surface);
-  color: var(--color-brass-deep);
+  color: var(--color-accent-deep);
   border: 1.5px solid var(--color-border);
   padding: 8px 12px;
   border-radius: var(--radius-md);
@@ -384,7 +410,7 @@ button.secondary {
 }
 
 button.secondary:hover:not(:disabled) {
-  border-color: var(--color-brass-deep);
+  border-color: var(--color-accent-deep);
 }
 
 button.secondary:disabled {

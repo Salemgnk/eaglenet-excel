@@ -17,34 +17,36 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="login-form">
-      <h1>Eaglenet</h1>
-      <label>
-        Email
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-      </label>
-      <label>
-        Mot de passe
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </label>
-      {error && (
-        <p className="error" role="alert">
-          {error}
-        </p>
-      )}
-      <button type="submit" disabled={submitting}>
-        {submitting ? 'Connexion…' : 'Se connecter'}
-      </button>
-    </form>
+    <div className="login-page">
+      <form onSubmit={handleSubmit} className="login-form">
+        <h1>Eaglenet</h1>
+        <label>
+          Email
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </label>
+        <label>
+          Mot de passe
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </label>
+        {error && (
+          <p className="error" role="alert">
+            {error}
+          </p>
+        )}
+        <button type="submit" disabled={submitting}>
+          {submitting ? 'Connexion…' : 'Se connecter'}
+        </button>
+      </form>
+    </div>
   )
 }

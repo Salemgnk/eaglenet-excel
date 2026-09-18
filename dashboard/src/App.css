@@ -14,10 +14,10 @@
 }
 
 .brand-mark {
+  font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.1rem;
-  color: var(--color-brass-deep);
-  letter-spacing: -0.01em;
+  font-size: 1.3rem;
+  color: var(--color-accent);
 }
 
 .app-header-user {
@@ -32,30 +32,40 @@
   color: var(--color-text);
 }
 
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--space-lg);
+}
+
 .login-form {
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
+  width: 100%;
   max-width: 360px;
-  margin: var(--space-xl) auto 0;
+  margin: 0;
   padding: var(--space-lg);
   background: var(--color-surface);
   border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-top: 4px solid var(--color-accent);
   box-shadow: var(--shadow-resting);
 }
 
 .login-form h1 {
-  font-size: 1.75rem;
+  font-size: 2.25rem;
   font-weight: 700;
-  letter-spacing: -0.01em;
   margin-bottom: 0;
 }
 
 .login-subtitle {
   color: var(--color-text);
   font-size: 0.9rem;
-  margin-bottom: var(--space-sm);
+  padding-bottom: var(--space-sm);
+  margin-bottom: var(--space-xs);
+  border-bottom: 3px double var(--color-rule-strong);
 }
 
 .login-form label {
@@ -69,16 +79,17 @@
 .login-form input {
   background: var(--color-surface);
   color: var(--color-ink);
-  padding: 10px 12px;
+  padding: 10px 2px;
   font-size: 1rem;
   font-family: var(--font-body);
-  border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  border: none;
+  border-bottom: 1.5px solid var(--color-border);
 }
 
 .login-form input:focus {
   outline: none;
-  border-color: var(--color-brass);
+  border-bottom-color: var(--color-accent);
+  border-bottom-width: 2px;
 }
 
 .login-form button[type='submit'] {
@@ -88,7 +99,7 @@
   font-family: var(--font-body);
   border: none;
   border-radius: var(--radius-md);
-  background: var(--color-brass);
+  background: var(--color-accent);
   color: var(--color-surface);
   box-shadow: var(--shadow-resting);
   cursor: pointer;
@@ -99,7 +110,7 @@
 }
 
 .login-form button[type='submit']:hover:not(:disabled) {
-  background: var(--color-brass-deep);
+  background: var(--color-accent-deep);
 }
 
 .login-form button[type='submit']:active:not(:disabled) {
@@ -125,7 +136,7 @@
 
 button.secondary {
   background: var(--color-surface);
-  color: var(--color-brass-deep);
+  color: var(--color-accent-deep);
   border: 1.5px solid var(--color-border);
   padding: 8px 12px;
   border-radius: var(--radius-md);
@@ -136,7 +147,7 @@ button.secondary {
 }
 
 button.secondary:hover:not(:disabled) {
-  border-color: var(--color-brass-deep);
+  border-color: var(--color-accent-deep);
 }
 
 /* Dashboard */
@@ -160,8 +171,8 @@ button.secondary:hover:not(:disabled) {
 }
 
 .period-selector button.active {
-  color: var(--color-brass-deep);
-  border-color: var(--color-brass-deep);
+  color: var(--color-accent-deep);
+  border-color: var(--color-accent-deep);
   font-weight: 700;
 }
 
@@ -174,27 +185,32 @@ button.secondary:hover:not(:disabled) {
   font-size: 0.8rem;
 }
 
-.stat-grid {
+.totals-band {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-md);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-top: 3px solid var(--color-rule-strong);
+  border-bottom: 3px solid var(--color-rule-strong);
+  box-shadow: var(--shadow-resting);
   margin-bottom: var(--space-xl);
 }
 
-.stat-card {
-  background: var(--color-surface);
-  border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-resting);
+.totals-band-item {
   padding: var(--space-md);
+  border-left: 1.5px solid var(--color-border);
+}
+
+.totals-band-item:first-child {
+  border-left: none;
 }
 
 .stat-readout {
   font-family: var(--font-readout);
   font-variant-numeric: tabular-nums;
-  font-size: 1.75rem;
-  font-weight: 500;
-  color: var(--color-ink);
+  font-size: 2.1rem;
+  font-weight: 600;
+  color: var(--color-accent);
   margin: 0;
 }
 
@@ -238,7 +254,7 @@ button.secondary:hover:not(:disabled) {
 
 .search-input:focus {
   outline: none;
-  border-color: var(--color-brass);
+  border-color: var(--color-accent);
 }
 
 .column-toggles {
@@ -261,13 +277,13 @@ button.secondary:hover:not(:disabled) {
 }
 
 .entries-table th.sortable:hover {
-  color: var(--color-brass-deep);
+  color: var(--color-accent-deep);
 }
 
 .sort-arrow {
   margin-left: 4px;
   font-size: 0.7em;
-  color: var(--color-brass-deep);
+  color: var(--color-accent-deep);
 }
 
 .entries-table {
@@ -295,9 +311,11 @@ button.secondary:hover:not(:disabled) {
 
 .entries-table th {
   font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: var(--color-text);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+  border-bottom: 3px double var(--color-rule-strong);
 }
 
 .entries-table tr:last-child td {
@@ -307,12 +325,17 @@ button.secondary:hover:not(:disabled) {
 .entries-table .numeric {
   font-family: var(--font-readout);
   font-variant-numeric: tabular-nums;
+  font-weight: 600;
   text-align: right;
 }
 
 @media (max-width: 720px) {
-  .stat-grid {
+  .totals-band {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .totals-band-item:nth-child(3) {
+    border-left: none;
   }
 
   .entries-table {
