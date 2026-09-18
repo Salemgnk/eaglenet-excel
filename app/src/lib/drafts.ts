@@ -45,3 +45,8 @@ export async function countDrafts(): Promise<number> {
   const db = await dbPromise
   return db.count('drafts')
 }
+
+export async function deleteDraft(id: string): Promise<void> {
+  const db = await dbPromise
+  await db.delete('drafts', id)
+}
