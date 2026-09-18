@@ -181,6 +181,16 @@ button.primary:disabled {
   margin: 0;
 }
 
+.last-saved {
+  border-top: 1.5px solid var(--color-border);
+  padding-top: var(--space-md);
+  margin-top: var(--space-xs);
+}
+
+.last-saved .field-hint {
+  margin: 0 0 var(--space-xs);
+}
+
 .login-form input.invalid,
 .entry-form input.invalid,
 .entry-card input.invalid {
@@ -246,9 +256,9 @@ button.primary:disabled {
 }
 
 .tabs button.active {
-  background: var(--color-brass);
-  color: var(--color-surface);
-  border-color: var(--color-brass);
+  color: var(--color-brass-deep);
+  border-color: var(--color-brass-deep);
+  font-weight: 700;
 }
 
 .entries-list {

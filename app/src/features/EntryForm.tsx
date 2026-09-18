@@ -17,6 +17,15 @@ const REQUIRED: Record<FieldName, boolean> = {
 
 type SavedStatus = 'local' | 'synced' | null
 
+interface LastSaved {
+  createdAt: string
+  bagsMilled: number
+  revenue: number
+  expenses: number
+  other: number
+  synced: boolean
+}
+
 export function EntryForm({ onSaved }: EntryFormProps) {
   const [bagsMilled, setBagsMilled] = useState('')
   const [revenue, setRevenue] = useState('')
@@ -26,6 +35,7 @@ export function EntryForm({ onSaved }: EntryFormProps) {
   const [errors, setErrors] = useState<Partial<Record<FieldName, boolean>>>({})
   const [submitting, setSubmitting] = useState(false)
   const [savedStatus, setSavedStatus] = useState<SavedStatus>(null)
+  const [lastSaved, setLastSaved] = useState<LastSaved | null>(null)
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
@@ -79,11 +89,28 @@ export function EntryForm({ onSaved }: EntryFormProps) {
     setErrors({})
     setSubmitting(false)
     showStatus('local')
+    setLastSaved({
+      createdAt: draft.created_at,
+      bagsMilled: results.bagsMilled.value,
+      revenue: results.revenue.value,
+      expenses: results.expenses.value,
+      other: results.other.value,
+      synced: false,
+    })
 
     // Don't block the next entry on the sync round-trip — just upgrade the
-    // confirmation to "Synchronisé" if and when it actually lands.
+    // confirmation to "Synchronisé" if and when it actually lands. The
+    // transient toast fades either way; this trace stays on screen so an
+    // operator who looks back later still sees proof the entry landed.
     onSaved(draft.id).then((synced) => {
-      if (synced) showStatus('synced')
+      if (synced) {
+        showStatus('synced')
+        setLastSaved((current) =>
+          current && current.createdAt === draft.created_at
+            ? { ...current, synced: true }
+            : current,
+        )
+      }
     })
   }
 
@@ -136,6 +163,23 @@ export function EntryForm({ onSaved }: EntryFormProps) {
         <p className={`saved${savedStatus === 'synced' ? ' synced' : ''}`} role="status">
           {savedStatus === 'synced' ? 'Synchronisé ✓' : 'Enregistré localement ✓'}
         </p>
+      )}
+      {lastSaved && (
+        <div className="last-saved">
+          <p className="field-hint">
+            Dernière entrée {lastSaved.synced ? 'synchronisée' : "en attente d'envoi"} :
+          </p>
+          <dl className="entry-readout">
+            <dt>Sacs</dt>
+            <dd>{lastSaved.bagsMilled}</dd>
+            <dt>Revenu</dt>
+            <dd>{lastSaved.revenue}</dd>
+            <dt>Dépenses</dt>
+            <dd>{lastSaved.expenses}</dd>
+            <dt>Autre</dt>
+            <dd>{lastSaved.other}</dd>
+          </dl>
+        </div>
       )}
     </form>
   )

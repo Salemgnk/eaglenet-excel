@@ -178,7 +178,7 @@ Modest, consistent radius (4px small controls, 6px buttons/inputs, 8px cards) â€
 - **Error:** border shifts to Oxide Red; helper text in Oxide Red, Label typography.
 
 ### Navigation (tabs)
-- **Style:** two equal-width buttons, 1.5px Etched Border, 6px radius. Active tab fills Brass Dial with white text; inactive stays Panel White with Instrument Ink text.
+- **Style:** two equal-width buttons, 1.5px Etched Border, 6px radius, Panel White background at rest and active alike. Active tab is marked by a Brass Dial Deep border and text (bold weight), never a solid fill â€” a tab bar sits above a form on every screen in this app, and a filled active tab would compete with that screen's one true primary action for the same accent. Inactive stays Panel White with Instrument Ink text, normal weight.
 
 ## Do's and Don'ts
 
