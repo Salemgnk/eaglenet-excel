@@ -33,10 +33,13 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <span>{session.user.email}</span>
-        <button className="secondary" onClick={() => supabase.auth.signOut()}>
-          Déconnexion
-        </button>
+        <span className="brand-mark">Eaglenet</span>
+        <div className="app-header-user">
+          <span>{session.user.email}</span>
+          <button className="secondary" onClick={() => supabase.auth.signOut()}>
+            Déconnexion
+          </button>
+        </div>
       </header>
 
       {pendingCount > 0 && (

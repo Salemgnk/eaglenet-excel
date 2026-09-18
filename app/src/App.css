@@ -11,6 +11,28 @@
   margin-bottom: var(--space-lg);
   font-size: 0.85rem;
   color: var(--color-text);
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.brand-mark {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--color-brass-deep);
+  letter-spacing: -0.01em;
+}
+
+.app-header-user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.app-header-user span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .loading {
@@ -27,6 +49,14 @@
   max-width: 360px;
   margin: 0 auto;
   padding: var(--space-lg);
+}
+
+.login-form {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-resting);
+  margin-top: var(--space-xl);
 }
 
 .login-form h1 {
@@ -65,7 +95,8 @@
 }
 
 .login-form button[type='submit'],
-.entry-form button[type='submit'] {
+.entry-form button[type='submit'],
+button.primary {
   padding: 12px 16px;
   font-size: 1rem;
   font-weight: 600;
@@ -82,18 +113,22 @@
     box-shadow 0.08s ease-out;
 }
 
-.login-form button[type='submit']:hover,
-.entry-form button[type='submit']:hover {
+.login-form button[type='submit']:hover:not(:disabled),
+.entry-form button[type='submit']:hover:not(:disabled),
+button.primary:hover:not(:disabled) {
   background: var(--color-brass-deep);
 }
 
-.login-form button[type='submit']:active,
-.entry-form button[type='submit']:active {
+.login-form button[type='submit']:active:not(:disabled),
+.entry-form button[type='submit']:active:not(:disabled),
+button.primary:active:not(:disabled) {
   transform: translateY(1px);
   box-shadow: none;
 }
 
-.login-form button:disabled {
+.login-form button:disabled,
+.entry-form button:disabled,
+button.primary:disabled {
   opacity: 0.6;
   cursor: default;
 }
@@ -101,6 +136,17 @@
 .error {
   color: var(--color-error);
   font-size: 0.85rem;
+}
+
+.field-error {
+  color: var(--color-error);
+  font-size: 0.8rem;
+}
+
+.login-form input.invalid,
+.entry-form input.invalid,
+.entry-card input.invalid {
+  border-color: var(--color-error);
 }
 
 .saved {
@@ -189,12 +235,27 @@
 }
 
 .entry-readout {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: var(--space-sm);
+  row-gap: 2px;
+  margin: 0;
+}
+
+.entry-readout dt {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.entry-readout dd {
   font-family: var(--font-readout);
   font-variant-numeric: tabular-nums;
   font-size: 1rem;
   font-weight: 500;
   color: var(--color-ink);
   margin: 0;
+  text-align: right;
 }
 
 .entry-notes {

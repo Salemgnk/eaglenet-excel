@@ -37,7 +37,11 @@ export function LoginForm() {
           required
         />
       </label>
-      {error && <p className="error">{error}</p>}
+      {error && (
+        <p className="error" role="alert">
+          {error}
+        </p>
+      )}
       <button type="submit" disabled={submitting}>
         {submitting ? 'Connexion…' : 'Se connecter'}
       </button>
