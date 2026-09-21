@@ -30,7 +30,7 @@ export function LoginForm() {
           />
         </label>
         <label>
-          Mot de passe
+          Password
           <input
             type="password"
             value={password}
@@ -44,7 +44,7 @@ export function LoginForm() {
           </p>
         )}
         <button type="submit" disabled={submitting}>
-          {submitting ? 'Connexion…' : 'Se connecter'}
+          {submitting ? 'Signing in…' : 'Sign in'}
         </button>
       </form>
     </div>

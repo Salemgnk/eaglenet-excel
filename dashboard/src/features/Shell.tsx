@@ -18,11 +18,11 @@ interface Module {
 const MODULES: Module[] = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, enabled: true },
   { path: '/stock', label: 'Stock', icon: Package, enabled: true },
-  { path: '/ventes', label: 'Ventes', icon: ShoppingCart, enabled: true },
+  { path: '/ventes', label: 'Sales', icon: ShoppingCart, enabled: true },
   { path: '/clients', label: 'Clients', icon: UserRound, enabled: true },
-  { path: '/achats', label: 'Achats', icon: Truck, enabled: true },
-  { path: '/fournisseurs', label: 'Fournisseurs', icon: Building2, enabled: true },
-  { path: '/employes', label: 'Employés', icon: Users, enabled: true },
+  { path: '/achats', label: 'Purchases', icon: Truck, enabled: true },
+  { path: '/fournisseurs', label: 'Suppliers', icon: Building2, enabled: true },
+  { path: '/employes', label: 'Employees', icon: Users, enabled: true },
 ]
 
 interface ShellProps {
@@ -45,7 +45,7 @@ export function Shell({ siteId, userId }: ShellProps) {
                     <Icon size={18} strokeWidth={2} />
                     <span>{m.label}</span>
                   </span>
-                  <span className="sidebar-soon">Bientôt</span>
+                  <span className="sidebar-soon">Soon</span>
                 </div>
               )
             }

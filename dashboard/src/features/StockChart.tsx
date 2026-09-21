@@ -38,7 +38,7 @@ export function StockChart({ series }: StockChartProps) {
       className="stock-chart"
       preserveAspectRatio="none"
       role="img"
-      aria-label="Évolution du stock cumulé dans le temps"
+      aria-label="Cumulative stock over time"
     >
       <path d={areaPath} className="stock-chart-area" />
       <path d={linePath} className="stock-chart-line" />

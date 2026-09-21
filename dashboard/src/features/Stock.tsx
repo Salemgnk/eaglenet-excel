@@ -56,57 +56,56 @@ export function Stock({ siteId }: StockProps) {
     [movements],
   )
 
-  if (entriesLoading || salesLoading) return <p className="loading">Chargement…</p>
+  if (entriesLoading || salesLoading) return <p className="loading">Loading…</p>
 
   return (
     <div className="stock-page">
       <div className="stock-headline">
-        <p className="field-hint">Stock riz transformé à ce jour</p>
+        <p className="field-hint">Processed rice stock to date</p>
         <p className="stock-total">
-          {formatCount(total)} <span className="stock-unit">sacs</span>
+          {formatCount(total)} <span className="stock-unit">bags</span>
         </p>
         <p className="stock-note">
-          Riz produit par la rizerie elle-même (hors service de mouture pour des clients),
-          moins ce qui a déjà été vendu.
+          Rice produced by the mill itself (excluding service milling for clients), minus
+          what's already been sold.
         </p>
         {untyped > 0 && (
           <p className="stock-note stock-note--warning">
-            {untyped} entrée{untyped > 1 ? 's' : ''} sans type de mouture renseigné n'
-            {untyped > 1 ? 'ont' : 'a'} pas pu être classée{untyped > 1 ? 's' : ''} et n'
-            {untyped > 1 ? 'entrent' : 'entre'} pas dans ce total.
+            {untyped} {untyped > 1 ? 'entries' : 'entry'} with no milling type recorded could
+            not be classified and {untyped > 1 ? "don't" : "doesn't"} count toward this total.
           </p>
         )}
       </div>
 
       {series.length > 1 && (
         <div className="stock-chart-card">
-          <h2 className="section-title">Évolution du stock cumulé</h2>
+          <h2 className="section-title">Cumulative stock over time</h2>
           <StockChart series={series} />
         </div>
       )}
 
       <div className="section-header">
-        <h2 className="section-title">Mouvements</h2>
+        <h2 className="section-title">Movements</h2>
       </div>
 
       {movements.length === 0 ? (
-        <p>Aucun mouvement pour l'instant.</p>
+        <p>No movements yet.</p>
       ) : (
         <table className="entries-table">
           <thead>
             <tr>
               <th>Date</th>
               <th>Type</th>
-              <th className="numeric">Sacs</th>
+              <th className="numeric">Bags</th>
             </tr>
           </thead>
           <tbody>
             {[...movements].reverse().map((m) => (
               <tr key={`${m.kind}-${m.id}`}>
-                <td>{new Date(m.created_at).toLocaleString('fr-FR')}</td>
+                <td>{new Date(m.created_at).toLocaleString('en-GB')}</td>
                 <td>
                   <span className={`type-pill type-pill--${m.kind === 'production' ? 'own_production' : 'service'}`}>
-                    {m.kind === 'production' ? 'Production' : 'Vente'}
+                    {m.kind === 'production' ? 'Production' : 'Sale'}
                   </span>
                 </td>
                 <td className="numeric">

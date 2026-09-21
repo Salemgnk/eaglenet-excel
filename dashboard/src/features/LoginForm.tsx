@@ -20,7 +20,7 @@ export function LoginForm() {
     <div className="login-page">
       <form onSubmit={handleSubmit} className="login-form" noValidate>
         <h1>Eaglenet</h1>
-        <p className="login-subtitle">Tableau de bord</p>
+        <p className="login-subtitle">Dashboard</p>
         <label>
           Email
           <input
@@ -32,7 +32,7 @@ export function LoginForm() {
           />
         </label>
         <label>
-          Mot de passe
+          Password
           <input
             type="password"
             autoComplete="current-password"
@@ -47,7 +47,7 @@ export function LoginForm() {
           </p>
         )}
         <button type="submit" disabled={submitting}>
-          {submitting ? 'Connexion…' : 'Se connecter'}
+          {submitting ? 'Signing in…' : 'Sign in'}
         </button>
       </form>
     </div>

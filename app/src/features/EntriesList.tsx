@@ -16,8 +16,8 @@ interface Entry {
 }
 
 const ENTRY_TYPE_LABEL: Record<EntryType, string> = {
-  own_production: 'Production propre',
-  service: 'Service client',
+  own_production: 'Own production',
+  service: 'Service milling',
 }
 
 function TypeBadge({ entryType }: { entryType: EntryType | null }) {
@@ -35,10 +35,10 @@ const REQUIRED: Record<FieldName, boolean> = {
 }
 
 const FIELD_LABELS: Record<FieldName, string> = {
-  bags_milled: 'Sacs moulus',
-  revenue: 'Revenu',
-  expenses: 'Dépenses',
-  other: 'Autre',
+  bags_milled: 'Bags milled',
+  revenue: 'Revenue',
+  expenses: 'Expenses',
+  other: 'Other',
 }
 
 interface EditDraft {
@@ -56,7 +56,7 @@ interface EntriesListProps {
 
 function friendlyErrorMessage(message: string, online: boolean): string {
   if (!online || /network|fetch/i.test(message)) {
-    return 'Connexion perdue — reconnectez-vous puis réessayez.'
+    return 'Connection lost — reconnect and try again.'
   }
   return message
 }
@@ -190,19 +190,19 @@ export function EntriesList({ online }: EntriesListProps) {
           value={draftEdit[name]}
           onChange={(e) => setDraftEdit({ ...draftEdit, [name]: e.target.value })}
         />
-        <span className="field-hint">Actuellement : {formatField(name, entry[name])}</span>
+        <span className="field-hint">Currently: {formatField(name, entry[name])}</span>
         {errors[name] && (
           <span className="field-error">
             {draftEdit[name].trim() === ''
-              ? 'Valeur requise'
-              : 'Doit être un nombre positif'}
+              ? 'Value required'
+              : 'Must be a positive number'}
           </span>
         )}
       </label>
     )
   }
 
-  if (loading) return <p className="loading">Chargement…</p>
+  if (loading) return <p className="loading">Loading…</p>
 
   const items: ListItem[] = [
     ...entries.map(
@@ -228,16 +228,12 @@ export function EntriesList({ online }: EntriesListProps) {
       {!online && (
         <p className="offline-note">
           {everLoadedOnline
-            ? "Hors-ligne : la liste peut ne pas inclure les entrées envoyées depuis d'autres appareils, et la correction nécessite une connexion."
-            : "Hors-ligne : seules les entrées enregistrées sur cet appareil et pas encore envoyées sont affichées ci-dessous."}
+            ? 'Offline: the list may not include entries sent from other devices, and corrections require a connection.'
+            : 'Offline: only entries saved on this device and not yet sent are shown below.'}
         </p>
       )}
       {items.length === 0 && (
-        <p>
-          {online
-            ? "Aucune entrée envoyée pour l'instant."
-            : "Aucune entrée en attente sur cet appareil."}
-        </p>
+        <p>{online ? 'No entries sent yet.' : 'No pending entries on this device.'}</p>
       )}
 
       {items.map((item) =>
@@ -245,19 +241,19 @@ export function EntriesList({ online }: EntriesListProps) {
           <div key={item.id} className="entry-card">
             <div className="entry-card-header">
               <p className="entry-date">
-                {new Date(item.draft.created_at).toLocaleString('fr-FR')}
+                {new Date(item.draft.created_at).toLocaleString('en-GB')}
               </p>
-              <span className="draft-badge">Non envoyée</span>
+              <span className="draft-badge">Not sent</span>
             </div>
             <TypeBadge entryType={item.draft.entry_type} />
             <dl className="entry-readout">
-              <dt>Sacs</dt>
+              <dt>Bags</dt>
               <dd>{formatCount(item.draft.bags_milled)}</dd>
-              <dt>Revenu</dt>
+              <dt>Revenue</dt>
               <dd>{formatCurrency(item.draft.revenue)}</dd>
-              <dt>Dépenses</dt>
+              <dt>Expenses</dt>
               <dd>{formatCurrency(item.draft.expenses)}</dd>
-              <dt>Autre</dt>
+              <dt>Other</dt>
               <dd>{formatCurrency(item.draft.other)}</dd>
             </dl>
             {item.draft.notes && <p className="entry-notes">{item.draft.notes}</p>}
@@ -266,8 +262,8 @@ export function EntriesList({ online }: EntriesListProps) {
           <div key={item.id} className="entry-card">
             {editingId === item.entry.id ? (
               <>
-                <div role="radiogroup" aria-label="Type de mouture">
-                  <p className="field-hint">Type de mouture</p>
+                <div role="radiogroup" aria-label="Milling type">
+                  <p className="field-hint">Milling type</p>
                   <div className="tabs entry-type-toggle">
                     <button
                       type="button"
@@ -279,7 +275,7 @@ export function EntriesList({ online }: EntriesListProps) {
                         setEntryTypeError(false)
                       }}
                     >
-                      Production propre
+                      Own production
                     </button>
                     <button
                       type="button"
@@ -291,10 +287,10 @@ export function EntriesList({ online }: EntriesListProps) {
                         setEntryTypeError(false)
                       }}
                     >
-                      Service client
+                      Service milling
                     </button>
                   </div>
-                  {entryTypeError && <span className="field-error">Choisissez un type</span>}
+                  {entryTypeError && <span className="field-error">Choose a type</span>}
                 </div>
                 {editField(item.entry, 'bags_milled')}
                 {editField(item.entry, 'revenue')}
@@ -308,8 +304,7 @@ export function EntriesList({ online }: EntriesListProps) {
                   />
                 </label>
                 <p className="tracked-note">
-                  Chaque modification est tracée : la valeur précédente reste
-                  consultable.
+                  Every change is tracked: the previous value stays visible.
                 </p>
                 {error && (
                   <p className="error" role="alert">
@@ -322,36 +317,36 @@ export function EntriesList({ online }: EntriesListProps) {
                     onClick={() => saveEdit(item.entry.id)}
                     disabled={saving || !online}
                   >
-                    {saving ? 'Enregistrement…' : 'Enregistrer'}
+                    {saving ? 'Saving…' : 'Save'}
                   </button>
                   <button
                     className="secondary"
                     onClick={() => setEditingId(null)}
                     disabled={saving}
                   >
-                    Annuler
+                    Cancel
                   </button>
                 </div>
                 {!online && (
                   <p className="field-hint">
-                    Hors-ligne : reconnectez-vous pour enregistrer cette correction.
+                    Offline: reconnect to save this correction.
                   </p>
                 )}
               </>
             ) : (
               <>
                 <p className="entry-date">
-                  {new Date(item.entry.created_at).toLocaleString('fr-FR')}
+                  {new Date(item.entry.created_at).toLocaleString('en-GB')}
                 </p>
                 <TypeBadge entryType={item.entry.entry_type} />
                 <dl className="entry-readout">
-                  <dt>Sacs</dt>
+                  <dt>Bags</dt>
                   <dd>{formatCount(item.entry.bags_milled)}</dd>
-                  <dt>Revenu</dt>
+                  <dt>Revenue</dt>
                   <dd>{formatCurrency(item.entry.revenue)}</dd>
-                  <dt>Dépenses</dt>
+                  <dt>Expenses</dt>
                   <dd>{formatCurrency(item.entry.expenses)}</dd>
-                  <dt>Autre</dt>
+                  <dt>Other</dt>
                   <dd>{formatCurrency(item.entry.other)}</dd>
                 </dl>
                 {item.entry.notes && <p className="entry-notes">{item.entry.notes}</p>}
@@ -360,7 +355,7 @@ export function EntriesList({ online }: EntriesListProps) {
                   onClick={() => startEdit(item.entry)}
                   disabled={!online}
                 >
-                  Corriger
+                  Correct
                 </button>
               </>
             )}

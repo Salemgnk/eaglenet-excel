@@ -41,7 +41,7 @@ export function Clients({ siteId, userId }: ClientsProps) {
 
   async function addClient() {
     if (!newName.trim()) {
-      setError('Nom requis')
+      setError('Name required')
       return
     }
     setSaving(true)
@@ -62,7 +62,7 @@ export function Clients({ siteId, userId }: ClientsProps) {
   async function recordPayment(clientId: string) {
     const amount = Number(paymentAmount.trim())
     if (!Number.isFinite(amount) || amount <= 0) {
-      setPaymentError('Montant invalide')
+      setPaymentError('Invalid amount')
       return
     }
     const { error: insertError } = await supabase
@@ -77,25 +77,25 @@ export function Clients({ siteId, userId }: ClientsProps) {
     setPaymentError(null)
   }
 
-  if (clientsLoading || salesLoading || paymentsLoading) return <p className="loading">Chargement…</p>
+  if (clientsLoading || salesLoading || paymentsLoading) return <p className="loading">Loading…</p>
 
   return (
     <div className="clients-page">
       <div className="section-header">
         <h2 className="section-title">Clients</h2>
         <button className="secondary" onClick={() => setAddingClient((v) => !v)}>
-          {addingClient ? 'Annuler' : '+ Nouveau client'}
+          {addingClient ? 'Cancel' : '+ New client'}
         </button>
       </div>
 
       {addingClient && (
         <div className="inline-form">
           <label>
-            Nom
+            Name
             <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)} />
           </label>
           <label>
-            Contact (optionnel)
+            Contact (optional)
             <input type="text" value={newContact} onChange={(e) => setNewContact(e.target.value)} />
           </label>
           {error && (
@@ -104,20 +104,20 @@ export function Clients({ siteId, userId }: ClientsProps) {
             </p>
           )}
           <button className="primary" onClick={addClient} disabled={saving}>
-            {saving ? 'Enregistrement…' : 'Ajouter'}
+            {saving ? 'Saving…' : 'Add'}
           </button>
         </div>
       )}
 
       {clients.length === 0 ? (
-        <p>Aucun client pour l'instant.</p>
+        <p>No clients yet.</p>
       ) : (
         <table className="entries-table">
           <thead>
             <tr>
-              <th>Nom</th>
+              <th>Name</th>
               <th>Contact</th>
-              <th className="numeric">Solde dû</th>
+              <th className="numeric">Balance due</th>
               <th></th>
             </tr>
           </thead>
@@ -137,12 +137,12 @@ export function Clients({ siteId, userId }: ClientsProps) {
                           type="number"
                           min="0"
                           className="search-input"
-                          placeholder="Montant"
+                          placeholder="Amount"
                           value={paymentAmount}
                           onChange={(e) => setPaymentAmount(e.target.value)}
                         />
                         <button className="primary" onClick={() => recordPayment(client.id)}>
-                          Valider
+                          Confirm
                         </button>
                         <button
                           className="secondary"
@@ -151,7 +151,7 @@ export function Clients({ siteId, userId }: ClientsProps) {
                             setPaymentError(null)
                           }}
                         >
-                          Annuler
+                          Cancel
                         </button>
                         {paymentError && (
                           <span className="field-error">{paymentError}</span>
@@ -165,7 +165,7 @@ export function Clients({ siteId, userId }: ClientsProps) {
                           setPaymentAmount('')
                         }}
                       >
-                        Enregistrer un paiement
+                        Record a payment
                       </button>
                     )}
                   </td>

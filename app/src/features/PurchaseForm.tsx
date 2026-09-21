@@ -155,7 +155,7 @@ export function PurchaseForm({ siteId, online, onSaved }: PurchaseFormProps) {
   return (
     <form onSubmit={handleSubmit} className="entry-form" noValidate>
       <label>
-        Fournisseur
+        Supplier
         <select
           className={supplierError && !creatingSupplier ? 'invalid' : undefined}
           value={creatingSupplier ? '__new__' : supplierId}
@@ -170,33 +170,33 @@ export function PurchaseForm({ siteId, online, onSaved }: PurchaseFormProps) {
             setSupplierError(false)
           }}
         >
-          <option value="">Choisir un fournisseur…</option>
+          <option value="">Choose a supplier…</option>
           {suppliers.map((s) => (
             <option key={s.id} value={s.id}>
               {s.name}
             </option>
           ))}
-          <option value="__new__">+ Nouveau fournisseur</option>
+          <option value="__new__">+ New supplier</option>
         </select>
         {supplierError && !creatingSupplier && (
-          <span className="field-error">Choisissez un fournisseur</span>
+          <span className="field-error">Choose a supplier</span>
         )}
       </label>
 
       {creatingSupplier && (
         <>
           <label>
-            Nom du nouveau fournisseur
+            New supplier name
             <input
               type="text"
               className={supplierError ? 'invalid' : undefined}
               value={newSupplierName}
               onChange={(e) => setNewSupplierName(e.target.value)}
             />
-            {supplierError && <span className="field-error">Nom requis</span>}
+            {supplierError && <span className="field-error">Name required</span>}
           </label>
           <label>
-            Contact (optionnel)
+            Contact (optional)
             <input
               type="text"
               value={newSupplierContact}
@@ -207,7 +207,7 @@ export function PurchaseForm({ siteId, online, onSaved }: PurchaseFormProps) {
       )}
 
       <label>
-        Sacs achetés
+        Bags bought
         <input
           type="number"
           inputMode="numeric"
@@ -219,13 +219,13 @@ export function PurchaseForm({ siteId, online, onSaved }: PurchaseFormProps) {
         />
         {errors.bagsBought && (
           <span className="field-error">
-            {bagsBought.trim() === '' ? 'Valeur requise' : 'Doit être un nombre positif'}
+            {bagsBought.trim() === '' ? 'Value required' : 'Must be a positive number'}
           </span>
         )}
       </label>
 
       <label>
-        Prix par sac (GH₵)
+        Price per bag (GH₵)
         <input
           type="number"
           inputMode="decimal"
@@ -237,12 +237,12 @@ export function PurchaseForm({ siteId, online, onSaved }: PurchaseFormProps) {
         />
         {errors.unitPrice && (
           <span className="field-error">
-            {unitPrice.trim() === '' ? 'Valeur requise' : 'Doit être un nombre positif'}
+            {unitPrice.trim() === '' ? 'Value required' : 'Must be a positive number'}
           </span>
         )}
       </label>
 
-      <p className="field-hint">Montant total : {formatCurrency(total)}</p>
+      <p className="field-hint">Total amount: {formatCurrency(total)}</p>
 
       <label>
         Notes
@@ -250,26 +250,26 @@ export function PurchaseForm({ siteId, online, onSaved }: PurchaseFormProps) {
       </label>
 
       <button type="submit" disabled={submitting}>
-        {submitting ? 'Enregistrement…' : "Enregistrer l'achat"}
+        {submitting ? 'Saving…' : 'Save purchase'}
       </button>
 
       {savedStatus && (
         <p className={`saved${savedStatus === 'synced' ? ' synced' : ''}`} role="status">
-          {savedStatus === 'synced' ? 'Synchronisé ✓' : 'Enregistré localement ✓'}
+          {savedStatus === 'synced' ? 'Synced ✓' : 'Saved locally ✓'}
         </p>
       )}
 
       {lastSaved && (
         <div className="last-saved">
           <p className="field-hint">
-            Dernier achat {lastSaved.synced ? 'synchronisé' : "en attente d'envoi"} :
+            Last purchase {lastSaved.synced ? 'synced' : 'pending send'}:
           </p>
           <dl className="entry-readout">
-            <dt>Fournisseur</dt>
+            <dt>Supplier</dt>
             <dd>{lastSaved.supplierName}</dd>
-            <dt>Sacs</dt>
+            <dt>Bags</dt>
             <dd>{formatCount(lastSaved.bagsBought)}</dd>
-            <dt>Prix/sac</dt>
+            <dt>Price/bag</dt>
             <dd>{formatCurrency(lastSaved.unitPrice)}</dd>
             <dt>Total</dt>
             <dd>{formatCurrency(lastSaved.totalAmount)}</dd>

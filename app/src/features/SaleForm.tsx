@@ -162,31 +162,31 @@ export function SaleForm({ siteId, online, onSaved }: SaleFormProps) {
             setClientError(false)
           }}
         >
-          <option value="">Choisir un client…</option>
+          <option value="">Choose a client…</option>
           {clients.map((c) => (
             <option key={c.id} value={c.id}>
               {c.name}
             </option>
           ))}
-          <option value="__new__">+ Nouveau client</option>
+          <option value="__new__">+ New client</option>
         </select>
-        {clientError && !creatingClient && <span className="field-error">Choisissez un client</span>}
+        {clientError && !creatingClient && <span className="field-error">Choose a client</span>}
       </label>
 
       {creatingClient && (
         <>
           <label>
-            Nom du nouveau client
+            New client name
             <input
               type="text"
               className={clientError ? 'invalid' : undefined}
               value={newClientName}
               onChange={(e) => setNewClientName(e.target.value)}
             />
-            {clientError && <span className="field-error">Nom requis</span>}
+            {clientError && <span className="field-error">Name required</span>}
           </label>
           <label>
-            Contact (optionnel)
+            Contact (optional)
             <input
               type="text"
               value={newClientContact}
@@ -197,7 +197,7 @@ export function SaleForm({ siteId, online, onSaved }: SaleFormProps) {
       )}
 
       <label>
-        Sacs vendus
+        Bags sold
         <input
           type="number"
           inputMode="numeric"
@@ -209,13 +209,13 @@ export function SaleForm({ siteId, online, onSaved }: SaleFormProps) {
         />
         {errors.bagsSold && (
           <span className="field-error">
-            {bagsSold.trim() === '' ? 'Valeur requise' : 'Doit être un nombre positif'}
+            {bagsSold.trim() === '' ? 'Value required' : 'Must be a positive number'}
           </span>
         )}
       </label>
 
       <label>
-        Prix par sac (GH₵)
+        Price per bag (GH₵)
         <input
           type="number"
           inputMode="decimal"
@@ -227,12 +227,12 @@ export function SaleForm({ siteId, online, onSaved }: SaleFormProps) {
         />
         {errors.unitPrice && (
           <span className="field-error">
-            {unitPrice.trim() === '' ? 'Valeur requise' : 'Doit être un nombre positif'}
+            {unitPrice.trim() === '' ? 'Value required' : 'Must be a positive number'}
           </span>
         )}
       </label>
 
-      <p className="field-hint">Montant total : {formatCurrency(total)}</p>
+      <p className="field-hint">Total amount: {formatCurrency(total)}</p>
 
       <label>
         Notes
@@ -240,26 +240,26 @@ export function SaleForm({ siteId, online, onSaved }: SaleFormProps) {
       </label>
 
       <button type="submit" disabled={submitting}>
-        {submitting ? 'Enregistrement…' : 'Enregistrer la vente'}
+        {submitting ? 'Saving…' : 'Save sale'}
       </button>
 
       {savedStatus && (
         <p className={`saved${savedStatus === 'synced' ? ' synced' : ''}`} role="status">
-          {savedStatus === 'synced' ? 'Synchronisé ✓' : 'Enregistré localement ✓'}
+          {savedStatus === 'synced' ? 'Synced ✓' : 'Saved locally ✓'}
         </p>
       )}
 
       {lastSaved && (
         <div className="last-saved">
           <p className="field-hint">
-            Dernière vente {lastSaved.synced ? 'synchronisée' : "en attente d'envoi"} :
+            Last sale {lastSaved.synced ? 'synced' : 'pending send'}:
           </p>
           <dl className="entry-readout">
             <dt>Client</dt>
             <dd>{lastSaved.clientName}</dd>
-            <dt>Sacs</dt>
+            <dt>Bags</dt>
             <dd>{formatCount(lastSaved.bagsSold)}</dd>
-            <dt>Prix/sac</dt>
+            <dt>Price/bag</dt>
             <dd>{formatCurrency(lastSaved.unitPrice)}</dd>
             <dt>Total</dt>
             <dd>{formatCurrency(lastSaved.totalAmount)}</dd>

@@ -26,9 +26,9 @@ interface ServerLeave {
 }
 
 const STATUS_LABEL: Record<LeaveStatus, string> = {
-  pending: 'En attente',
-  approved: 'Approuvé',
-  rejected: 'Refusé',
+  pending: 'Pending',
+  approved: 'Approved',
+  rejected: 'Rejected',
 }
 
 const STATUS_PILL_CLASS: Record<LeaveStatus, string> = {
@@ -38,11 +38,11 @@ const STATUS_PILL_CLASS: Record<LeaveStatus, string> = {
 }
 
 function formatTime(iso: string): string {
-  return new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+  return new Date(iso).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
 }
 
 function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('fr-FR')
+  return new Date(iso).toLocaleDateString('en-GB')
 }
 
 function isToday(iso: string): boolean {
@@ -123,7 +123,7 @@ export function Pointage({ siteId, employeeId, online }: PointageProps) {
   async function handleLeaveSubmit(e: FormEvent) {
     e.preventDefault()
     if (!leaveDate) {
-      setLeaveError('Date requise')
+      setLeaveError('Date required')
       return
     }
     setLeaveError(null)
@@ -136,7 +136,7 @@ export function Pointage({ siteId, employeeId, online }: PointageProps) {
     await load()
   }
 
-  if (loading) return <p className="loading">Chargement…</p>
+  if (loading) return <p className="loading">Loading…</p>
 
   // Priority: an open shift (even from a prior day) > a shift already
   // closed today (local, maybe still syncing) > today's shift as last
@@ -149,22 +149,22 @@ export function Pointage({ siteId, employeeId, online }: PointageProps) {
       <div className="pointage-status">
         {openDraft ? (
           <>
-            <p className="field-hint">En poste depuis</p>
+            <p className="field-hint">Clocked in since</p>
             <p className="pointage-time">{formatTime(openDraft.clock_in)}</p>
             <button type="button" className="primary" onClick={handleClockOut} disabled={busy}>
-              {busy ? 'Enregistrement…' : 'Pointer la sortie'}
+              {busy ? 'Saving…' : 'Clock out'}
             </button>
           </>
         ) : closedToday ? (
           <>
-            <p className="field-hint">Journée terminée</p>
-            <p className="pointage-time">Sorti à {formatTime(closedToday.clock_out!)}</p>
+            <p className="field-hint">Day complete</p>
+            <p className="pointage-time">Clocked out at {formatTime(closedToday.clock_out!)}</p>
           </>
         ) : (
           <>
-            <p className="field-hint">Pas encore pointé aujourd'hui</p>
+            <p className="field-hint">Not clocked in yet today</p>
             <button type="button" className="primary" onClick={handleClockIn} disabled={busy}>
-              {busy ? 'Enregistrement…' : "Pointer l'arrivée"}
+              {busy ? 'Saving…' : 'Clock in'}
             </button>
           </>
         )}
@@ -172,13 +172,13 @@ export function Pointage({ siteId, employeeId, online }: PointageProps) {
 
       {recentShifts.length > 0 && (
         <div className="last-saved">
-          <p className="field-hint">Derniers pointages</p>
+          <p className="field-hint">Recent shifts</p>
           <table className="entries-table">
             <thead>
               <tr>
                 <th>Date</th>
-                <th>Entrée</th>
-                <th>Sortie</th>
+                <th>In</th>
+                <th>Out</th>
               </tr>
             </thead>
             <tbody>
@@ -196,7 +196,7 @@ export function Pointage({ siteId, employeeId, online }: PointageProps) {
 
       <form onSubmit={handleLeaveSubmit} className="entry-form">
         <label>
-          Demander un congé — date
+          Request leave — date
           <input
             type="date"
             className={leaveError ? 'invalid' : undefined}
@@ -206,20 +206,20 @@ export function Pointage({ siteId, employeeId, online }: PointageProps) {
           {leaveError && <span className="field-error">{leaveError}</span>}
         </label>
         <label>
-          Motif (optionnel)
+          Reason (optional)
           <input type="text" value={leaveReason} onChange={(e) => setLeaveReason(e.target.value)} />
         </label>
-        <button type="submit">Envoyer la demande</button>
+        <button type="submit">Send request</button>
         {leaveSaved && (
           <p className="saved" role="status">
-            Demande enregistrée ✓
+            Request saved ✓
           </p>
         )}
       </form>
 
       {leaveRequests.length > 0 && (
         <div className="last-saved">
-          <p className="field-hint">Mes demandes de congé</p>
+          <p className="field-hint">My leave requests</p>
           {leaveRequests.map((l) => (
             <div key={l.id} className="entry-card-header">
               <span>{formatDate(l.date)}</span>

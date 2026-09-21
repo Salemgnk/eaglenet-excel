@@ -16,9 +16,9 @@ interface EmployeeProfile {
 }
 
 const ROLE_LABEL: Record<EmployeeProfile['role'], string> = {
-  operator: 'Opérateur',
-  owner: 'Patron',
-  employee: 'Employé',
+  operator: 'Operator',
+  owner: 'Owner',
+  employee: 'Employee',
 }
 
 function isToday(iso: string): boolean {
@@ -32,7 +32,7 @@ function isToday(iso: string): boolean {
 }
 
 function formatTime(iso: string): string {
-  return new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+  return new Date(iso).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
 }
 
 export function Employes({ siteId, userId }: EmployesProps) {
@@ -72,9 +72,9 @@ export function Employes({ siteId, userId }: EmployesProps) {
     for (const t of timeEntries) {
       if (!isToday(t.clock_in)) continue
       if (t.clock_out) {
-        byEmployee.set(t.employee_id, `Sorti à ${formatTime(t.clock_out)}`)
-      } else if (!byEmployee.get(t.employee_id)?.startsWith('En poste')) {
-        byEmployee.set(t.employee_id, `En poste depuis ${formatTime(t.clock_in)}`)
+        byEmployee.set(t.employee_id, `Clocked out at ${formatTime(t.clock_out)}`)
+      } else if (!byEmployee.get(t.employee_id)?.startsWith('Clocked in')) {
+        byEmployee.set(t.employee_id, `Clocked in since ${formatTime(t.clock_in)}`)
       }
     }
     return byEmployee
@@ -92,7 +92,7 @@ export function Employes({ siteId, userId }: EmployesProps) {
 
   async function addEmployee() {
     if (!newName.trim() || !newEmail.trim()) {
-      setError('Nom et email requis')
+      setError('Name and email required')
       return
     }
     setSaving(true)
@@ -102,7 +102,7 @@ export function Employes({ siteId, userId }: EmployesProps) {
     })
     setSaving(false)
     if (invokeError || data?.error) {
-      setError(data?.error ?? invokeError?.message ?? 'Erreur inconnue')
+      setError(data?.error ?? invokeError?.message ?? 'Unknown error')
       return
     }
     setCreatedPassword({ email: data.email, password: data.password })
@@ -119,21 +119,21 @@ export function Employes({ siteId, userId }: EmployesProps) {
       .eq('id', id)
   }
 
-  if (profilesLoading || timeLoading || leaveLoading) return <p className="loading">Chargement…</p>
+  if (profilesLoading || timeLoading || leaveLoading) return <p className="loading">Loading…</p>
 
   return (
     <div className="clients-page">
       <div className="section-header">
-        <h2 className="section-title">Employés</h2>
+        <h2 className="section-title">Employees</h2>
         <button className="secondary" onClick={() => setAdding((v) => !v)}>
-          {adding ? 'Annuler' : '+ Ajouter un employé'}
+          {adding ? 'Cancel' : '+ Add an employee'}
         </button>
       </div>
 
       {adding && (
         <div className="inline-form">
           <label>
-            Nom
+            Name
             <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)} />
           </label>
           <label>
@@ -146,7 +146,7 @@ export function Employes({ siteId, userId }: EmployesProps) {
             </p>
           )}
           <button className="primary" onClick={addEmployee} disabled={saving}>
-            {saving ? 'Création…' : 'Créer le compte'}
+            {saving ? 'Creating…' : 'Create account'}
           </button>
         </div>
       )}
@@ -154,25 +154,25 @@ export function Employes({ siteId, userId }: EmployesProps) {
       {createdPassword && (
         <div className="inline-form">
           <p>
-            Compte créé pour <strong>{createdPassword.email}</strong>. Mot de passe temporaire
-            (à communiquer à l'employé, affiché une seule fois) :
+            Account created for <strong>{createdPassword.email}</strong>. Temporary password
+            (share it with the employee, shown only once):
           </p>
           <p className="temp-password">{createdPassword.password}</p>
           <button className="secondary" onClick={() => setCreatedPassword(null)}>
-            J'ai noté le mot de passe
+            I've noted the password
           </button>
         </div>
       )}
 
       {profiles.length === 0 ? (
-        <p>Aucun employé pour l'instant.</p>
+        <p>No employees yet.</p>
       ) : (
         <table className="entries-table">
           <thead>
             <tr>
-              <th>Nom</th>
-              <th>Rôle</th>
-              <th>Aujourd'hui</th>
+              <th>Name</th>
+              <th>Role</th>
+              <th>Today</th>
             </tr>
           </thead>
           <tbody>
@@ -180,7 +180,7 @@ export function Employes({ siteId, userId }: EmployesProps) {
               <tr key={p.id}>
                 <td>{p.name ?? p.email ?? p.id.slice(0, 8)}</td>
                 <td>{ROLE_LABEL[p.role]}</td>
-                <td>{todayStatus.get(p.id) ?? 'Pas pointé aujourd\'hui'}</td>
+                <td>{todayStatus.get(p.id) ?? 'Not clocked in today'}</td>
               </tr>
             ))}
           </tbody>
@@ -188,18 +188,18 @@ export function Employes({ siteId, userId }: EmployesProps) {
       )}
 
       <div className="section-header">
-        <h2 className="section-title">Demandes de congé</h2>
+        <h2 className="section-title">Leave requests</h2>
       </div>
 
       {pendingLeave.length === 0 ? (
-        <p>Aucune demande en attente.</p>
+        <p>No pending requests.</p>
       ) : (
         <table className="entries-table">
           <thead>
             <tr>
-              <th>Employé</th>
+              <th>Employee</th>
               <th>Date</th>
-              <th>Motif</th>
+              <th>Reason</th>
               <th></th>
             </tr>
           </thead>
@@ -207,15 +207,15 @@ export function Employes({ siteId, userId }: EmployesProps) {
             {pendingLeave.map((l) => (
               <tr key={l.id}>
                 <td>{employeeName(l.employee_id)}</td>
-                <td>{new Date(l.date).toLocaleDateString('fr-FR')}</td>
+                <td>{new Date(l.date).toLocaleDateString('en-GB')}</td>
                 <td>{l.reason || '—'}</td>
                 <td>
                   <span className="inline-payment">
                     <button className="primary" onClick={() => decideLeave(l.id, 'approved')}>
-                      Approuver
+                      Approve
                     </button>
                     <button className="secondary" onClick={() => decideLeave(l.id, 'rejected')}>
-                      Refuser
+                      Reject
                     </button>
                   </span>
                 </td>

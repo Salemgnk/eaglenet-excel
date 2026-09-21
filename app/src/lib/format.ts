@@ -1,10 +1,10 @@
-const currencyFormatter = new Intl.NumberFormat('fr-FR', {
+const currencyFormatter = new Intl.NumberFormat('en-GB', {
   style: 'currency',
   currency: 'GHS',
   currencyDisplay: 'narrowSymbol',
 })
 
-const countFormatter = new Intl.NumberFormat('fr-FR')
+const countFormatter = new Intl.NumberFormat('en-GB')
 
 export function formatCurrency(value: number): string {
   return currencyFormatter.format(value)

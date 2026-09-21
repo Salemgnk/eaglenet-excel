@@ -29,7 +29,7 @@ function App() {
   const isEmployeeOnly = profile?.role === 'employee'
 
   if (sessionLoading) {
-    return <p className="loading">Chargement…</p>
+    return <p className="loading">Loading…</p>
   }
 
   if (!session) {
@@ -61,13 +61,13 @@ function App() {
           <span className="brand-mark">Eaglenet</span>
           <span className={`status-indicator ${online ? 'online' : 'offline'}`}>
             <span className="status-dot" />
-            {online ? 'En ligne' : 'Hors ligne'}
+            {online ? 'Online' : 'Offline'}
           </span>
         </div>
         <div className="app-header-user">
           <span>{session.user.email}</span>
           <button className="secondary" onClick={() => supabase.auth.signOut()}>
-            Déconnexion
+            Sign out
           </button>
         </div>
       </header>
@@ -75,11 +75,10 @@ function App() {
       {pendingCount > 0 && (
         <div className="pending-badge">
           <span>
-            {pendingCount} élément{pendingCount > 1 ? 's' : ''} non envoyé
-            {pendingCount > 1 ? 's' : ''}
+            {pendingCount} item{pendingCount > 1 ? 's' : ''} not sent
           </span>
           <button className="link-button" onClick={runSync} disabled={syncing}>
-            {syncing ? 'Envoi…' : 'Réessayer'}
+            {syncing ? 'Sending…' : 'Retry'}
           </button>
         </div>
       )}
@@ -87,19 +86,19 @@ function App() {
       {!isEmployeeOnly && (
         <nav className="tabs">
           <button className={tab === 'new' ? 'active' : ''} onClick={() => setTab('new')}>
-            Nouvelle entrée
+            New entry
           </button>
           <button className={tab === 'sale' ? 'active' : ''} onClick={() => setTab('sale')}>
-            Vente
+            Sale
           </button>
           <button className={tab === 'purchase' ? 'active' : ''} onClick={() => setTab('purchase')}>
-            Achat
+            Purchase
           </button>
           <button className={tab === 'pointage' ? 'active' : ''} onClick={() => setTab('pointage')}>
-            Pointage
+            Time clock
           </button>
           <button className={tab === 'list' ? 'active' : ''} onClick={() => setTab('list')}>
-            Mes entrées
+            My entries
           </button>
         </nav>
       )}

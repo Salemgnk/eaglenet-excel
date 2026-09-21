@@ -3,8 +3,8 @@ import { formatCount, formatCurrency } from '../lib/format'
 import { useLiveEntries, type Entry, type EntryType } from '../lib/useLiveEntries'
 
 const ENTRY_TYPE_LABEL: Record<EntryType, string> = {
-  own_production: 'Production propre',
-  service: 'Service client',
+  own_production: 'Own production',
+  service: 'Service milling',
 }
 
 function TypeBadge({ entryType }: { entryType: EntryType | null }) {
@@ -18,22 +18,22 @@ type SortField = 'created_at' | 'bags_milled' | 'revenue' | 'expenses' | 'other'
 type SortDir = 'asc' | 'desc'
 
 const PERIODS: { id: Period; label: string }[] = [
-  { id: 'today', label: "Aujourd'hui" },
-  { id: '7d', label: '7 jours' },
-  { id: '30d', label: '30 jours' },
-  { id: 'all', label: 'Tout' },
+  { id: 'today', label: 'Today' },
+  { id: '7d', label: '7 days' },
+  { id: '30d', label: '30 days' },
+  { id: 'all', label: 'All' },
 ]
 
 const GRANULARITIES: { id: Granularity; label: string }[] = [
-  { id: 'day', label: 'Jour' },
-  { id: 'week', label: 'Semaine' },
-  { id: 'month', label: 'Mois' },
+  { id: 'day', label: 'Day' },
+  { id: 'week', label: 'Week' },
+  { id: 'month', label: 'Month' },
 ]
 
 const GROUP_SECTION_TITLE: Record<Granularity, string> = {
-  day: 'Par jour',
-  week: 'Par semaine',
-  month: 'Par mois',
+  day: 'By day',
+  week: 'By week',
+  month: 'By month',
 }
 
 function periodStart(period: Period): Date | null {
@@ -74,20 +74,20 @@ function startOfWeek(date: Date): Date {
 function groupKeyAndLabel(date: Date, granularity: Granularity): { key: string; label: string } {
   if (granularity === 'day') {
     return {
-      key: date.toLocaleDateString('fr-CA'),
-      label: date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }),
+      key: date.toLocaleDateString('en-CA'),
+      label: date.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }),
     }
   }
   if (granularity === 'week') {
     const monday = startOfWeek(date)
     return {
-      key: monday.toLocaleDateString('fr-CA'),
-      label: `Semaine du ${monday.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}`,
+      key: monday.toLocaleDateString('en-CA'),
+      label: `Week of ${monday.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}`,
     }
   }
   return {
     key: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`,
-    label: date.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }),
+    label: date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }),
   }
 }
 
@@ -183,7 +183,7 @@ export function Dashboard({ siteId }: DashboardProps) {
     )
   }
 
-  if (loading) return <p className="loading">Chargement…</p>
+  if (loading) return <p className="loading">Loading…</p>
 
   return (
     <div className="dashboard">
@@ -201,25 +201,25 @@ export function Dashboard({ siteId }: DashboardProps) {
 
       <div className="totals-band">
         <div className="totals-band-item">
-          <p className="field-hint">Sacs moulus</p>
+          <p className="field-hint">Bags milled</p>
           <p className="stat-readout">{formatCount(totals.bags_milled)}</p>
         </div>
         <div className="totals-band-item">
-          <p className="field-hint">Revenu</p>
+          <p className="field-hint">Revenue</p>
           <p className="stat-readout">{formatCurrency(totals.revenue)}</p>
         </div>
         <div className="totals-band-item">
-          <p className="field-hint">Dépenses</p>
+          <p className="field-hint">Expenses</p>
           <p className="stat-readout">{formatCurrency(totals.expenses)}</p>
         </div>
         <div className="totals-band-item">
-          <p className="field-hint">Autre</p>
+          <p className="field-hint">Other</p>
           <p className="stat-readout">{formatCurrency(totals.other)}</p>
         </div>
       </div>
 
       {filtered.length === 0 ? (
-        <p>Aucune entrée sur cette période.</p>
+        <p>No entries for this period.</p>
       ) : (
         <>
           {grouped.length > 1 && (
@@ -242,10 +242,10 @@ export function Dashboard({ siteId }: DashboardProps) {
                 <thead>
                   <tr>
                     <th>{GRANULARITIES.find((g) => g.id === granularity)?.label}</th>
-                    <th className="numeric">Sacs</th>
-                    <th className="numeric">Revenu</th>
-                    <th className="numeric">Dépenses</th>
-                    <th className="numeric">Autre</th>
+                    <th className="numeric">Bags</th>
+                    <th className="numeric">Revenue</th>
+                    <th className="numeric">Expenses</th>
+                    <th className="numeric">Other</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -264,12 +264,12 @@ export function Dashboard({ siteId }: DashboardProps) {
           )}
 
           <div className="section-header">
-            <h2 className="section-title">Détail des entrées</h2>
+            <h2 className="section-title">Entry detail</h2>
             <div className="table-toolbar">
               <input
                 type="search"
                 className="search-input"
-                placeholder="Rechercher dans les notes…"
+                placeholder="Search notes…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -280,7 +280,7 @@ export function Dashboard({ siteId }: DashboardProps) {
                     checked={showOther}
                     onChange={(e) => setShowOther(e.target.checked)}
                   />
-                  Autre
+                  Other
                 </label>
                 <label>
                   <input
@@ -295,24 +295,24 @@ export function Dashboard({ siteId }: DashboardProps) {
           </div>
 
           {sorted.length === 0 ? (
-            <p>Aucun résultat pour cette recherche.</p>
+            <p>No results for this search.</p>
           ) : (
             <table className="entries-table">
               <thead>
                 <tr>
                   {sortableHeader('created_at', 'Date')}
                   <th>Type</th>
-                  {sortableHeader('bags_milled', 'Sacs', true)}
-                  {sortableHeader('revenue', 'Revenu', true)}
-                  {sortableHeader('expenses', 'Dépenses', true)}
-                  {showOther && sortableHeader('other', 'Autre', true)}
+                  {sortableHeader('bags_milled', 'Bags', true)}
+                  {sortableHeader('revenue', 'Revenue', true)}
+                  {sortableHeader('expenses', 'Expenses', true)}
+                  {showOther && sortableHeader('other', 'Other', true)}
                   {showNotes && <th>Notes</th>}
                 </tr>
               </thead>
               <tbody>
                 {sorted.map((entry) => (
                   <tr key={entry.id}>
-                    <td>{new Date(entry.created_at).toLocaleString('fr-FR')}</td>
+                    <td>{new Date(entry.created_at).toLocaleString('en-GB')}</td>
                     <td>
                       <TypeBadge entryType={entry.entry_type} />
                     </td>

@@ -29,8 +29,8 @@ interface LastSaved {
 }
 
 const ENTRY_TYPE_LABEL: Record<EntryType, string> = {
-  own_production: 'Production propre',
-  service: 'Service client',
+  own_production: 'Own production',
+  service: 'Service milling',
 }
 
 export function EntryForm({ onSaved }: EntryFormProps) {
@@ -112,7 +112,7 @@ export function EntryForm({ onSaved }: EntryFormProps) {
     })
 
     // Don't block the next entry on the sync round-trip — just upgrade the
-    // confirmation to "Synchronisé" if and when it actually lands. The
+    // confirmation to "Synced" if and when it actually lands. The
     // transient toast fades either way; this trace stays on screen so an
     // operator who looks back later still sees proof the entry landed.
     onSaved(draft.id).then((synced) => {
@@ -151,8 +151,8 @@ export function EntryForm({ onSaved }: EntryFormProps) {
         {errors[name] && (
           <span className="field-error">
             {raw[name].trim() === ''
-              ? 'Valeur requise'
-              : 'Doit être un nombre positif'}
+              ? 'Value required'
+              : 'Must be a positive number'}
           </span>
         )}
       </label>
@@ -161,8 +161,8 @@ export function EntryForm({ onSaved }: EntryFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="entry-form" noValidate>
-      <div role="radiogroup" aria-label="Type de mouture">
-        <p className="field-hint">Type de mouture</p>
+      <div role="radiogroup" aria-label="Milling type">
+        <p className="field-hint">Milling type</p>
         <div className="tabs entry-type-toggle">
           <button
             type="button"
@@ -174,7 +174,7 @@ export function EntryForm({ onSaved }: EntryFormProps) {
               setEntryTypeError(false)
             }}
           >
-            Production propre
+            Own production
           </button>
           <button
             type="button"
@@ -186,43 +186,43 @@ export function EntryForm({ onSaved }: EntryFormProps) {
               setEntryTypeError(false)
             }}
           >
-            Service client
+            Service milling
           </button>
         </div>
-        {entryTypeError && <span className="field-error">Choisissez un type</span>}
+        {entryTypeError && <span className="field-error">Choose a type</span>}
       </div>
-      {field('bagsMilled', 'Sacs moulus', REQUIRED.bagsMilled)}
-      {field('revenue', 'Revenu', REQUIRED.revenue)}
-      {field('expenses', 'Dépenses', REQUIRED.expenses)}
-      {field('other', 'Autre', REQUIRED.other)}
+      {field('bagsMilled', 'Bags milled', REQUIRED.bagsMilled)}
+      {field('revenue', 'Revenue', REQUIRED.revenue)}
+      {field('expenses', 'Expenses', REQUIRED.expenses)}
+      {field('other', 'Other', REQUIRED.other)}
       <label>
         Notes
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)} />
       </label>
       <button type="submit" disabled={submitting}>
-        {submitting ? 'Enregistrement…' : 'Enregistrer'}
+        {submitting ? 'Saving…' : 'Save'}
       </button>
       {savedStatus && (
         <p className={`saved${savedStatus === 'synced' ? ' synced' : ''}`} role="status">
-          {savedStatus === 'synced' ? 'Synchronisé ✓' : 'Enregistré localement ✓'}
+          {savedStatus === 'synced' ? 'Synced ✓' : 'Saved locally ✓'}
         </p>
       )}
       {lastSaved && (
         <div className="last-saved">
           <p className="field-hint">
-            Dernière entrée {lastSaved.synced ? 'synchronisée' : "en attente d'envoi"} :
+            Last entry {lastSaved.synced ? 'synced' : 'pending send'}:
           </p>
           <span className={`type-pill type-pill--${lastSaved.entryType}`}>
             {ENTRY_TYPE_LABEL[lastSaved.entryType]}
           </span>
           <dl className="entry-readout">
-            <dt>Sacs</dt>
+            <dt>Bags</dt>
             <dd>{formatCount(lastSaved.bagsMilled)}</dd>
-            <dt>Revenu</dt>
+            <dt>Revenue</dt>
             <dd>{formatCurrency(lastSaved.revenue)}</dd>
-            <dt>Dépenses</dt>
+            <dt>Expenses</dt>
             <dd>{formatCurrency(lastSaved.expenses)}</dd>
-            <dt>Autre</dt>
+            <dt>Other</dt>
             <dd>{formatCurrency(lastSaved.other)}</dd>
           </dl>
         </div>
