@@ -1,7 +1,9 @@
-import { LayoutDashboard, Package, ShoppingCart, Truck, UserRound, Users } from 'lucide-react'
+import { Building2, LayoutDashboard, Package, ShoppingCart, Truck, UserRound, Users } from 'lucide-react'
 import { NavLink, Navigate, Route, Routes } from 'react-router-dom'
+import { Achats } from './Achats'
 import { Clients } from './Clients'
 import { Dashboard } from './Dashboard'
+import { Fournisseurs } from './Fournisseurs'
 import { Stock } from './Stock'
 import { Ventes } from './Ventes'
 
@@ -17,7 +19,8 @@ const MODULES: Module[] = [
   { path: '/stock', label: 'Stock', icon: Package, enabled: true },
   { path: '/ventes', label: 'Ventes', icon: ShoppingCart, enabled: true },
   { path: '/clients', label: 'Clients', icon: UserRound, enabled: true },
-  { path: '/achats', label: 'Achats', icon: Truck, enabled: false },
+  { path: '/achats', label: 'Achats', icon: Truck, enabled: true },
+  { path: '/fournisseurs', label: 'Fournisseurs', icon: Building2, enabled: true },
   { path: '/employes', label: 'Employés', icon: Users, enabled: false },
 ]
 
@@ -66,6 +69,8 @@ export function Shell({ siteId, userId }: ShellProps) {
           <Route path="/stock" element={<Stock siteId={siteId} />} />
           <Route path="/ventes" element={<Ventes siteId={siteId} userId={userId} />} />
           <Route path="/clients" element={<Clients siteId={siteId} userId={userId} />} />
+          <Route path="/achats" element={<Achats siteId={siteId} userId={userId} />} />
+          <Route path="/fournisseurs" element={<Fournisseurs siteId={siteId} userId={userId} />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </div>

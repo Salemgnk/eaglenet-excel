@@ -1,6 +1,8 @@
 import { supabase } from './supabase'
 import { deleteDraft, listDrafts } from './drafts'
 import { deletePendingClient, listPendingClients } from './clientsCache'
+import { deletePendingSupplier, listPendingSuppliers } from './suppliersCache'
+import { deletePurchaseDraft, listPurchaseDrafts } from './purchaseDrafts'
 import { deleteSaleDraft, listSaleDrafts } from './salesDrafts'
 
 export interface SyncResult {
@@ -90,6 +92,53 @@ export async function syncPendingSales(
     // retried on the next sync pass.
     if (!error || error.code === UNIQUE_VIOLATION) {
       await deleteSaleDraft(draft.id)
+      synced++
+    } else {
+      failed++
+    }
+  }
+
+  return { synced, failed }
+}
+
+// Mirrors syncPendingSales: pending suppliers before pending purchases,
+// same foreign-key-ordering reason.
+export async function syncPendingPurchases(
+  operatorId: string,
+  siteId: string,
+): Promise<SyncResult> {
+  const pendingSuppliers = await listPendingSuppliers()
+  for (const supplier of pendingSuppliers) {
+    const { error } = await supabase.from('suppliers').insert({
+      id: supplier.id,
+      site_id: siteId,
+      name: supplier.name,
+      contact: supplier.contact,
+    })
+    if (!error || error.code === UNIQUE_VIOLATION) {
+      await deletePendingSupplier(supplier.id)
+    }
+  }
+
+  const drafts = await listPurchaseDrafts()
+  let synced = 0
+  let failed = 0
+
+  for (const draft of drafts) {
+    const { error } = await supabase.from('purchases').insert({
+      id: draft.id,
+      site_id: siteId,
+      supplier_id: draft.supplier_id,
+      created_by: operatorId,
+      bags_bought: draft.bags_bought,
+      unit_price: draft.unit_price,
+      total_amount: draft.total_amount,
+      notes: draft.notes || null,
+      created_at: draft.created_at,
+    })
+
+    if (!error || error.code === UNIQUE_VIOLATION) {
+      await deletePurchaseDraft(draft.id)
       synced++
     } else {
       failed++

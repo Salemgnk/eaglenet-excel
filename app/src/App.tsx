@@ -2,8 +2,10 @@ import { useState } from 'react'
 import { EntriesList } from './features/EntriesList'
 import { EntryForm } from './features/EntryForm'
 import { LoginForm } from './features/LoginForm'
+import { PurchaseForm } from './features/PurchaseForm'
 import { SaleForm } from './features/SaleForm'
 import { draftExists } from './lib/drafts'
+import { purchaseDraftExists } from './lib/purchaseDrafts'
 import { saleDraftExists } from './lib/salesDrafts'
 import { supabase } from './lib/supabase'
 import { useOnlineStatus } from './lib/useOnlineStatus'
@@ -20,7 +22,7 @@ function App() {
     profile?.site_id,
   )
   const online = useOnlineStatus()
-  const [tab, setTab] = useState<'new' | 'sale' | 'list'>('new')
+  const [tab, setTab] = useState<'new' | 'sale' | 'purchase' | 'list'>('new')
 
   if (sessionLoading) {
     return <p className="loading">Chargement…</p>
@@ -40,6 +42,12 @@ function App() {
     await refreshPendingCount()
     await runSync()
     return !(await saleDraftExists(draftId))
+  }
+
+  async function handlePurchaseSaved(draftId: string): Promise<boolean> {
+    await refreshPendingCount()
+    await runSync()
+    return !(await purchaseDraftExists(draftId))
   }
 
   return (
@@ -79,6 +87,9 @@ function App() {
         <button className={tab === 'sale' ? 'active' : ''} onClick={() => setTab('sale')}>
           Vente
         </button>
+        <button className={tab === 'purchase' ? 'active' : ''} onClick={() => setTab('purchase')}>
+          Achat
+        </button>
         <button className={tab === 'list' ? 'active' : ''} onClick={() => setTab('list')}>
           Mes entrées
         </button>
@@ -87,6 +98,9 @@ function App() {
       {tab === 'new' && <EntryForm onSaved={handleSaved} />}
       {tab === 'sale' && profile?.site_id && (
         <SaleForm siteId={profile.site_id} online={online} onSaved={handleSaleSaved} />
+      )}
+      {tab === 'purchase' && profile?.site_id && (
+        <PurchaseForm siteId={profile.site_id} online={online} onSaved={handlePurchaseSaved} />
       )}
       {tab === 'list' && <EntriesList online={online} />}
     </div>

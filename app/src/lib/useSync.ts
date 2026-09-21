@@ -1,20 +1,24 @@
 import { useCallback, useEffect, useState } from 'react'
 import { countPendingClients } from './clientsCache'
 import { countDrafts } from './drafts'
+import { countPendingSuppliers } from './suppliersCache'
+import { countPurchaseDrafts } from './purchaseDrafts'
 import { countSaleDrafts } from './salesDrafts'
-import { syncPendingDrafts, syncPendingSales } from './sync'
+import { syncPendingDrafts, syncPendingPurchases, syncPendingSales } from './sync'
 
 export function useSync(operatorId: string | undefined, siteId: string | undefined) {
   const [pendingCount, setPendingCount] = useState(0)
   const [syncing, setSyncing] = useState(false)
 
   const refreshPendingCount = useCallback(async () => {
-    const [entries, sales, clients] = await Promise.all([
+    const [entries, sales, clients, purchases, suppliers] = await Promise.all([
       countDrafts(),
       countSaleDrafts(),
       countPendingClients(),
+      countPurchaseDrafts(),
+      countPendingSuppliers(),
     ])
-    setPendingCount(entries + sales + clients)
+    setPendingCount(entries + sales + clients + purchases + suppliers)
   }, [])
 
   const runSync = useCallback(async () => {
@@ -22,6 +26,7 @@ export function useSync(operatorId: string | undefined, siteId: string | undefin
     setSyncing(true)
     await syncPendingDrafts(operatorId, siteId)
     await syncPendingSales(operatorId, siteId)
+    await syncPendingPurchases(operatorId, siteId)
     await refreshPendingCount()
     setSyncing(false)
   }, [operatorId, siteId, refreshPendingCount])
