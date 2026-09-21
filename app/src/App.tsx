@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { EntriesList } from './features/EntriesList'
 import { EntryForm } from './features/EntryForm'
 import { LoginForm } from './features/LoginForm'
+import { Pointage } from './features/Pointage'
 import { PurchaseForm } from './features/PurchaseForm'
 import { SaleForm } from './features/SaleForm'
 import { draftExists } from './lib/drafts'
@@ -14,6 +15,8 @@ import { useSession } from './lib/useSession'
 import { useSync } from './lib/useSync'
 import './App.css'
 
+type Tab = 'new' | 'sale' | 'purchase' | 'pointage' | 'list'
+
 function App() {
   const { session, loading: sessionLoading } = useSession()
   const { profile } = useProfile(session)
@@ -22,7 +25,8 @@ function App() {
     profile?.site_id,
   )
   const online = useOnlineStatus()
-  const [tab, setTab] = useState<'new' | 'sale' | 'purchase' | 'list'>('new')
+  const [tab, setTab] = useState<Tab>('new')
+  const isEmployeeOnly = profile?.role === 'employee'
 
   if (sessionLoading) {
     return <p className="loading">Chargement…</p>
@@ -80,29 +84,45 @@ function App() {
         </div>
       )}
 
-      <nav className="tabs">
-        <button className={tab === 'new' ? 'active' : ''} onClick={() => setTab('new')}>
-          Nouvelle entrée
-        </button>
-        <button className={tab === 'sale' ? 'active' : ''} onClick={() => setTab('sale')}>
-          Vente
-        </button>
-        <button className={tab === 'purchase' ? 'active' : ''} onClick={() => setTab('purchase')}>
-          Achat
-        </button>
-        <button className={tab === 'list' ? 'active' : ''} onClick={() => setTab('list')}>
-          Mes entrées
-        </button>
-      </nav>
+      {!isEmployeeOnly && (
+        <nav className="tabs">
+          <button className={tab === 'new' ? 'active' : ''} onClick={() => setTab('new')}>
+            Nouvelle entrée
+          </button>
+          <button className={tab === 'sale' ? 'active' : ''} onClick={() => setTab('sale')}>
+            Vente
+          </button>
+          <button className={tab === 'purchase' ? 'active' : ''} onClick={() => setTab('purchase')}>
+            Achat
+          </button>
+          <button className={tab === 'pointage' ? 'active' : ''} onClick={() => setTab('pointage')}>
+            Pointage
+          </button>
+          <button className={tab === 'list' ? 'active' : ''} onClick={() => setTab('list')}>
+            Mes entrées
+          </button>
+        </nav>
+      )}
 
-      {tab === 'new' && <EntryForm onSaved={handleSaved} />}
-      {tab === 'sale' && profile?.site_id && (
-        <SaleForm siteId={profile.site_id} online={online} onSaved={handleSaleSaved} />
+      {isEmployeeOnly ? (
+        profile?.site_id && (
+          <Pointage siteId={profile.site_id} employeeId={session.user.id} online={online} />
+        )
+      ) : (
+        <>
+          {tab === 'new' && <EntryForm onSaved={handleSaved} />}
+          {tab === 'sale' && profile?.site_id && (
+            <SaleForm siteId={profile.site_id} online={online} onSaved={handleSaleSaved} />
+          )}
+          {tab === 'purchase' && profile?.site_id && (
+            <PurchaseForm siteId={profile.site_id} online={online} onSaved={handlePurchaseSaved} />
+          )}
+          {tab === 'pointage' && profile?.site_id && (
+            <Pointage siteId={profile.site_id} employeeId={session.user.id} online={online} />
+          )}
+          {tab === 'list' && <EntriesList online={online} />}
+        </>
       )}
-      {tab === 'purchase' && profile?.site_id && (
-        <PurchaseForm siteId={profile.site_id} online={online} onSaved={handlePurchaseSaved} />
-      )}
-      {tab === 'list' && <EntriesList online={online} />}
     </div>
   )
 }

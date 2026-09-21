@@ -4,7 +4,7 @@ import { supabase } from './supabase'
 
 export interface Profile {
   id: string
-  role: 'operator' | 'owner'
+  role: 'operator' | 'owner' | 'employee'
   site_id: string
 }
 
@@ -27,7 +27,8 @@ export function useProfile(session: Session | null) {
       .select('id, role, site_id')
       .eq('id', session.user.id)
       .single()
-      .then(({ data }) => {
+      .then(({ data, error }) => {
+        if (error) console.error('Failed to load profile:', error.message)
         if (!cancelled) {
           setProfile((data as Profile | null) ?? null)
           setLoading(false)

@@ -1,9 +1,11 @@
 import { supabase } from './supabase'
 import { deleteDraft, listDrafts } from './drafts'
 import { deletePendingClient, listPendingClients } from './clientsCache'
+import { deleteLeaveDraft, listLeaveDrafts } from './leaveRequests'
 import { deletePendingSupplier, listPendingSuppliers } from './suppliersCache'
 import { deletePurchaseDraft, listPurchaseDrafts } from './purchaseDrafts'
 import { deleteSaleDraft, listSaleDrafts } from './salesDrafts'
+import { deleteShiftDraft, listShiftDrafts } from './timeEntries'
 
 export interface SyncResult {
   synced: number
@@ -139,6 +141,70 @@ export async function syncPendingPurchases(
 
     if (!error || error.code === UNIQUE_VIOLATION) {
       await deletePurchaseDraft(draft.id)
+      synced++
+    } else {
+      failed++
+    }
+  }
+
+  return { synced, failed }
+}
+
+// A shift is one logical row whether it's synced once (clock-in) or
+// twice (clock-in, then clock-out) — upsert rather than insert, so
+// completing a shift never needs to know whether the clock-in leg
+// already reached the server.
+export async function syncPendingShifts(
+  employeeId: string,
+  siteId: string,
+): Promise<SyncResult> {
+  const drafts = await listShiftDrafts()
+  let synced = 0
+  let failed = 0
+
+  for (const draft of drafts) {
+    const { error } = await supabase.from('time_entries').upsert({
+      id: draft.id,
+      site_id: siteId,
+      employee_id: employeeId,
+      clock_in: draft.clock_in,
+      clock_out: draft.clock_out,
+    })
+
+    if (!error) {
+      // Only drop the local draft once the shift is complete — an open
+      // shift (no clock_out yet) stays local so the app still knows a
+      // shift is in progress, synced or not.
+      if (draft.clock_out) await deleteShiftDraft(draft.id)
+      synced++
+    } else {
+      failed++
+    }
+  }
+
+  return { synced, failed }
+}
+
+export async function syncPendingLeaveRequests(
+  employeeId: string,
+  siteId: string,
+): Promise<SyncResult> {
+  const drafts = await listLeaveDrafts()
+  let synced = 0
+  let failed = 0
+
+  for (const draft of drafts) {
+    const { error } = await supabase.from('leave_requests').insert({
+      id: draft.id,
+      site_id: siteId,
+      employee_id: employeeId,
+      date: draft.date,
+      reason: draft.reason || null,
+      created_at: draft.created_at,
+    })
+
+    if (!error || error.code === UNIQUE_VIOLATION) {
+      await deleteLeaveDraft(draft.id)
       synced++
     } else {
       failed++
