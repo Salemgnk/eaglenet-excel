@@ -1,39 +1,62 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-18T14:30:00Z",
+  "generatedAt": "2026-09-21T10:07:52Z",
   "title": "Design System: Eaglenet",
   "extensions": {
     "colorMeta": {
-      "accent": { "role": "primary", "displayName": "Ledger Red", "canonical": "#A3282A", "tonalRamp": ["#1F0D0D", "#3A1414", "#571A1B", "#7E1E20", "#A3282A", "#C14D4F", "#DA8385", "#EFC1C2"] },
-      "accent-deep": { "role": "primary-hover", "displayName": "Ledger Red, Deep", "canonical": "#7E1E20" },
-      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#1A1512", "tonalRamp": ["#000000", "#1A1512", "#2E2721", "#473D34", "#615449", "#7C6E60", "#988878", "#B6A692"] },
-      "text": { "role": "neutral", "displayName": "Graphite Text", "canonical": "#5B5147" },
-      "paper": { "role": "neutral", "displayName": "Ledger Paper", "canonical": "#F7F2E8", "tonalRamp": ["#1A1512", "#382F27", "#584B3E", "#847358", "#B3A283", "#D8CFBC", "#EEE7D9", "#F7F2E8"] },
-      "surface": { "role": "neutral", "displayName": "Panel White", "canonical": "#FFFFFF" },
-      "border": { "role": "neutral", "displayName": "Etched Border", "canonical": "#D8CFBC" },
-      "rule-strong": { "role": "neutral", "displayName": "Rule, Strong", "canonical": "#2A241D" },
-      "success": { "role": "semantic", "displayName": "Confirmed Green", "canonical": "#2F6B3F" },
-      "warning-bg": { "role": "semantic", "displayName": "Pending Gold (background)", "canonical": "#F5E6C8" },
-      "warning-text": { "role": "semantic", "displayName": "Pending Gold (text)", "canonical": "#7A5C1F" },
-      "error": { "role": "semantic", "displayName": "Correction Sienna", "canonical": "#A0522D" }
+      "accent": {
+        "role": "primary",
+        "displayName": "Operational Emerald",
+        "canonical": "#10B981",
+        "tonalRamp": ["#064E3B", "#065F46", "#047857", "#059669", "#10B981", "#34D399", "#6EE7B7", "#A7F3D0"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Console Ink",
+        "canonical": "#0F172A",
+        "tonalRamp": ["#0F172A", "#1E293B", "#334155", "#475569", "#64748B", "#94A3B8", "#CBD5E1", "#E2E8F0"]
+      },
+      "sidebar-bg": {
+        "role": "neutral",
+        "displayName": "Command Bay",
+        "canonical": "#0F2E28",
+        "tonalRamp": ["#051A16", "#0A231E", "#0F2E28", "#153A32", "#1C4A40", "#2A6152", "#3F8271", "#5BA38F"]
+      },
+      "success": {
+        "role": "semantic",
+        "displayName": "Synced Green",
+        "canonical": "#16A34A",
+        "tonalRamp": ["#052E16", "#14532D", "#166534", "#15803D", "#16A34A", "#4ADE80", "#86EFAC", "#BBF7D0"]
+      },
+      "warning-text": {
+        "role": "semantic",
+        "displayName": "Pending Amber",
+        "canonical": "#92400E",
+        "tonalRamp": ["#451A03", "#78350F", "#92400E", "#B45309", "#D97706", "#F59E0B", "#FBBF24", "#FDE68A"]
+      },
+      "error": {
+        "role": "semantic",
+        "displayName": "Alert Red",
+        "canonical": "#DC2626",
+        "tonalRamp": ["#450A0A", "#7F1D1D", "#991B1B", "#B91C1C", "#DC2626", "#EF4444", "#F87171", "#FCA5A5"]
+      }
     },
     "typographyMeta": {
-      "display": { "displayName": "Display", "purpose": "Screen/app title only." },
-      "title": { "displayName": "Title", "purpose": "Section headers." },
-      "body": { "displayName": "Body", "purpose": "Labels, inputs, body copy." },
-      "label": { "displayName": "Label", "purpose": "Meta text: dates, badges, helper captions." },
-      "readout": { "displayName": "Readout", "purpose": "Every numeric figure representing real quantities (bags, currency, counts); tabular-nums." }
+      "display": { "displayName": "Display", "purpose": "Page-level headings, login card title." },
+      "title": { "displayName": "Title", "purpose": "Section headings within a module." },
+      "body": { "displayName": "Body", "purpose": "Labels, body copy, table cell text." },
+      "label": { "displayName": "Label", "purpose": "Field hints, uppercase table headers." },
+      "readout": { "displayName": "Readout", "purpose": "Every real numeric figure — tabular-nums for column alignment." }
     },
     "shadows": [
-      { "name": "resting-lift", "value": "0 1px 3px rgba(26,21,18,0.12)", "purpose": "Default state for cards and primary buttons — a paper sheet lifted off the desk, not a floating SaaS card." },
-      { "name": "pressed", "value": "none", "purpose": "Active/pressed state; paired with translateY(1px) instead of a shadow." }
+      { "name": "resting", "value": "0 1px 2px rgba(15,23,42,.06), 0 1px 3px rgba(15,23,42,.08)", "purpose": "Uniform soft lift for cards, tables, and buttons." }
     ],
     "motion": [
-      { "name": "press", "value": "transform 0.08s ease-out", "purpose": "Button/card press feedback (Pressed state)." }
+      { "name": "ease-button", "value": "0.15s ease-out", "purpose": "Button background/hover transitions." },
+      { "name": "ease-press", "value": "0.08s ease-out", "purpose": "Button press transform/shadow removal (The Pressable Rule)." }
     ],
     "breakpoints": [
-      { "name": "mobile", "value": "0px" },
-      { "name": "desktop", "value": "768px" }
+      { "name": "sidebar-collapse", "value": "720px" }
     ]
   },
   "components": [
@@ -41,74 +64,83 @@
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "The single most important action on screen (submit, save, sync retry).",
-      "html": "<button class=\"ds-btn-primary\">Enregistrer</button>",
-      "css": ".ds-btn-primary { background: #A3282A; color: #FFFFFF; padding: 12px 16px; border: none; border-radius: 0; font: 600 1rem system-ui, 'Segoe UI', Roboto, sans-serif; box-shadow: 0 1px 3px rgba(26,21,18,0.12); transition: background 0.15s ease-out, transform 0.08s ease-out, box-shadow 0.08s ease-out; cursor: pointer; } .ds-btn-primary:hover { background: #7E1E20; } .ds-btn-primary:active { transform: translateY(1px); box-shadow: none; }"
+      "description": "Main call-to-action — form submit, primary in-page action.",
+      "html": "<button class=\"ds-btn-primary\">Se connecter</button>",
+      "css": ".ds-btn-primary { padding: 12px 16px; font-size: 1rem; font-weight: 600; font-family: 'Inter', system-ui, sans-serif; border: none; border-radius: 8px; background: #10B981; color: #FFFFFF; box-shadow: 0 1px 2px rgba(15,23,42,.06), 0 1px 3px rgba(15,23,42,.08); cursor: pointer; transition: background 0.15s ease-out, transform 0.08s ease-out, box-shadow 0.08s ease-out; } .ds-btn-primary:hover { background: #059669; } .ds-btn-primary:active { transform: translateY(1px); box-shadow: none; } .ds-btn-primary:focus-visible { outline: 2px solid #10B981; outline-offset: 2px; }"
     },
     {
       "name": "Secondary Button",
       "kind": "button",
       "refersTo": "button-secondary",
-      "description": "A lower-weight action alongside a primary one (cancel, correct).",
-      "html": "<button class=\"ds-btn-secondary\">Corriger</button>",
-      "css": ".ds-btn-secondary { background: #FFFFFF; color: #7E1E20; padding: 8px 12px; border: 1.5px solid #D8CFBC; border-radius: 0; font: 600 0.9rem system-ui, 'Segoe UI', Roboto, sans-serif; cursor: pointer; transition: border-color 0.15s ease-out; } .ds-btn-secondary:hover { border-color: #7E1E20; } .ds-btn-secondary:disabled { color: #988878; border-color: #D8CFBC; cursor: default; }"
+      "description": "Lower-emphasis action — sign out, cancel.",
+      "html": "<button class=\"ds-btn-secondary\">Déconnexion</button>",
+      "css": ".ds-btn-secondary { background: #FFFFFF; color: #059669; border: 1px solid #E2E8F0; padding: 8px 12px; border-radius: 8px; font-family: 'Inter', system-ui, sans-serif; font-weight: 600; cursor: pointer; transition: border-color 0.15s ease-out; } .ds-btn-secondary:hover { border-color: #059669; } .ds-btn-secondary:focus-visible { outline: 2px solid #10B981; outline-offset: 2px; }"
     },
     {
       "name": "Text Input",
       "kind": "input",
       "refersTo": "input",
-      "description": "Bordered field for form entry; focus is a border color shift, no glow ring.",
-      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"0\" />",
-      "css": ".ds-input { background: #FFFFFF; color: #1A1512; border: 1.5px solid #D8CFBC; border-radius: 0; padding: 10px 12px; font: 400 1rem system-ui, 'Segoe UI', Roboto, sans-serif; width: 100%; } .ds-input:focus { outline: none; border-color: #A3282A; } .ds-input:invalid:not(:placeholder-shown) { border-color: #A0522D; }"
+      "description": "Boxed field with rounded corners and an emerald focus ring — a deliberate reversal of the prior ruled-line treatment.",
+      "html": "<input class=\"ds-input\" type=\"email\" placeholder=\"Email\" />",
+      "css": ".ds-input { background: #FFFFFF; color: #0F172A; padding: 10px 12px; font-size: 1rem; font-family: 'Inter', system-ui, sans-serif; border: 1px solid #E2E8F0; border-radius: 6px; } .ds-input:focus { outline: none; border-color: #10B981; box-shadow: 0 0 0 3px #D1FAE5; }"
     },
     {
-      "name": "Entry Card",
+      "name": "Sidebar Nav Item (active)",
+      "kind": "nav",
+      "refersTo": "sidebar-item-active",
+      "description": "The platform's spine — a module link in the dark Command Bay sidebar, active state shown.",
+      "html": "<div class=\"ds-sidebar\"><a class=\"ds-sidebar-item ds-sidebar-item--active\" href=\"#\">📊 Dashboard</a><a class=\"ds-sidebar-item\" href=\"#\">📦 Stock</a><div class=\"ds-sidebar-item ds-sidebar-item--disabled\"><span>🧾 Ventes</span><span class=\"ds-sidebar-soon\">Bientôt</span></div></div>",
+      "css": ".ds-sidebar { background: #0F2E28; padding: 16px 12px; display: flex; flex-direction: column; gap: 2px; border-radius: 12px; } .ds-sidebar-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; color: #A7D9CF; text-decoration: none; font-size: 0.9rem; font-weight: 600; font-family: 'Inter', system-ui, sans-serif; } .ds-sidebar-item:hover { background: rgba(255,255,255,0.07); color: #FFFFFF; } .ds-sidebar-item--active { background: #10B981; color: #FFFFFF; } .ds-sidebar-item--disabled { justify-content: space-between; opacity: 0.55; } .ds-sidebar-soon { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.04em; background: rgba(255,255,255,0.1); color: #A7D9CF; padding: 2px 7px; border-radius: 999px; }"
+    },
+    {
+      "name": "Status Pill",
+      "kind": "chip",
+      "refersTo": "status-pill",
+      "description": "Synced/pending state marker — a plain rounded pill, replacing the prior rotated ink-stamp badge.",
+      "html": "<span class=\"ds-pill ds-pill--success\">Synced</span> <span class=\"ds-pill ds-pill--warning\">En attente</span>",
+      "css": ".ds-pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 0.72rem; font-weight: 600; font-family: 'Inter', system-ui, sans-serif; } .ds-pill--success { background: #DCFCE7; color: #16A34A; } .ds-pill--warning { background: #FEF3C7; color: #92400E; }"
+    },
+    {
+      "name": "Dense Table Header",
+      "kind": "custom",
+      "refersTo": "entries-table",
+      "description": "Tinted header row over a dense data table — replaces the prior system's double-rule with an Emerald Mist band.",
+      "html": "<table class=\"ds-table\"><thead><tr><th>Date</th><th class=\"ds-numeric\">Sacs</th></tr></thead><tbody><tr><td>21/09/2026</td><td class=\"ds-numeric\">120</td></tr></tbody></table>",
+      "css": ".ds-table { width: 100%; border-collapse: collapse; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden; } .ds-table th, .ds-table td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #E2E8F0; font-size: 0.9rem; color: #0F172A; font-family: 'Inter', system-ui, sans-serif; } .ds-table th { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #059669; background: #D1FAE5; } .ds-numeric { font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; }"
+    },
+    {
+      "name": "Headline Stat Card",
       "kind": "card",
       "refersTo": "card",
-      "description": "One submitted entry in the operator's list, with its readout figures.",
-      "html": "<div class=\"ds-card\"><p class=\"ds-card-date\">18 sept. 2026, 09:20</p><p class=\"ds-card-readout\">Sacs: 10 &middot; Revenu: 500 &middot; D&eacute;penses: 100</p></div>",
-      "css": ".ds-card { background: #FFFFFF; border: 1.5px solid #D8CFBC; border-radius: 0; padding: 12px; box-shadow: 0 1px 3px rgba(26,21,18,0.12); } .ds-card-date { color: #5B5147; font: 600 0.8rem system-ui, 'Segoe UI', Roboto, sans-serif; letter-spacing: 0.02em; margin: 0 0 4px; } .ds-card-readout { color: #1A1512; font: 600 1rem ui-monospace, 'SF Mono', Consolas, monospace; font-variant-numeric: tabular-nums; margin: 0; }"
-    },
-    {
-      "name": "Pending Badge (ink stamp)",
-      "kind": "chip",
-      "refersTo": "badge-warning",
-      "description": "Count of entries captured locally but not yet synced, or a draft entry's status — the one rounded, rotated element in the system.",
-      "html": "<div class=\"ds-badge-pending\">Non envoy&eacute;e</div>",
-      "css": ".ds-badge-pending { background: transparent; color: #7A5C1F; padding: 3px 10px; border: 1.5px solid #7A5C1F; border-radius: 999px; font: 700 0.7rem system-ui, 'Segoe UI', Roboto, sans-serif; text-transform: uppercase; letter-spacing: 0.06em; transform: rotate(-3deg); display: inline-block; }"
-    },
-    {
-      "name": "Ledger Table Header",
-      "kind": "custom",
-      "refersTo": null,
-      "description": "Table header row for totals/entries tables — uppercase, double-ruled underline like a ledger sum.",
-      "html": "<table class=\"ds-table\"><thead><tr><th>Jour</th><th class=\"ds-numeric\">Sacs</th></tr></thead></table>",
-      "css": ".ds-table th { font: 700 0.8rem system-ui, 'Segoe UI', Roboto, sans-serif; letter-spacing: 0.04em; text-transform: uppercase; color: #1A1512; text-align: left; padding: 8px 12px; border-bottom: 3px double #2A241D; } .ds-numeric { font-family: ui-monospace, 'SF Mono', Consolas, monospace; font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; }"
+      "description": "A prominent cumulative figure (e.g. Stock total) — Readout numerals in Emerald Deep inside a soft-shadow card.",
+      "html": "<div class=\"ds-stat-card\"><p class=\"ds-stat-hint\">Stock riz transformé à ce jour</p><p class=\"ds-stat-total\">3 410 <span>sacs</span></p></div>",
+      "css": ".ds-stat-card { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; box-shadow: 0 1px 2px rgba(15,23,42,.06), 0 1px 3px rgba(15,23,42,.08); padding: 24px; font-family: 'Inter', system-ui, sans-serif; } .ds-stat-hint { color: #64748B; font-size: 0.8rem; margin: 0 0 4px; } .ds-stat-total { font-variant-numeric: tabular-nums; font-size: 2.75rem; font-weight: 700; color: #059669; margin: 0; } .ds-stat-total span { font-size: 1.1rem; font-weight: 600; color: #64748B; }"
     }
   ],
   "narrative": {
-    "northStar": "The Cooperative Ledger",
-    "overview": "Eaglenet reads as a hand-inked account ledger, not a SaaS dashboard: every figure carries the gravity of a bookkeeper's entry, decisively ruled and stamped, the way a cooperative produce-buying society or a bank passbook has recorded transactions for a century. Warm ledger-paper cream sits behind crisp white sheet panels; near-black ink carries the text; one confident accent — a deep bookkeeping-ink red — carries primary actions and every headline total. Structure comes from ruled lines, not soft card chrome: a bold double-rule marks table headers and totals rows the way a ledger book underlines a sum twice before it's final. Corners are sharp, paper-like, never rounded — the one exception is the ink-stamp badge, a rotated oval ring that marks a record's status the way a rubber stamp marks a real document.\n\nThis replaces an earlier, more muted system (\"The Weigh Station\") that read as too quiet and too soft-cornered to feel like an authoritative financial record. This version commits harder: bigger, bolder display type for totals and titles; a real accent color with confidence instead of a desaturated one; visible structural rules instead of implied card boundaries.",
+    "northStar": "The Mill Control Room",
+    "overview": "Eaglenet reads as a live operations console, not a paper record: a dark instrument-panel sidebar anchors a bright, dense data surface where every module — production, stock, and the ones still to come — sits one click away. The system replaces an earlier hand-inked \"ledger\" identity outright; the owner explicitly wanted the platform to read like the CRM/SaaS tools he already recognizes (Zoho and its category), not a bookkeeping metaphor. Where the ledger system earned trust through the gravity of a paper record, this system earns it through the fluency of a well-run console: real-time figures, dense tables, a single confident status color (emerald) that reads as \"healthy\" and \"active\" the way an indicator light does on real equipment.\n\nThe palette stays deliberately restrained — one accent, a dark command surface, a light neutral data surface — so that as more modules ship (Ventes, Achats, Employés), each one inherits the same console without needing its own visual argument.",
     "keyCharacteristics": [
-      "One confident Ledger Red accent, reserved for primary actions and headline totals — never decorative, never doubled elsewhere on the same screen.",
-      "Warm graphite-black ink on ledger-paper cream, not cool corporate gray-and-blue.",
-      "Sharp, ruled component language: zero-radius corners, bold double-rules under totals and table headers, ink-stamp badges for status.",
-      "A bold slab-serif display face (Zilla Slab) for titles and headline totals; real numeric data keeps the existing monospace tabular Readout face."
+      "A persistent dark sidebar is the platform's spine — every module, built or planned, lives there",
+      "One emerald accent carries navigation state, primary actions, and headline figures — never a second competing hue",
+      "Rounded corners and soft card shadows throughout — the opposite of the previous system's sharp, flat ledger surfaces",
+      "Tables are dense by default: this is an operational tool read by someone who wants numbers, not a leisurely reading surface"
     ],
     "rules": [
-      { "name": "The One Accent Rule", "body": "Ledger Red appears only on the single most important action or state per screen. If two elements compete for it, one of them is wrong.", "section": "colors" },
-      { "name": "The Tabular Readout Rule", "body": "Every number that represents a real quantity (bags, currency, counts) is set in the Readout face with font-variant-numeric: tabular-nums. Numbers used as ordinary language stay in Body.", "section": "typography" },
-      { "name": "The Pressable Rule", "body": "Anything the user taps to commit data (submit, save, sync retry) carries the resting lift at rest and the pressed treatment on :active. Static, non-interactive surfaces stay flat.", "section": "elevation" }
+      { "name": "The One Accent Rule", "body": "Emerald is the only accent color in the system. Success/warning/error are semantic, not decorative alternates — they mark state, never brand.", "section": "colors" },
+      { "name": "The Tabular Readout Rule", "body": "Every real data figure (a total, a table's numeric column, the Stock headline number) renders in the Readout treatment with tabular-nums so digits align column-to-column. Unchanged from the prior system — a functional property of reading numbers, not an aesthetic choice tied to either visual world.", "section": "typography" },
+      { "name": "The Pressable Rule", "body": "Anything the user taps to commit data (submit, save, sync retry) carries the resting shadow at rest and compresses (translateY(1px), shadow removed) on :active. Unchanged from the prior system.", "section": "elevation" }
     ],
     "dos": [
-      "Do reserve Ledger Red for exactly one primary action or state per screen.",
-      "Do set every real numeric figure in the Readout monospace face with tabular numerals.",
-      "Do use the 3px double-rule specifically for totals and table headers — it's a named signal, not decoration."
+      "Do reserve Operational Emerald for exactly one accent role per screen (The One Accent Rule) — active nav, primary actions, headline figures.",
+      "Do set every real numeric figure in the Readout treatment with tabular numerals (The Tabular Readout Rule).",
+      "Do keep disabled/planned modules visible in the sidebar rather than hiding them — the platform's full shape is part of the pitch, even unbuilt.",
+      "Do use rounded corners and soft shadows consistently — this system's visual signature is the opposite of the sharp, flat surfaces it replaced."
     ],
     "donts": [
-      "Don't introduce a second accent color alongside Ledger Red.",
-      "Don't round any corner except the ink-stamp badge.",
-      "Don't set numeric data in the display or body font — it breaks the \"mechanical readout\" character."
+      "Don't introduce a second accent color alongside Operational Emerald — semantic colors (success/warning/error) carry state, emerald alone carries brand/action.",
+      "Don't revive ledger-era treatments (ruled-line inputs, double-rule borders, rotated ink-stamp badges, zero-radius corners) — those belong to the discarded prior identity, not this one.",
+      "Don't set numeric data in the display or body font without tabular-nums — misaligned digits break the \"console you can trust\" character."
     ]
   }
 }

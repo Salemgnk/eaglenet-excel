@@ -1,53 +1,58 @@
 ---
 name: Eaglenet
-description: Offline-first production tracking for rice mill operators and their owner.
+description: Multi-module management platform for a rice mill — production tracking, stock, and future modules, all under one live operations console.
 colors:
-  accent: "#A3282A"
-  accent-deep: "#7E1E20"
-  ink: "#1A1512"
-  text: "#5B5147"
-  paper: "#F7F2E8"
+  accent: "#10B981"
+  accent-deep: "#059669"
+  accent-soft: "#D1FAE5"
+  ink: "#0F172A"
+  text: "#64748B"
+  paper: "#F8FAFC"
   surface: "#FFFFFF"
-  border: "#D8CFBC"
-  rule-strong: "#2A241D"
-  success: "#2F6B3F"
-  warning-bg: "#F5E6C8"
-  warning-text: "#7A5C1F"
-  error: "#A0522D"
+  border: "#E2E8F0"
+  sidebar-bg: "#0F2E28"
+  sidebar-text: "#A7D9CF"
+  success: "#16A34A"
+  success-bg: "#DCFCE7"
+  warning-bg: "#FEF3C7"
+  warning-text: "#92400E"
+  error: "#DC2626"
 typography:
   display:
-    fontFamily: "'Zilla Slab', Georgia, serif"
-    fontSize: "2.25rem"
+    fontFamily: "'Inter', system-ui, 'Segoe UI', Roboto, sans-serif"
+    fontSize: "1.75rem"
     fontWeight: 700
-    lineHeight: 1.15
+    lineHeight: 1.2
     letterSpacing: "normal"
   title:
-    fontFamily: "'Zilla Slab', Georgia, serif"
-    fontSize: "1.1rem"
+    fontFamily: "'Inter', system-ui, 'Segoe UI', Roboto, sans-serif"
+    fontSize: "1rem"
     fontWeight: 600
     lineHeight: 1.3
     letterSpacing: "normal"
   body:
-    fontFamily: "system-ui, 'Segoe UI', Roboto, sans-serif"
+    fontFamily: "'Inter', system-ui, 'Segoe UI', Roboto, sans-serif"
     fontSize: "1rem"
     fontWeight: 400
     lineHeight: 1.45
     letterSpacing: "normal"
   label:
-    fontFamily: "system-ui, 'Segoe UI', Roboto, sans-serif"
+    fontFamily: "'Inter', system-ui, 'Segoe UI', Roboto, sans-serif"
     fontSize: "0.8rem"
     fontWeight: 600
     lineHeight: 1.3
     letterSpacing: "0.02em"
   readout:
-    fontFamily: "ui-monospace, 'SF Mono', Consolas, monospace"
+    fontFamily: "'Inter', system-ui, sans-serif"
     fontSize: "1rem"
     fontWeight: 600
     lineHeight: 1.3
     letterSpacing: "normal"
 rounded:
-  none: "0px"
-  stamp: "999px"
+  sm: "6px"
+  md: "8px"
+  lg: "12px"
+  pill: "999px"
 spacing:
   xs: "4px"
   sm: "8px"
@@ -58,138 +63,153 @@ components:
   button-primary:
     backgroundColor: "{colors.accent}"
     textColor: "{colors.surface}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.md}"
     padding: "12px 16px"
   button-primary-hover:
     backgroundColor: "{colors.accent-deep}"
   button-secondary:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.accent-deep}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.md}"
     padding: "8px 12px"
   input:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.ink}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.sm}"
     padding: "10px 12px"
   card:
     backgroundColor: "{colors.surface}"
-    rounded: "{rounded.none}"
-    padding: "12px"
+    rounded: "{rounded.lg}"
+    padding: "16px"
+  sidebar-item-active:
+    backgroundColor: "{colors.accent}"
+    textColor: "{colors.surface}"
+    rounded: "{rounded.md}"
+    padding: "9px 12px"
 ---
 
 # Design System: Eaglenet
 
 ## Overview
 
-**Creative North Star: "The Cooperative Ledger"**
+**Creative North Star: "The Mill Control Room"**
 
-Eaglenet reads as a hand-inked account ledger, not a SaaS dashboard: every figure carries the gravity of a bookkeeper's entry, decisively ruled and stamped, the way a cooperative produce-buying society or a bank passbook has recorded transactions for a century. Warm ledger-paper cream sits behind crisp white sheet panels; near-black ink carries the text; one confident accent — a deep bookkeeping-ink red — carries primary actions and every headline total. Structure comes from ruled lines, not soft card chrome: a bold double-rule marks table headers and totals rows the way a ledger book underlines a sum twice before it's final. Corners are sharp, paper-like, never rounded — the one exception is the ink-stamp badge, a rotated oval ring that marks a record's status the way a rubber stamp marks a real document.
+Eaglenet reads as a live operations console, not a paper record: a dark instrument-panel sidebar anchors a bright, dense data surface where every module — production, stock, and the ones still to come — sits one click away. The system replaces an earlier hand-inked "ledger" identity outright; the owner explicitly wanted the platform to read like the CRM/SaaS tools he already recognizes (Zoho and its category), not a bookkeeping metaphor. Where the ledger system earned trust through the gravity of a paper record, this system earns it through the fluency of a well-run console: real-time figures, dense tables, a single confident status color (emerald) that reads as "healthy" and "active" the way an indicator light does on real equipment.
 
-This replaces an earlier, more muted system ("The Weigh Station") that read as too quiet and too soft-cornered to feel like an authoritative financial record. This version commits harder: bigger, bolder display type for totals and titles; a real accent color with confidence instead of a desaturated one; visible structural rules instead of implied card boundaries.
+The palette stays deliberately restrained — one accent, a dark command surface, a light neutral data surface — so that as more modules ship (Ventes, Achats, Employés), each one inherits the same console without needing its own visual argument.
 
 **Key Characteristics:**
-- One confident Ledger Red accent, reserved for primary actions and headline totals — never decorative, never doubled elsewhere on the same screen.
-- Warm graphite-black ink on ledger-paper cream, not cool corporate gray-and-blue.
-- Sharp, ruled component language: zero-radius corners, bold double-rules under totals and table headers, ink-stamp badges for status.
-- A bold slab-serif display face (Zilla Slab) for titles and headline totals; real UI chrome and body copy stay in system-ui for legibility; real numeric data keeps the existing monospace tabular Readout face — the Tabular Readout Rule is unchanged by this redesign.
+- A persistent dark sidebar is the platform's spine — every module, built or planned, lives there
+- One emerald accent carries navigation state, primary actions, and headline figures — never a second competing hue
+- Rounded corners and soft card shadows throughout — the opposite of the previous system's sharp, flat ledger surfaces
+- Tables are dense by default: this is an operational tool read by someone who wants numbers, not a leisurely reading surface
 
 ## Colors
 
-A warm, high-contrast ledger palette: near-black ink on cream paper, one confident red accent, and desaturated semantic colors that read as stamped states.
+The palette is intentionally small: one operational accent, one dark command surface, one light data surface, and standard semantic states.
 
 ### Primary
-- **Ledger Red** (`#A3282A`): the only accent color. Primary buttons, focus rings, headline totals, and anything the user must act on or trust right now.
-- **Ledger Red, Deep** (`#7E1E20`): hover/active state for accent elements, and the color used for secondary-button text/border where a lighter touch than solid red is right.
+- **Operational Emerald** (`#10B981`): the platform's single accent — active sidebar module, primary buttons, headline stat figures, table header tint. Its darker step, **Emerald Deep** (`#059669`), carries hover/active states. Its lightest step, **Emerald Mist** (`#D1FAE5`), tints table headers and stat-card backgrounds without competing with the solid accent.
 
 ### Neutral
-- **Ink** (`#1A1512`): headings, primary text, table data. A warm near-black, not pure black.
-- **Graphite Text** (`#5B5147`): secondary text, labels, meta information (dates, helper text).
-- **Ledger Paper** (`#F7F2E8`): page background — warm cream, never stark white.
-- **Panel White** (`#FFFFFF`): card, table, and input surfaces, sitting lighter than the page behind them.
-- **Etched Border** (`#D8CFBC`): ordinary borders and dividers — a warm, light rule.
-- **Rule, Strong** (`#2A241D`): the bold double-rule under table headers, totals rows, and the login title — near-ink, used sparingly for structural emphasis.
+- **Console Ink** (`#0F172A`): primary text and headings on the light surface.
+- **Slate Text** (`#64748B`): secondary/muted text — hints, labels, timestamps.
+- **Panel White** (`#FFFFFF`): card and table surfaces.
+- **Cool Paper** (`#F8FAFC`): the page ground behind every card.
+- **Hairline Border** (`#E2E8F0`): card borders, table dividers, input borders.
+- **Command Bay** (`#0F2E28`): the sidebar's dark ground — the one place the system departs from the light data surface, marking navigation as a distinct control layer.
+- **Command Bay Text** (`#A7D9CF`): muted sidebar label text; brightens to white on hover/active.
 
 ### Semantic
-- **Confirmed Green** (`#2F6B3F`): success states and confirmed sync.
-- **Pending Gold** (bg `#F5E6C8` / text `#7A5C1F`): entries awaiting sync — visually distinct from Ledger Red so "pending" is never mistaken for the primary action.
-- **Correction Sienna** (`#A0522D`): errors and validation problems. A warm brown-red, deliberately distinct from Ledger Red now that red is the primary accent — the two must never be confused.
+- **Success** (`#16A34A` text / `#DCFCE7` background): synced/complete states.
+- **Warning** (`#92400E` text / `#FEF3C7` background): pending/attention states.
+- **Error** (`#DC2626`): validation and failure states.
 
 ### Named Rules
-**The One Accent Rule.** Ledger Red appears only on the single most important action or state per screen. If two elements compete for it, one of them is wrong. (Carried over from the prior system; still binding.)
+**The One Accent Rule.** Emerald is the only accent color in the system. Success/warning/error are semantic, not decorative alternates — they mark state, never brand.
 
 ## Typography
 
-**Display/Title Font:** Zilla Slab (with Georgia fallback)
-**Body/UI Font:** system-ui (with 'Segoe UI', Roboto fallback)
-**Readout Font:** ui-monospace (with 'SF Mono', Consolas fallback)
+**Display Font:** Inter (with system-ui, Segoe UI, Roboto fallback)
+**Body Font:** Inter (same family — one typeface, weight does the differentiating work)
+**Readout Font:** Inter with `font-variant-numeric: tabular-nums`
 
-**Character:** A bold slab serif carries every headline and title — the thing that gives this version its impact — while ordinary UI chrome stays in plain system type for fast legibility, and real numeric data stays in the tabular monospace face so a column of figures lines up like a ledger total.
+**Character:** One typeface throughout, carrying the whole hierarchy on weight and size alone — a deliberate move away from the prior system's serif/sans pairing, toward the single-family convention of the CRM tools this platform now takes as its reference.
 
 ### Hierarchy
-- **Display** (700, 2.25rem, Zilla Slab): screen/app title only (e.g. the login screen's "Eaglenet").
-- **Title** (600, 1.1rem, Zilla Slab): section headers ("Par jour," "Détail des entrées").
-- **Body** (400, 1rem, system-ui): form labels, inputs, body copy.
-- **Label** (600, 0.8rem, system-ui, 0.02em tracking): meta text — dates, badges, helper captions.
-- **Readout** (600, 1rem+, monospace, tabular-nums): any numeric figure a user reads as data — bags milled, revenue, expenses, totals. Weight increased from the prior system's 500 for more presence.
+- **Display** (700, 1.75rem): page-level headings, the login card's "Eaglenet" title.
+- **Title** (600, 1rem): section headings within a module (e.g. "Évolution du stock cumulé").
+- **Body** (400, 1rem): form labels, body copy, table cell text.
+- **Label** (600, 0.8rem, +0.02em tracking): field hints, table header text (uppercase in table headers specifically).
+- **Readout** (600, tabular-nums): every real numeric figure — stat totals, table numeric columns.
 
 ### Named Rules
-**The Tabular Readout Rule.** Every number that represents a real quantity (bags, currency, counts) is set in the Readout face with `font-variant-numeric: tabular-nums`. Numbers used as ordinary language stay in Body. (Unchanged by this redesign — explicitly preserved.)
+**The Tabular Readout Rule.** Every real data figure (a total, a table's numeric column, the Stock headline number) renders in the Readout treatment with `tabular-nums` so digits align column-to-column. This rule is unchanged from the prior system — it's a functional property of reading numbers, not an aesthetic choice tied to either visual world.
 
 ## Layout
 
-Unchanged: single-column, mobile-first for the operator app (480px max-width container); the owner dashboard is desktop-first (960px max-width). Vertical rhythm runs on the same 4/8/12/16/24px spacing scale.
+The owner's platform is a persistent two-column shell: a fixed-width (220px) sidebar on the left, a flexible content region on the right that scrolls independently. A slim top bar (user identity, sign-out) spans the full width above both. Below 720px the sidebar collapses to a horizontal strip above the content, so the platform stays usable on a narrow screen without hiding navigation behind a menu.
+
+Content density is high by design: the entries and stock tables use compact row padding (`--space-sm` vertical) so a full day's entries are visible without excessive scrolling — consistent with an operational console, not a marketing page. Cards (totals, stock headline, chart) use generous internal padding (`--space-xl`) so headline figures still get visual room to breathe against the dense tables around them.
 
 ## Elevation & Depth
 
-Mostly flat, paper-like surfaces; a small resting shadow (`0 1px 3px rgba(26,21,18,0.12)`) gives cards and buttons a slight lift off the page, like a sheet of paper on a desk rather than a floating SaaS card. Structural separation comes primarily from rules (borders), not shadow.
+Cards lift softly off the page ground with a two-layer soft shadow (`0 1px 2px rgba(15,23,42,.06), 0 1px 3px rgba(15,23,42,.08)`) — enough to separate a card from `Cool Paper` without the heavier, more theatrical shadows some SaaS systems use. The sidebar itself has no shadow; it reads as a fixed structural plane, not a floating panel.
+
+### Shadow Vocabulary
+- **Resting** (`0 1px 2px rgba(15,23,42,.06), 0 1px 3px rgba(15,23,42,.08)`): the only shadow value in the system, used uniformly on cards, tables, and buttons.
 
 ### Named Rules
-**The Pressable Rule.** Anything the user taps to commit data (submit, save, sync retry) carries the resting lift at rest and compresses (translateY, shadow removed) on `:active`. Static, non-interactive surfaces stay flat. (Unchanged.)
+**The Pressable Rule.** Anything the user taps to commit data (submit, save, sync retry) carries the resting shadow at rest and compresses (`translateY(1px)`, shadow removed) on `:active`. Unchanged from the prior system — a physical-feedback convention independent of visual world.
 
 ## Shapes
 
-Zero radius everywhere except one deliberate exception: the ink-stamp badge (pending/draft status), which is fully rounded (`999px`) and rotated a few degrees, the one place in the system a curve appears — because it reads as a stamp, not a UI chip. Borders stay 1.5px for ordinary rules, stepping up to 3-4px for structural accents (the login card's top bar, a stat card's base rule) and a 3px double rule for totals/header rows.
+Rounded corners throughout — the system's clearest visual break from its predecessor's sharp, paper-like edges. Cards and the login form use the largest radius (`12px`); buttons, inputs, and the sidebar's active-item highlight use a medium radius (`8px`); small controls (search input) use `6px`. Status indicators (draft badge, sync-state pill) are fully rounded (`999px`) — a soft pill, not the prior system's rotated ink-stamp.
 
 ## Components
 
 ### Buttons
-- **Shape:** zero radius, borderless.
-- **Primary:** Ledger Red background, white text, resting-lift shadow, 12px/16px padding.
-- **Hover / Active:** background steps to Ledger Red Deep on hover; pressed treatment (1px translateY, shadow removed) on active.
-- **Secondary / Ghost:** Panel White background, Ledger Red Deep text, 1.5px Etched Border.
+- **Shape:** rounded (`8px`), borderless.
+- **Primary:** Operational Emerald background, white text, resting shadow, 12px/16px padding.
+- **Hover / Active:** background steps to Emerald Deep on hover; pressed treatment (1px translateY, shadow removed) on active.
+- **Secondary / Ghost:** Panel White background, Emerald Deep text, 1px Hairline Border.
 
-### Badges (ink stamps)
-- **Pending / Draft:** transparent or Pending Gold background, Pending Gold text and border, uppercase, letter-spaced, fully rounded (999px), rotated -3deg — the one rounded, tilted element in the system.
+### Status Pills
+- **Draft / Pending:** Warning background/text, uppercase, letter-spaced, fully rounded (`999px`) — a plain pill, not rotated or stamped.
+- **Synced / Success:** Success background/text, same pill shape.
 
 ### Cards / Containers
-- **Corner Style:** zero radius.
-- **Background:** Panel White on Ledger Paper.
-- **Shadow Strategy:** resting lift (see Elevation & Depth).
-- **Border:** 1.5px Etched Border, plus a structural accent border where the component calls for one (login card: 4px Ledger Red top bar; stat card: 3px Rule-Strong bottom bar).
-- **Internal Padding:** 12px.
+- **Corner Style:** `12px` radius.
+- **Background:** Panel White on Cool Paper.
+- **Shadow Strategy:** resting shadow (see Elevation & Depth).
+- **Border:** 1px Hairline Border.
+- **Internal Padding:** `16px`–`24px` depending on the card's role (dense list cards use less, headline/chart cards use more).
 
 ### Inputs / Fields
-- **Style:** Panel White background, 1.5px Etched Border, zero radius.
-- **Focus:** border shifts to Ledger Red, no glow/ring.
-- **Error:** border shifts to Correction Sienna; helper text in Correction Sienna, Label typography.
+- **Style:** Panel White background, 1px Hairline Border, `6px` radius (boxed, not ruled-line — a deliberate reversal of the prior system).
+- **Focus:** border shifts to Operational Emerald plus a soft `3px` Emerald Mist ring (`box-shadow: 0 0 0 3px var(--color-accent-soft)`) — a visible focus state the prior system didn't use.
+- **Error:** border shifts to Error red; helper text in Error red, Label typography.
 
-### Navigation (tabs)
-- **Style:** two equal-width buttons, 1.5px Etched Border, zero radius, Panel White background at rest and active alike. Active tab is marked by a Ledger Red Deep border and bold text, never a solid fill — a tab bar sits above a form on every screen, and a filled active tab would compete with that screen's primary action for the same accent.
+### Navigation (sidebar)
+- **Style:** vertical list of module items in the dark Command Bay, icon + label, `8px` radius per item.
+- **Active:** solid Operational Emerald fill, white text and icon — the one place the accent fills a large surface rather than marking a small element.
+- **Hover (enabled items):** subtle white-alpha background lift, text brightens toward white.
+- **Disabled (planned modules):** 55% opacity, a small "Bientôt" pill badge at the item's trailing edge, no hover state, not clickable — the platform's full intended shape stays visible even before a module is built.
 
-### Tables (ledger totals)
-- **Header row:** uppercase, letter-spaced Label type, 3px double-rule bottom border (Rule Strong) — the classic ledger "total underlined twice" mark.
-- **Body rows:** 1.5px Etched Border between rows, no border on the last row.
+### Tables (dense data)
+- **Header row:** uppercase Label type in Emerald Deep, Emerald Mist background tint, 1px Hairline Border bottom — replaces the prior system's double-rule with a tinted band, a CRM convention rather than a ledger one.
+- **Body rows:** 1px Hairline Border between rows, no border on the last row.
 - **Numeric columns:** Readout face, tabular-nums, right-aligned, 600 weight.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** reserve Ledger Red for exactly one primary action or state per screen (The One Accent Rule).
-- **Do** set every real numeric figure in the Readout monospace face with tabular numerals.
-- **Do** use the 3px double-rule specifically for totals and table headers — it's a named signal, not decoration, and loses meaning if used elsewhere.
+- **Do** reserve Operational Emerald for exactly one accent role per screen (The One Accent Rule) — active nav, primary actions, headline figures.
+- **Do** set every real numeric figure in the Readout treatment with tabular numerals (The Tabular Readout Rule).
+- **Do** keep disabled/planned modules visible in the sidebar rather than hiding them — the platform's full shape is part of the pitch, even unbuilt.
+- **Do** use rounded corners and soft shadows consistently — this system's visual signature is the opposite of the sharp, flat surfaces it replaced.
 
 ### Don't:
-- **Don't** introduce a second accent color alongside Ledger Red — semantic colors (green/gold/sienna) carry state, red alone carries action.
-- **Don't** round any corner except the ink-stamp badge — a rounded card or button is the prior system's signature, not this one's.
-- **Don't** set numeric data in the display or body font — it breaks the "mechanical readout" character the whole system is built around.
+- **Don't** introduce a second accent color alongside Operational Emerald — semantic colors (success/warning/error) carry state, emerald alone carries brand/action.
+- **Don't** revive ledger-era treatments (ruled-line inputs, double-rule borders, rotated ink-stamp badges, zero-radius corners) — those belong to the discarded prior identity, not this one.
+- **Don't** set numeric data in the display or body font without `tabular-nums` — misaligned digits break the "console you can trust" character.

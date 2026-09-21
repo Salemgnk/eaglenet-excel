@@ -14,11 +14,11 @@ web
 
 ## Product Purpose
 
-Replace an unreliable Airtable-based workflow for tracking rice mill production data. Airtable's dependence on live connectivity meant operators skipped or delayed entries whenever the on-site connection dropped, leaving the owner with gaps and stale numbers. This tracker captures an entry locally on the operator's phone the instant it's made, syncs automatically once a connection exists, and gets validated numbers to the owner within minutes rather than a manual end-of-day export.
+Eaglenet is growing from a single-purpose production tracker into a complete management platform for the rice mill: production/finance tracking today, with Stock, Ventes/clients, Achats/fournisseurs, and Employés/paie as sequenced future modules under the same platform. It started as a replacement for an unreliable Airtable-based workflow — Airtable's dependence on live connectivity meant operators skipped or delayed entries whenever the on-site connection dropped, leaving the owner with gaps and stale numbers — and that offline-first foundation carries forward as the platform grows: this tracker captures an entry locally on the operator's phone the instant it's made, syncs automatically once a connection exists, and gets validated numbers to the owner within minutes rather than a manual end-of-day export.
 
 ## Positioning
 
-Unlike Airtable or any connectivity-dependent spreadsheet tool, entries are never blocked by the network: capture is offline-first with a local queue, and every correction is auditable rather than a silent overwrite. That combination — never lose an entry, never lose a prior value — is the mechanism a generic spreadsheet tool doesn't offer.
+Unlike Airtable or any connectivity-dependent spreadsheet tool, entries are never blocked by the network: capture is offline-first with a local queue, and every correction is auditable rather than a silent overwrite. That combination — never lose an entry, never lose a prior value — is the mechanism a generic spreadsheet tool doesn't offer. As the platform grows beyond tracking, that same principle extends to every module: the owner's view of his business is never gated on connectivity, and every module lives under one coherent multi-module dashboard rather than a scattered set of separate tools.
 
 ## Operating Context
 
@@ -30,14 +30,15 @@ Unlike Airtable or any connectivity-dependent spreadsheet tool, entries are neve
 
 ## Capabilities and Constraints
 
-- Built: offline entry form (bags milled, revenue, expenses, other, notes); background sync on reconnect with idempotent retries (a dropped response after a successful sync never creates a duplicate); corrections restricted to the entry's original operator, with every field change logged to an immutable `entry_history` via a database trigger; role-based access (an operator sees/edits only their own entries, the owner has read-only access across the site); a read-only owner dashboard (period totals, a daily breakdown, and a live entries table via Supabase Realtime — no page refresh needed).
-- Not yet built: the Excel push worker.
+- Built: offline entry form (bags milled, revenue, expenses, other, notes); background sync on reconnect with idempotent retries (a dropped response after a successful sync never creates a duplicate); corrections restricted to the entry's original operator, with every field change logged to an immutable `entry_history` via a database trigger; role-based access (an operator sees/edits only their own entries, the owner has read-only access across the site); a multi-module owner dashboard (sidebar navigation) with a Dashboard module (period totals, a daily breakdown, and a live entries table via Supabase Realtime — no page refresh needed) and a Stock module (cumulative processed-rice inventory, an evolution chart, and the contributing entries — derived entirely from existing production entries, no new data model).
+- Planned, not yet built: Ventes/clients, Achats/fournisseurs, Employés/paie — visible in the dashboard's navigation as disabled placeholders so the owner sees the platform's intended shape, each to be scoped and built as its own sub-project. The Excel push worker is also not yet built.
+- Stock is currently an estimate: it sums all processed-rice production to date with no outflow tracking (no sales/waste/adjustment deductions) until the Ventes module ships.
 - Undecided: the exact Excel push mechanism (Microsoft Graph API vs. Google Sheets API vs. another route) — depends on the operating-context gap above.
-- Scope for v1: one site, 1-2 operators — not multi-tenant.
+- Scope for v1: one site, 1-2 operators — not multi-tenant. Stock has no per-site breakdown yet for the same reason (no `sites` table).
 
 ## Brand Commitments
 
-Product/company name: **Eaglenet**. No logo, palette, or typography has been specified yet.
+Product/company name: **Eaglenet**. Visual identity: emerald accent on a light neutral ground, dark sidebar, Inter typography, rounded corners, dense tables — a conventional SaaS/CRM look (see `DESIGN.md`), replacing an earlier hand-inked "ledger" identity that the owner judged too different from the CRM-style tools (e.g. Zoho) he wanted the platform to resemble.
 
 ## Evidence on Hand
 

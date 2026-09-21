@@ -25,7 +25,7 @@
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 1.15rem;
-  color: var(--color-accent);
+  color: var(--color-accent-deep);
 }
 
 .status-indicator {
@@ -89,17 +89,16 @@
 .login-form {
   width: 100%;
   background: var(--color-surface);
-  border: 1.5px solid var(--color-border);
-  border-top: 4px solid var(--color-accent);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-resting);
+  padding: var(--space-xl);
   margin: 0;
 }
 
 .login-form h1 {
-  font-size: 2.25rem;
+  font-size: 1.75rem;
   font-weight: 700;
-  padding-bottom: var(--space-sm);
-  border-bottom: 3px double var(--color-rule-strong);
   margin-bottom: var(--space-xs);
 }
 
@@ -120,7 +119,7 @@
   padding: 10px 12px;
   font-size: 1rem;
   font-family: var(--font-body);
-  border: 1.5px solid var(--color-border);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
 }
 
@@ -129,16 +128,7 @@
 .entry-form textarea:focus {
   outline: none;
   border-color: var(--color-accent);
-}
-
-.login-form input {
-  border: none;
-  border-bottom: 1.5px solid var(--color-border);
-  padding: 10px 2px;
-}
-
-.login-form input:focus {
-  border-bottom-width: 2px;
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
 }
 
 .login-form button[type='submit'],
@@ -202,7 +192,7 @@ button.primary:disabled {
 }
 
 .last-saved {
-  border-top: 1.5px solid var(--color-border);
+  border-top: 1px solid var(--color-border);
   padding-top: var(--space-md);
   margin-top: var(--space-xs);
 }
@@ -231,7 +221,6 @@ button.primary:disabled {
   color: var(--color-warning-text);
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-md);
-  border: 1.5px solid var(--color-warning-text);
   font-size: 0.85rem;
   font-weight: 600;
   margin-bottom: var(--space-md);
@@ -266,7 +255,7 @@ button.primary:disabled {
 .tabs button {
   flex: 1;
   padding: 10px;
-  border: 1.5px solid var(--color-border);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: var(--color-surface);
   color: var(--color-ink);
@@ -278,7 +267,8 @@ button.primary:disabled {
 
 .tabs button.active {
   color: var(--color-accent-deep);
-  border-color: var(--color-accent-deep);
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent-soft);
   font-weight: 700;
 }
 
@@ -290,7 +280,7 @@ button.primary:disabled {
 
 .entry-card {
   background: var(--color-surface);
-  border: 1.5px solid var(--color-border);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-resting);
   padding: var(--space-md);
@@ -315,17 +305,15 @@ button.primary:disabled {
 }
 
 .draft-badge {
-  background: transparent;
+  background: var(--color-warning-bg);
   color: var(--color-warning-text);
   padding: 3px 10px;
-  border: 1.5px solid var(--color-warning-text);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   white-space: nowrap;
-  transform: rotate(-3deg);
   display: inline-block;
 }
 
@@ -374,7 +362,7 @@ button.primary:disabled {
   padding: 8px 10px;
   font-size: 0.95rem;
   font-family: var(--font-body);
-  border: 1.5px solid var(--color-border);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
 }
 
@@ -382,6 +370,7 @@ button.primary:disabled {
 .entry-card textarea:focus {
   outline: none;
   border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
 }
 
 .edit-actions {
@@ -400,7 +389,7 @@ button.primary:disabled {
 button.secondary {
   background: var(--color-surface);
   color: var(--color-accent-deep);
-  border: 1.5px solid var(--color-border);
+  border: 1px solid var(--color-border);
   padding: 8px 12px;
   border-radius: var(--radius-md);
   font-family: var(--font-body);
