@@ -3,6 +3,7 @@ import { NavLink, Navigate, Route, Routes } from 'react-router-dom'
 import { Achats } from './Achats'
 import { Clients } from './Clients'
 import { Dashboard } from './Dashboard'
+import { Employes } from './Employes'
 import { Fournisseurs } from './Fournisseurs'
 import { Stock } from './Stock'
 import { Ventes } from './Ventes'
@@ -21,7 +22,7 @@ const MODULES: Module[] = [
   { path: '/clients', label: 'Clients', icon: UserRound, enabled: true },
   { path: '/achats', label: 'Achats', icon: Truck, enabled: true },
   { path: '/fournisseurs', label: 'Fournisseurs', icon: Building2, enabled: true },
-  { path: '/employes', label: 'Employés', icon: Users, enabled: false },
+  { path: '/employes', label: 'Employés', icon: Users, enabled: true },
 ]
 
 interface ShellProps {
@@ -71,6 +72,7 @@ export function Shell({ siteId, userId }: ShellProps) {
           <Route path="/clients" element={<Clients siteId={siteId} userId={userId} />} />
           <Route path="/achats" element={<Achats siteId={siteId} userId={userId} />} />
           <Route path="/fournisseurs" element={<Fournisseurs siteId={siteId} userId={userId} />} />
+          <Route path="/employes" element={<Employes siteId={siteId} userId={userId} />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </div>

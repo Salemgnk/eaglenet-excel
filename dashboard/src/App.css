@@ -528,6 +528,18 @@ button.secondary:hover:not(:disabled) {
   min-width: 120px;
 }
 
+.temp-password {
+  font-family: var(--font-readout);
+  font-variant-numeric: tabular-nums;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-accent-deep);
+  background: var(--color-accent-soft);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  display: inline-block;
+}
+
 .stock-chart-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
