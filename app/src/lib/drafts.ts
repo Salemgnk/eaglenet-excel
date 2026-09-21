@@ -1,7 +1,10 @@
 import { openDB, type DBSchema } from 'idb'
 
+export type EntryType = 'service' | 'own_production'
+
 export interface Draft {
   id: string
+  entry_type: EntryType
   bags_milled: number
   revenue: number
   expenses: number

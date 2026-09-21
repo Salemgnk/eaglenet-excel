@@ -1,17 +1,28 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import { listDrafts, type Draft } from '../lib/drafts'
+import { listDrafts, type Draft, type EntryType } from '../lib/drafts'
 import { formatCount, formatCurrency } from '../lib/format'
 import { validateNumberField } from '../lib/validation'
 
 interface Entry {
   id: string
+  entry_type: EntryType | null
   bags_milled: number
   revenue: number
   expenses: number
   other: number
   notes: string | null
   created_at: string
+}
+
+const ENTRY_TYPE_LABEL: Record<EntryType, string> = {
+  own_production: 'Production propre',
+  service: 'Service client',
+}
+
+function TypeBadge({ entryType }: { entryType: EntryType | null }) {
+  if (!entryType) return null
+  return <span className={`type-pill type-pill--${entryType}`}>{ENTRY_TYPE_LABEL[entryType]}</span>
 }
 
 type FieldName = 'bags_milled' | 'revenue' | 'expenses' | 'other'
@@ -31,6 +42,7 @@ const FIELD_LABELS: Record<FieldName, string> = {
 }
 
 interface EditDraft {
+  entry_type: EntryType | null
   bags_milled: string
   revenue: string
   expenses: string
@@ -64,12 +76,14 @@ export function EntriesList({ online }: EntriesListProps) {
   const [everLoadedOnline, setEverLoadedOnline] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [draftEdit, setDraftEdit] = useState<EditDraft>({
+    entry_type: null,
     bags_milled: '',
     revenue: '',
     expenses: '',
     other: '',
     notes: '',
   })
+  const [entryTypeError, setEntryTypeError] = useState(false)
   const [errors, setErrors] = useState<Partial<Record<FieldName, boolean>>>({})
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -84,7 +98,7 @@ export function EntriesList({ online }: EntriesListProps) {
     if (online) {
       const { data, error } = await supabase
         .from('entries')
-        .select('id, bags_milled, revenue, expenses, other, notes, created_at')
+        .select('id, entry_type, bags_milled, revenue, expenses, other, notes, created_at')
         .order('created_at', { ascending: false })
       if (!error && data) {
         setEntries(data)
@@ -102,6 +116,7 @@ export function EntriesList({ online }: EntriesListProps) {
   function startEdit(entry: Entry) {
     setEditingId(entry.id)
     setDraftEdit({
+      entry_type: entry.entry_type,
       bags_milled: String(entry.bags_milled),
       revenue: String(entry.revenue),
       expenses: String(entry.expenses),
@@ -109,6 +124,7 @@ export function EntriesList({ online }: EntriesListProps) {
       notes: entry.notes ?? '',
     })
     setErrors({})
+    setEntryTypeError(false)
     setError(null)
   }
 
@@ -134,12 +150,14 @@ export function EntriesList({ online }: EntriesListProps) {
       }
     }
     setErrors(nextErrors)
-    if (hasError) return
+    setEntryTypeError(!draftEdit.entry_type)
+    if (hasError || !draftEdit.entry_type) return
 
     setSaving(true)
     const { error } = await supabase
       .from('entries')
       .update({
+        entry_type: draftEdit.entry_type,
         bags_milled: results.bags_milled.value,
         revenue: results.revenue.value,
         expenses: results.expenses.value,
@@ -231,6 +249,7 @@ export function EntriesList({ online }: EntriesListProps) {
               </p>
               <span className="draft-badge">Non envoyée</span>
             </div>
+            <TypeBadge entryType={item.draft.entry_type} />
             <dl className="entry-readout">
               <dt>Sacs</dt>
               <dd>{formatCount(item.draft.bags_milled)}</dd>
@@ -247,6 +266,36 @@ export function EntriesList({ online }: EntriesListProps) {
           <div key={item.id} className="entry-card">
             {editingId === item.entry.id ? (
               <>
+                <div role="radiogroup" aria-label="Type de mouture">
+                  <p className="field-hint">Type de mouture</p>
+                  <div className="tabs entry-type-toggle">
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={draftEdit.entry_type === 'own_production'}
+                      className={draftEdit.entry_type === 'own_production' ? 'active' : ''}
+                      onClick={() => {
+                        setDraftEdit({ ...draftEdit, entry_type: 'own_production' })
+                        setEntryTypeError(false)
+                      }}
+                    >
+                      Production propre
+                    </button>
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={draftEdit.entry_type === 'service'}
+                      className={draftEdit.entry_type === 'service' ? 'active' : ''}
+                      onClick={() => {
+                        setDraftEdit({ ...draftEdit, entry_type: 'service' })
+                        setEntryTypeError(false)
+                      }}
+                    >
+                      Service client
+                    </button>
+                  </div>
+                  {entryTypeError && <span className="field-error">Choisissez un type</span>}
+                </div>
                 {editField(item.entry, 'bags_milled')}
                 {editField(item.entry, 'revenue')}
                 {editField(item.entry, 'expenses')}
@@ -294,6 +343,7 @@ export function EntriesList({ online }: EntriesListProps) {
                 <p className="entry-date">
                   {new Date(item.entry.created_at).toLocaleString('fr-FR')}
                 </p>
+                <TypeBadge entryType={item.entry.entry_type} />
                 <dl className="entry-readout">
                   <dt>Sacs</dt>
                   <dd>{formatCount(item.entry.bags_milled)}</dd>

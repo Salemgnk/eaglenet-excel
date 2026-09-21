@@ -317,6 +317,29 @@ button.primary:disabled {
   display: inline-block;
 }
 
+.entry-type-toggle {
+  margin: 0 0 var(--space-sm);
+}
+
+.type-pill {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 0.72rem;
+  font-weight: 600;
+  align-self: flex-start;
+}
+
+.type-pill--own_production {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-deep);
+}
+
+.type-pill--service {
+  background: var(--color-border);
+  color: var(--color-text);
+}
+
 .entry-readout {
   display: grid;
   grid-template-columns: auto 1fr;

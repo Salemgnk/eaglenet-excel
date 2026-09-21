@@ -1,6 +1,16 @@
 import { useMemo, useState } from 'react'
 import { formatCount, formatCurrency } from '../lib/format'
-import { useLiveEntries, type Entry } from '../lib/useLiveEntries'
+import { useLiveEntries, type Entry, type EntryType } from '../lib/useLiveEntries'
+
+const ENTRY_TYPE_LABEL: Record<EntryType, string> = {
+  own_production: 'Production propre',
+  service: 'Service client',
+}
+
+function TypeBadge({ entryType }: { entryType: EntryType | null }) {
+  if (!entryType) return <span className="type-pill">—</span>
+  return <span className={`type-pill type-pill--${entryType}`}>{ENTRY_TYPE_LABEL[entryType]}</span>
+}
 
 type Period = 'today' | '7d' | '30d' | 'all'
 type Granularity = 'day' | 'week' | 'month'
@@ -291,6 +301,7 @@ export function Dashboard({ siteId }: DashboardProps) {
               <thead>
                 <tr>
                   {sortableHeader('created_at', 'Date')}
+                  <th>Type</th>
                   {sortableHeader('bags_milled', 'Sacs', true)}
                   {sortableHeader('revenue', 'Revenu', true)}
                   {sortableHeader('expenses', 'Dépenses', true)}
@@ -302,6 +313,9 @@ export function Dashboard({ siteId }: DashboardProps) {
                 {sorted.map((entry) => (
                   <tr key={entry.id}>
                     <td>{new Date(entry.created_at).toLocaleString('fr-FR')}</td>
+                    <td>
+                      <TypeBadge entryType={entry.entry_type} />
+                    </td>
                     <td className="numeric">{formatCount(entry.bags_milled)}</td>
                     <td className="numeric">{formatCurrency(entry.revenue)}</td>
                     <td className="numeric">{formatCurrency(entry.expenses)}</td>

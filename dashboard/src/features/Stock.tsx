@@ -10,9 +10,18 @@ interface StockProps {
 export function Stock({ siteId }: StockProps) {
   const { entries, loading } = useLiveEntries(siteId)
 
-  const chronological = useMemo(
-    () => [...entries].sort((a, b) => a.created_at.localeCompare(b.created_at)),
+  // Only entries the mill milled for itself become Stock — service milling
+  // (a client's own rice) never belongs to the mill, so it never counts.
+  const ownProduction = useMemo(
+    () => entries.filter((e) => e.entry_type === 'own_production'),
     [entries],
+  )
+
+  const untyped = useMemo(() => entries.filter((e) => e.entry_type == null).length, [entries])
+
+  const chronological = useMemo(
+    () => [...ownProduction].sort((a, b) => a.created_at.localeCompare(b.created_at)),
+    [ownProduction],
   )
 
   const total = useMemo(
@@ -40,9 +49,17 @@ export function Stock({ siteId }: StockProps) {
           {formatCount(total)} <span className="stock-unit">sacs</span>
         </p>
         <p className="stock-note">
-          Cumul de la production enregistrée depuis le début — n'inclut pas encore les
-          sorties (vente, livraison), qui arriveront avec le module Ventes.
+          Cumul du riz produit par la rizerie elle-même depuis le début (hors service de
+          mouture pour des clients) — n'inclut pas encore les sorties (vente, livraison),
+          qui arriveront avec le module Ventes.
         </p>
+        {untyped > 0 && (
+          <p className="stock-note stock-note--warning">
+            {untyped} entrée{untyped > 1 ? 's' : ''} sans type de mouture renseigné n'
+            {untyped > 1 ? 'ont' : 'a'} pas pu être classée{untyped > 1 ? 's' : ''} et n'
+            {untyped > 1 ? 'entrent' : 'entre'} pas dans ce total.
+          </p>
+        )}
       </div>
 
       {series.length > 1 && (

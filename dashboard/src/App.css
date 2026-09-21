@@ -462,6 +462,30 @@ button.secondary:hover:not(:disabled) {
   max-width: 60ch;
 }
 
+.stock-note--warning {
+  color: var(--color-warning-text);
+  margin-top: var(--space-xs);
+}
+
+.type-pill {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.type-pill--own_production {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-deep);
+}
+
+.type-pill--service {
+  background: var(--color-paper);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
 .stock-chart-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);

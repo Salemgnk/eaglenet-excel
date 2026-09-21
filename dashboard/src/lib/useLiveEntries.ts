@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react'
 import { supabase } from './supabase'
 
+export type EntryType = 'service' | 'own_production'
+
 export interface Entry {
   id: string
+  entry_type: EntryType | null
   bags_milled: number
   revenue: number
   expenses: number
@@ -23,7 +26,7 @@ export function useLiveEntries(siteId: string | undefined) {
 
     supabase
       .from('entries')
-      .select('id, bags_milled, revenue, expenses, other, notes, created_at')
+      .select('id, entry_type, bags_milled, revenue, expenses, other, notes, created_at')
       .eq('site_id', siteId)
       .order('created_at', { ascending: false })
       .then(({ data, error }) => {

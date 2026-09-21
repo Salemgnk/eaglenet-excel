@@ -21,6 +21,7 @@ export async function syncPendingDrafts(
       id: draft.id,
       site_id: siteId,
       operator_id: operatorId,
+      entry_type: draft.entry_type,
       bags_milled: draft.bags_milled,
       revenue: draft.revenue,
       expenses: draft.expenses,

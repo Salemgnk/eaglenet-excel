@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
-import { saveDraft } from '../lib/drafts'
+import { saveDraft, type EntryType } from '../lib/drafts'
 import { formatCount, formatCurrency } from '../lib/format'
 import { validateNumberField } from '../lib/validation'
 
@@ -20,6 +20,7 @@ type SavedStatus = 'local' | 'synced' | null
 
 interface LastSaved {
   createdAt: string
+  entryType: EntryType
   bagsMilled: number
   revenue: number
   expenses: number
@@ -27,7 +28,14 @@ interface LastSaved {
   synced: boolean
 }
 
+const ENTRY_TYPE_LABEL: Record<EntryType, string> = {
+  own_production: 'Production propre',
+  service: 'Service client',
+}
+
 export function EntryForm({ onSaved }: EntryFormProps) {
+  const [entryType, setEntryType] = useState<EntryType | null>(null)
+  const [entryTypeError, setEntryTypeError] = useState(false)
   const [bagsMilled, setBagsMilled] = useState('')
   const [revenue, setRevenue] = useState('')
   const [expenses, setExpenses] = useState('')
@@ -72,16 +80,19 @@ export function EntryForm({ onSaved }: EntryFormProps) {
       }
     }
     setErrors(nextErrors)
-    if (hasError) return
+    setEntryTypeError(!entryType)
+    if (hasError || !entryType) return
 
     setSubmitting(true)
     const draft = await saveDraft({
+      entry_type: entryType,
       bags_milled: results.bagsMilled.value,
       revenue: results.revenue.value,
       expenses: results.expenses.value,
       other: results.other.value,
       notes,
     })
+    setEntryType(null)
     setBagsMilled('')
     setRevenue('')
     setExpenses('')
@@ -92,6 +103,7 @@ export function EntryForm({ onSaved }: EntryFormProps) {
     showStatus('local')
     setLastSaved({
       createdAt: draft.created_at,
+      entryType: draft.entry_type,
       bagsMilled: results.bagsMilled.value,
       revenue: results.revenue.value,
       expenses: results.expenses.value,
@@ -149,6 +161,36 @@ export function EntryForm({ onSaved }: EntryFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="entry-form" noValidate>
+      <div role="radiogroup" aria-label="Type de mouture">
+        <p className="field-hint">Type de mouture</p>
+        <div className="tabs entry-type-toggle">
+          <button
+            type="button"
+            role="radio"
+            aria-checked={entryType === 'own_production'}
+            className={entryType === 'own_production' ? 'active' : ''}
+            onClick={() => {
+              setEntryType('own_production')
+              setEntryTypeError(false)
+            }}
+          >
+            Production propre
+          </button>
+          <button
+            type="button"
+            role="radio"
+            aria-checked={entryType === 'service'}
+            className={entryType === 'service' ? 'active' : ''}
+            onClick={() => {
+              setEntryType('service')
+              setEntryTypeError(false)
+            }}
+          >
+            Service client
+          </button>
+        </div>
+        {entryTypeError && <span className="field-error">Choisissez un type</span>}
+      </div>
       {field('bagsMilled', 'Sacs moulus', REQUIRED.bagsMilled)}
       {field('revenue', 'Revenu', REQUIRED.revenue)}
       {field('expenses', 'Dépenses', REQUIRED.expenses)}
@@ -170,6 +212,9 @@ export function EntryForm({ onSaved }: EntryFormProps) {
           <p className="field-hint">
             Dernière entrée {lastSaved.synced ? 'synchronisée' : "en attente d'envoi"} :
           </p>
+          <span className={`type-pill type-pill--${lastSaved.entryType}`}>
+            {ENTRY_TYPE_LABEL[lastSaved.entryType]}
+          </span>
           <dl className="entry-readout">
             <dt>Sacs</dt>
             <dd>{formatCount(lastSaved.bagsMilled)}</dd>
