@@ -1,14 +1,23 @@
 import { useMemo } from 'react'
 import { formatCount } from '../lib/format'
 import { useLiveEntries } from '../lib/useLiveEntries'
+import { useSales } from '../lib/useSales'
 import { StockChart } from './StockChart'
 
 interface StockProps {
   siteId: string
 }
 
+interface Movement {
+  id: string
+  created_at: string
+  kind: 'production' | 'sale'
+  bags: number // signed: +production, -sale
+}
+
 export function Stock({ siteId }: StockProps) {
-  const { entries, loading } = useLiveEntries(siteId)
+  const { entries, loading: entriesLoading } = useLiveEntries(siteId)
+  const { sales, loading: salesLoading } = useSales(siteId)
 
   // Only entries the mill milled for itself become Stock — service milling
   // (a client's own rice) never belongs to the mill, so it never counts.
@@ -19,27 +28,35 @@ export function Stock({ siteId }: StockProps) {
 
   const untyped = useMemo(() => entries.filter((e) => e.entry_type == null).length, [entries])
 
-  const chronological = useMemo(
-    () => [...ownProduction].sort((a, b) => a.created_at.localeCompare(b.created_at)),
-    [ownProduction],
-  )
+  const movements = useMemo<Movement[]>(() => {
+    const production: Movement[] = ownProduction.map((e) => ({
+      id: e.id,
+      created_at: e.created_at,
+      kind: 'production',
+      bags: e.bags_milled,
+    }))
+    const sold: Movement[] = sales.map((s) => ({
+      id: s.id,
+      created_at: s.created_at,
+      kind: 'sale',
+      bags: -s.bags_sold,
+    }))
+    return [...production, ...sold].sort((a, b) => a.created_at.localeCompare(b.created_at))
+  }, [ownProduction, sales])
 
-  const total = useMemo(
-    () => chronological.reduce((sum, e) => sum + e.bags_milled, 0),
-    [chronological],
-  )
+  const total = useMemo(() => movements.reduce((sum, m) => sum + m.bags, 0), [movements])
 
   const series = useMemo(
     () =>
-      chronological.reduce<{ date: string; value: number }[]>((acc, e) => {
+      movements.reduce<{ date: string; value: number }[]>((acc, m) => {
         const previous = acc.length > 0 ? acc[acc.length - 1].value : 0
-        acc.push({ date: e.created_at, value: previous + e.bags_milled })
+        acc.push({ date: m.created_at, value: previous + m.bags })
         return acc
       }, []),
-    [chronological],
+    [movements],
   )
 
-  if (loading) return <p className="loading">Chargement…</p>
+  if (entriesLoading || salesLoading) return <p className="loading">Chargement…</p>
 
   return (
     <div className="stock-page">
@@ -49,9 +66,8 @@ export function Stock({ siteId }: StockProps) {
           {formatCount(total)} <span className="stock-unit">sacs</span>
         </p>
         <p className="stock-note">
-          Cumul du riz produit par la rizerie elle-même depuis le début (hors service de
-          mouture pour des clients) — n'inclut pas encore les sorties (vente, livraison),
-          qui arriveront avec le module Ventes.
+          Riz produit par la rizerie elle-même (hors service de mouture pour des clients),
+          moins ce qui a déjà été vendu.
         </p>
         {untyped > 0 && (
           <p className="stock-note stock-note--warning">
@@ -70,24 +86,33 @@ export function Stock({ siteId }: StockProps) {
       )}
 
       <div className="section-header">
-        <h2 className="section-title">Mouvements (entrées de production)</h2>
+        <h2 className="section-title">Mouvements</h2>
       </div>
 
-      {chronological.length === 0 ? (
-        <p>Aucune entrée pour l'instant.</p>
+      {movements.length === 0 ? (
+        <p>Aucun mouvement pour l'instant.</p>
       ) : (
         <table className="entries-table">
           <thead>
             <tr>
               <th>Date</th>
+              <th>Type</th>
               <th className="numeric">Sacs</th>
             </tr>
           </thead>
           <tbody>
-            {[...chronological].reverse().map((e) => (
-              <tr key={e.id}>
-                <td>{new Date(e.created_at).toLocaleString('fr-FR')}</td>
-                <td className="numeric">{formatCount(e.bags_milled)}</td>
+            {[...movements].reverse().map((m) => (
+              <tr key={`${m.kind}-${m.id}`}>
+                <td>{new Date(m.created_at).toLocaleString('fr-FR')}</td>
+                <td>
+                  <span className={`type-pill type-pill--${m.kind === 'production' ? 'own_production' : 'service'}`}>
+                    {m.kind === 'production' ? 'Production' : 'Vente'}
+                  </span>
+                </td>
+                <td className="numeric">
+                  {m.bags > 0 ? '+' : ''}
+                  {formatCount(m.bags)}
+                </td>
               </tr>
             ))}
           </tbody>

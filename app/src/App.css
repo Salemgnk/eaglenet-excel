@@ -113,7 +113,8 @@
 
 .login-form input,
 .entry-form input,
-.entry-form textarea {
+.entry-form textarea,
+.entry-form select {
   background: var(--color-surface);
   color: var(--color-ink);
   padding: 10px 12px;
@@ -125,7 +126,8 @@
 
 .login-form input:focus,
 .entry-form input:focus,
-.entry-form textarea:focus {
+.entry-form textarea:focus,
+.entry-form select:focus {
   outline: none;
   border-color: var(--color-accent);
   box-shadow: 0 0 0 3px var(--color-accent-soft);
@@ -203,6 +205,7 @@ button.primary:disabled {
 
 .login-form input.invalid,
 .entry-form input.invalid,
+.entry-form select.invalid,
 .entry-card input.invalid {
   border-color: var(--color-error);
 }

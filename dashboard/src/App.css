@@ -486,6 +486,48 @@ button.secondary:hover:not(:disabled) {
   border: 1px solid var(--color-border);
 }
 
+.inline-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-resting);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+.inline-form label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  font-size: 0.85rem;
+  color: var(--color-ink);
+}
+
+.inline-form input {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  padding: 8px 10px;
+  font-size: 0.95rem;
+  font-family: var(--font-body);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.inline-payment {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.inline-payment .search-input {
+  min-width: 120px;
+}
+
 .stock-chart-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);

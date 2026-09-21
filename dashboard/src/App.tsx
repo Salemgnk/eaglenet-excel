@@ -31,7 +31,7 @@ function App() {
       {profileLoading ? (
         <p className="loading">Chargement…</p>
       ) : profile?.site_id ? (
-        <Shell siteId={profile.site_id} />
+        <Shell siteId={profile.site_id} userId={session.user.id} />
       ) : (
         <p className="error" role="alert">
           Aucun profil associé à ce compte.

@@ -1,7 +1,9 @@
-import { LayoutDashboard, Package, ShoppingCart, Truck, Users } from 'lucide-react'
+import { LayoutDashboard, Package, ShoppingCart, Truck, UserRound, Users } from 'lucide-react'
 import { NavLink, Navigate, Route, Routes } from 'react-router-dom'
+import { Clients } from './Clients'
 import { Dashboard } from './Dashboard'
 import { Stock } from './Stock'
+import { Ventes } from './Ventes'
 
 interface Module {
   path: string
@@ -13,16 +15,18 @@ interface Module {
 const MODULES: Module[] = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, enabled: true },
   { path: '/stock', label: 'Stock', icon: Package, enabled: true },
-  { path: '/ventes', label: 'Ventes', icon: ShoppingCart, enabled: false },
+  { path: '/ventes', label: 'Ventes', icon: ShoppingCart, enabled: true },
+  { path: '/clients', label: 'Clients', icon: UserRound, enabled: true },
   { path: '/achats', label: 'Achats', icon: Truck, enabled: false },
   { path: '/employes', label: 'Employés', icon: Users, enabled: false },
 ]
 
 interface ShellProps {
   siteId: string
+  userId: string
 }
 
-export function Shell({ siteId }: ShellProps) {
+export function Shell({ siteId, userId }: ShellProps) {
   return (
     <div className="shell">
       <aside className="sidebar">
@@ -60,6 +64,8 @@ export function Shell({ siteId }: ShellProps) {
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<Dashboard siteId={siteId} />} />
           <Route path="/stock" element={<Stock siteId={siteId} />} />
+          <Route path="/ventes" element={<Ventes siteId={siteId} userId={userId} />} />
+          <Route path="/clients" element={<Clients siteId={siteId} userId={userId} />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </div>
