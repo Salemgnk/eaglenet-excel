@@ -156,6 +156,7 @@ export function PurchaseForm({ siteId, online, onSaved }: PurchaseFormProps) {
     <form onSubmit={handleSubmit} className="entry-form" noValidate>
       <label>
         Supplier
+        <span className="field-hint">Who you're buying raw paddy from.</span>
         <select
           className={supplierError && !creatingSupplier ? 'invalid' : undefined}
           value={creatingSupplier ? '__new__' : supplierId}
@@ -210,6 +211,7 @@ export function PurchaseForm({ siteId, online, onSaved }: PurchaseFormProps) {
 
       <label>
         Bags bought
+        <span className="field-hint">Raw paddy bought — this doesn't affect Stock, which only tracks processed rice.</span>
         <input
           type="number"
           inputMode="numeric"
@@ -229,6 +231,7 @@ export function PurchaseForm({ siteId, online, onSaved }: PurchaseFormProps) {
 
       <label>
         Price per bag (GH₵)
+        <span className="field-hint">The agreed purchase price for one bag.</span>
         <input
           type="number"
           inputMode="decimal"
@@ -247,6 +250,10 @@ export function PurchaseForm({ siteId, online, onSaved }: PurchaseFormProps) {
       </label>
 
       <p className="field-hint">Total amount: {formatCurrency(total)}</p>
+      <p className="field-hint">
+        Credit is fine — this adds to what you owe the supplier. Payments
+        are recorded separately, from the dashboard.
+      </p>
 
       <label>
         Notes

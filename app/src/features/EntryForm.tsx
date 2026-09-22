@@ -132,10 +132,11 @@ export function EntryForm({ onSaved }: EntryFormProps) {
     })
   }
 
-  function field(name: FieldName, label: string, required: boolean, placeholder: string) {
+  function field(name: FieldName, label: string, required: boolean, placeholder: string, hint: string) {
     return (
       <label>
         {label}
+        <span className="field-hint">{hint}</span>
         <input
           type="number"
           inputMode={name === 'bagsMilled' ? 'numeric' : 'decimal'}
@@ -169,6 +170,10 @@ export function EntryForm({ onSaved }: EntryFormProps) {
     <form onSubmit={handleSubmit} className="entry-form" noValidate>
       <div role="radiogroup" aria-label="Milling type">
         <p className="field-hint">Milling type</p>
+        <p className="field-hint">
+          Own production: your rice, kept as stock. Service milling: a
+          client's paddy — you just charge a fee.
+        </p>
         <div className="tabs entry-type-toggle">
           <button
             type="button"
@@ -197,10 +202,18 @@ export function EntryForm({ onSaved }: EntryFormProps) {
         </div>
         {entryTypeError && <span className="field-error">Choose a type</span>}
       </div>
-      {field('bagsMilled', 'Bags milled', REQUIRED.bagsMilled, 'e.g. 50')}
-      {field('revenue', 'Revenue', REQUIRED.revenue, '0.00')}
-      {field('expenses', 'Expenses', REQUIRED.expenses, '0.00')}
-      {field('other', 'Other', REQUIRED.other, '0.00')}
+      {field('bagsMilled', 'Bags milled', REQUIRED.bagsMilled, 'e.g. 50', 'Total bags processed in this batch.')}
+      {field(
+        'revenue',
+        'Revenue',
+        REQUIRED.revenue,
+        '0.00',
+        entryType === 'own_production'
+          ? "Usually 0 here — this stock earns money later when it's sold (see Sales)."
+          : 'Milling fee charged to the client for this job.',
+      )}
+      {field('expenses', 'Expenses', REQUIRED.expenses, '0.00', 'Costs for this batch (fuel, labor, etc.), if any.')}
+      {field('other', 'Other', REQUIRED.other, '0.00', 'Any other amount tied to this entry, if any.')}
       <label>
         Notes
         <textarea

@@ -148,6 +148,7 @@ export function SaleForm({ siteId, online, onSaved }: SaleFormProps) {
     <form onSubmit={handleSubmit} className="entry-form" noValidate>
       <label>
         Client
+        <span className="field-hint">Who is buying this rice.</span>
         <select
           className={clientError && !creatingClient ? 'invalid' : undefined}
           value={creatingClient ? '__new__' : clientId}
@@ -200,6 +201,10 @@ export function SaleForm({ siteId, online, onSaved }: SaleFormProps) {
 
       <label>
         Bags sold
+        <span className="field-hint">
+          Only your own stock — bags produced under Own production, not
+          service-milled rice.
+        </span>
         <input
           type="number"
           inputMode="numeric"
@@ -219,6 +224,7 @@ export function SaleForm({ siteId, online, onSaved }: SaleFormProps) {
 
       <label>
         Price per bag (GH₵)
+        <span className="field-hint">The agreed selling price for one bag.</span>
         <input
           type="number"
           inputMode="decimal"
@@ -237,6 +243,10 @@ export function SaleForm({ siteId, online, onSaved }: SaleFormProps) {
       </label>
 
       <p className="field-hint">Total amount: {formatCurrency(total)}</p>
+      <p className="field-hint">
+        Credit is fine — this adds to the client's balance. Payments are
+        recorded separately, from the dashboard.
+      </p>
 
       <label>
         Notes
