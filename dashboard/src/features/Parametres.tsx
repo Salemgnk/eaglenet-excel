@@ -5,7 +5,7 @@ interface ParametresProps {
   siteId: string
 }
 
-const CONFIRM_WORD = 'SUPPRIMER'
+const CONFIRM_WORD = 'DELETE'
 
 export function Parametres({ siteId }: ParametresProps) {
   const [confirmText, setConfirmText] = useState('')
