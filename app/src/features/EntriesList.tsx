@@ -52,6 +52,7 @@ interface EditDraft {
 
 interface EntriesListProps {
   online: boolean
+  syncVersion: number
 }
 
 function friendlyErrorMessage(message: string, online: boolean): string {
@@ -69,7 +70,7 @@ type ListItem =
   | { kind: 'synced'; id: string; createdAt: string; entry: Entry }
   | { kind: 'draft'; id: string; createdAt: string; draft: Draft }
 
-export function EntriesList({ online }: EntriesListProps) {
+export function EntriesList({ online, syncVersion }: EntriesListProps) {
   const [entries, setEntries] = useState<Entry[]>([])
   const [drafts, setDrafts] = useState<Draft[]>([])
   const [loading, setLoading] = useState(true)
@@ -88,8 +89,8 @@ export function EntriesList({ online }: EntriesListProps) {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  async function loadEntries() {
-    setLoading(true)
+  async function loadEntries(opts: { silent?: boolean } = {}) {
+    if (!opts.silent) setLoading(true)
     setDrafts(await listDrafts())
     // Local drafts are always available offline. The server list only makes
     // sense to fetch when actually online — waiting on a fetch that can't
@@ -105,13 +106,21 @@ export function EntriesList({ online }: EntriesListProps) {
         setEverLoadedOnline(true)
       }
     }
-    setLoading(false)
+    if (!opts.silent) setLoading(false)
   }
 
   useEffect(() => {
     loadEntries()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [online])
+
+  // A background sync pass just ran (e.g. auto-retry after a flaky
+  // connection came back) — refresh quietly, no loading flash, so the list
+  // catches up without the operator having to do anything.
+  useEffect(() => {
+    if (syncVersion > 0) loadEntries({ silent: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [syncVersion])
 
   function startEdit(entry: Entry) {
     setEditingId(entry.id)

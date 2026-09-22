@@ -17,10 +17,15 @@ import './App.css'
 
 type Tab = 'new' | 'sale' | 'purchase' | 'pointage' | 'list'
 
+// Time clock is paused pending on-site location verification — hidden from
+// the tab bar for now, but the feature (Pointage, timeEntries, sync) stays
+// in the codebase so it's a one-line flip once that work lands.
+const TIME_CLOCK_ENABLED = false
+
 function App() {
   const { session, loading: sessionLoading } = useSession()
   const { profile } = useProfile(session)
-  const { pendingCount, syncing, refreshPendingCount, runSync } = useSync(
+  const { pendingCount, syncing, syncVersion, refreshPendingCount, runSync } = useSync(
     session?.user.id,
     profile?.site_id,
   )
@@ -75,11 +80,15 @@ function App() {
       {pendingCount > 0 && (
         <div className="pending-badge">
           <span>
-            {pendingCount} item{pendingCount > 1 ? 's' : ''} not sent
+            {online
+              ? `${pendingCount} item${pendingCount > 1 ? 's' : ''} not yet sent`
+              : `${pendingCount} item${pendingCount > 1 ? 's' : ''} saved — will send automatically once back online`}
           </span>
-          <button className="link-button" onClick={runSync} disabled={syncing}>
-            {syncing ? 'Sending…' : 'Retry'}
-          </button>
+          {online && (
+            <button className="link-button" onClick={runSync} disabled={syncing}>
+              {syncing ? 'Sending…' : 'Retry'}
+            </button>
+          )}
         </div>
       )}
 
@@ -94,9 +103,11 @@ function App() {
           <button className={tab === 'purchase' ? 'active' : ''} onClick={() => setTab('purchase')}>
             Purchase
           </button>
-          <button className={tab === 'pointage' ? 'active' : ''} onClick={() => setTab('pointage')}>
-            Time clock
-          </button>
+          {TIME_CLOCK_ENABLED && (
+            <button className={tab === 'pointage' ? 'active' : ''} onClick={() => setTab('pointage')}>
+              Time clock
+            </button>
+          )}
           <button className={tab === 'list' ? 'active' : ''} onClick={() => setTab('list')}>
             My entries
           </button>
@@ -104,8 +115,12 @@ function App() {
       )}
 
       {isEmployeeOnly ? (
-        profile?.site_id && (
-          <Pointage siteId={profile.site_id} employeeId={session.user.id} online={online} />
+        TIME_CLOCK_ENABLED ? (
+          profile?.site_id && (
+            <Pointage siteId={profile.site_id} employeeId={session.user.id} online={online} />
+          )
+        ) : (
+          <p className="loading">Time clock is coming back soon.</p>
         )
       ) : (
         <>
@@ -116,10 +131,10 @@ function App() {
           {tab === 'purchase' && profile?.site_id && (
             <PurchaseForm siteId={profile.site_id} online={online} onSaved={handlePurchaseSaved} />
           )}
-          {tab === 'pointage' && profile?.site_id && (
+          {TIME_CLOCK_ENABLED && tab === 'pointage' && profile?.site_id && (
             <Pointage siteId={profile.site_id} employeeId={session.user.id} online={online} />
           )}
-          {tab === 'list' && <EntriesList online={online} />}
+          {tab === 'list' && <EntriesList online={online} syncVersion={syncVersion} />}
         </>
       )}
     </div>
