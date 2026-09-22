@@ -1,10 +1,20 @@
-import { Building2, LayoutDashboard, Package, ShoppingCart, Truck, UserRound, Users } from 'lucide-react'
+import {
+  Building2,
+  LayoutDashboard,
+  Package,
+  Settings,
+  ShoppingCart,
+  Truck,
+  UserRound,
+  Users,
+} from 'lucide-react'
 import { NavLink, Navigate, Route, Routes } from 'react-router-dom'
 import { Achats } from './Achats'
 import { Clients } from './Clients'
 import { Dashboard } from './Dashboard'
 import { Employes } from './Employes'
 import { Fournisseurs } from './Fournisseurs'
+import { Parametres } from './Parametres'
 import { Stock } from './Stock'
 import { Ventes } from './Ventes'
 
@@ -23,6 +33,7 @@ const MODULES: Module[] = [
   { path: '/achats', label: 'Purchases', icon: Truck, enabled: true },
   { path: '/fournisseurs', label: 'Suppliers', icon: Building2, enabled: true },
   { path: '/employes', label: 'Employees', icon: Users, enabled: true },
+  { path: '/parametres', label: 'Settings', icon: Settings, enabled: true },
 ]
 
 interface ShellProps {
@@ -73,6 +84,7 @@ export function Shell({ siteId, userId }: ShellProps) {
           <Route path="/achats" element={<Achats siteId={siteId} userId={userId} />} />
           <Route path="/fournisseurs" element={<Fournisseurs siteId={siteId} userId={userId} />} />
           <Route path="/employes" element={<Employes siteId={siteId} userId={userId} />} />
+          <Route path="/parametres" element={<Parametres siteId={siteId} />} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </div>
