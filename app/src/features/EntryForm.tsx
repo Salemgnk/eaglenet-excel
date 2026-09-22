@@ -33,8 +33,13 @@ const ENTRY_TYPE_LABEL: Record<EntryType, string> = {
   service: 'Service milling',
 }
 
+// Service milling (a client's own paddy) is the more common case day to
+// day, so it's the default — the operator only has to act when it's
+// actually own production.
+const DEFAULT_ENTRY_TYPE: EntryType = 'service'
+
 export function EntryForm({ onSaved }: EntryFormProps) {
-  const [entryType, setEntryType] = useState<EntryType | null>(null)
+  const [entryType, setEntryType] = useState<EntryType | null>(DEFAULT_ENTRY_TYPE)
   const [entryTypeError, setEntryTypeError] = useState(false)
   const [bagsMilled, setBagsMilled] = useState('')
   const [revenue, setRevenue] = useState('')
@@ -92,7 +97,7 @@ export function EntryForm({ onSaved }: EntryFormProps) {
       other: results.other.value,
       notes,
     })
-    setEntryType(null)
+    setEntryType(DEFAULT_ENTRY_TYPE)
     setBagsMilled('')
     setRevenue('')
     setExpenses('')
