@@ -189,6 +189,7 @@ export function PurchaseForm({ siteId, online, onSaved }: PurchaseFormProps) {
             New supplier name
             <input
               type="text"
+              placeholder="e.g. Ashanti Paddy Co"
               className={supplierError ? 'invalid' : undefined}
               value={newSupplierName}
               onChange={(e) => setNewSupplierName(e.target.value)}
@@ -199,6 +200,7 @@ export function PurchaseForm({ siteId, online, onSaved }: PurchaseFormProps) {
             Contact (optional)
             <input
               type="text"
+              placeholder="Phone or email"
               value={newSupplierContact}
               onChange={(e) => setNewSupplierContact(e.target.value)}
             />
@@ -212,6 +214,7 @@ export function PurchaseForm({ siteId, online, onSaved }: PurchaseFormProps) {
           type="number"
           inputMode="numeric"
           min="0"
+          placeholder="e.g. 50"
           className={errors.bagsBought ? 'invalid' : undefined}
           value={bagsBought}
           onChange={(e) => setBagsBought(e.target.value)}
@@ -230,6 +233,7 @@ export function PurchaseForm({ siteId, online, onSaved }: PurchaseFormProps) {
           type="number"
           inputMode="decimal"
           min="0"
+          placeholder="0.00"
           className={errors.unitPrice ? 'invalid' : undefined}
           value={unitPrice}
           onChange={(e) => setUnitPrice(e.target.value)}
@@ -246,7 +250,11 @@ export function PurchaseForm({ siteId, online, onSaved }: PurchaseFormProps) {
 
       <label>
         Notes
-        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} />
+        <textarea
+          placeholder="Optional notes…"
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+        />
       </label>
 
       <button type="submit" disabled={submitting}>

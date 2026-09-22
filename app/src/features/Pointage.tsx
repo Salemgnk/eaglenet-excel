@@ -207,7 +207,12 @@ export function Pointage({ siteId, employeeId, online }: PointageProps) {
         </label>
         <label>
           Reason (optional)
-          <input type="text" value={leaveReason} onChange={(e) => setLeaveReason(e.target.value)} />
+          <input
+            type="text"
+            placeholder="e.g. Doctor's appointment"
+            value={leaveReason}
+            onChange={(e) => setLeaveReason(e.target.value)}
+          />
         </label>
         <button type="submit">Send request</button>
         {leaveSaved && (

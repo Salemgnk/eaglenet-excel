@@ -194,6 +194,7 @@ export function EntriesList({ online, syncVersion }: EntriesListProps) {
           type="number"
           inputMode={name === 'bags_milled' ? 'numeric' : 'decimal'}
           min="0"
+          placeholder={name === 'bags_milled' ? '0' : '0.00'}
           required={REQUIRED[name]}
           className={errors[name] ? 'invalid' : undefined}
           value={draftEdit[name]}
@@ -308,6 +309,7 @@ export function EntriesList({ online, syncVersion }: EntriesListProps) {
                 <label>
                   Notes
                   <textarea
+                    placeholder="Optional notes…"
                     value={draftEdit.notes}
                     onChange={(e) => setDraftEdit({ ...draftEdit, notes: e.target.value })}
                   />

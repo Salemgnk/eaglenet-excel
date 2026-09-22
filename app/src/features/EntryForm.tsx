@@ -127,7 +127,7 @@ export function EntryForm({ onSaved }: EntryFormProps) {
     })
   }
 
-  function field(name: FieldName, label: string, required: boolean) {
+  function field(name: FieldName, label: string, required: boolean, placeholder: string) {
     return (
       <label>
         {label}
@@ -135,6 +135,7 @@ export function EntryForm({ onSaved }: EntryFormProps) {
           type="number"
           inputMode={name === 'bagsMilled' ? 'numeric' : 'decimal'}
           min="0"
+          placeholder={placeholder}
           className={errors[name] ? 'invalid' : undefined}
           value={raw[name]}
           onChange={(e) => {
@@ -191,13 +192,17 @@ export function EntryForm({ onSaved }: EntryFormProps) {
         </div>
         {entryTypeError && <span className="field-error">Choose a type</span>}
       </div>
-      {field('bagsMilled', 'Bags milled', REQUIRED.bagsMilled)}
-      {field('revenue', 'Revenue', REQUIRED.revenue)}
-      {field('expenses', 'Expenses', REQUIRED.expenses)}
-      {field('other', 'Other', REQUIRED.other)}
+      {field('bagsMilled', 'Bags milled', REQUIRED.bagsMilled, 'e.g. 50')}
+      {field('revenue', 'Revenue', REQUIRED.revenue, '0.00')}
+      {field('expenses', 'Expenses', REQUIRED.expenses, '0.00')}
+      {field('other', 'Other', REQUIRED.other, '0.00')}
       <label>
         Notes
-        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} />
+        <textarea
+          placeholder="Optional notes…"
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+        />
       </label>
       <button type="submit" disabled={submitting}>
         {submitting ? 'Saving…' : 'Save'}

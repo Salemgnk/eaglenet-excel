@@ -179,6 +179,7 @@ export function SaleForm({ siteId, online, onSaved }: SaleFormProps) {
             New client name
             <input
               type="text"
+              placeholder="e.g. Kwame Rice Traders"
               className={clientError ? 'invalid' : undefined}
               value={newClientName}
               onChange={(e) => setNewClientName(e.target.value)}
@@ -189,6 +190,7 @@ export function SaleForm({ siteId, online, onSaved }: SaleFormProps) {
             Contact (optional)
             <input
               type="text"
+              placeholder="Phone or email"
               value={newClientContact}
               onChange={(e) => setNewClientContact(e.target.value)}
             />
@@ -202,6 +204,7 @@ export function SaleForm({ siteId, online, onSaved }: SaleFormProps) {
           type="number"
           inputMode="numeric"
           min="0"
+          placeholder="e.g. 20"
           className={errors.bagsSold ? 'invalid' : undefined}
           value={bagsSold}
           onChange={(e) => setBagsSold(e.target.value)}
@@ -220,6 +223,7 @@ export function SaleForm({ siteId, online, onSaved }: SaleFormProps) {
           type="number"
           inputMode="decimal"
           min="0"
+          placeholder="0.00"
           className={errors.unitPrice ? 'invalid' : undefined}
           value={unitPrice}
           onChange={(e) => setUnitPrice(e.target.value)}
@@ -236,7 +240,11 @@ export function SaleForm({ siteId, online, onSaved }: SaleFormProps) {
 
       <label>
         Notes
-        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} />
+        <textarea
+          placeholder="Optional notes…"
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+        />
       </label>
 
       <button type="submit" disabled={submitting}>
