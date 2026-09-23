@@ -42,6 +42,13 @@ const CATEGORY_COLOR: Record<ExpenseCategory, string> = {
   other: '#64748b',
 }
 
+// The historical-import script fell back to this exact description when
+// the source ledger gave no label for a row — it also means the row's date
+// was carried forward from the nearest earlier dated row, not read off a
+// real transaction, so both need a visible caveat rather than reading as
+// an ordinary dated, described expense.
+const UNLABELED_IMPORT_MARKER = 'Unlabeled expense from historical ledger'
+
 function monthKeyAndLabel(iso: string): { key: string; label: string } {
   const d = new Date(iso)
   return {
@@ -414,18 +421,32 @@ export function Depenses({ siteId, userId }: DepensesProps) {
             </tr>
           </thead>
           <tbody>
-            {visibleExpenses.map((expense: Expense) => (
-              <tr key={expense.id}>
-                <td>{new Date(expense.created_at).toLocaleString('en-GB')}</td>
-                <td>{CATEGORY_LABEL[expense.category]}</td>
-                <td>{employeeName(expense.employee_id) ?? '—'}</td>
-                <td className="numeric">{formatCurrency(expense.amount)}</td>
-                <td>{expense.description}</td>
-                <td className="actions-col">
-                  <DeleteRowButton onDelete={() => deleteExpense(expense.id)} />
-                </td>
-              </tr>
-            ))}
+            {visibleExpenses.map((expense: Expense) => {
+              const isUnlabeledImport = expense.description?.startsWith(UNLABELED_IMPORT_MARKER)
+              return (
+                <tr key={expense.id}>
+                  <td title={isUnlabeledImport ? 'Carried forward from the nearest dated row in the original ledger — not a confirmed transaction date.' : undefined}>
+                    {new Date(expense.created_at).toLocaleString('en-GB')}
+                  </td>
+                  <td>{CATEGORY_LABEL[expense.category]}</td>
+                  <td>{employeeName(expense.employee_id) ?? '—'}</td>
+                  <td className="numeric">{formatCurrency(expense.amount)}</td>
+                  <td>
+                    {isUnlabeledImport ? (
+                      <>
+                        <span className="status-pill pending">Imported</span>{' '}
+                        <span className="field-hint">No description in the original ledger</span>
+                      </>
+                    ) : (
+                      expense.description
+                    )}
+                  </td>
+                  <td className="actions-col">
+                    <DeleteRowButton onDelete={() => deleteExpense(expense.id)} />
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       )}

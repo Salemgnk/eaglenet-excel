@@ -9,7 +9,10 @@
 
   /* Eaglenet — platform SaaS identity (see DESIGN.md) */
   --color-accent: #10b981;
-  --color-accent-deep: #059669;
+  /* Darkened one step from the original #059669 (3.8:1 on white, 3.3:1 on
+     accent-soft — both fail WCAG AA's 4.5:1 for text). #047857 clears
+     4.5:1 on both surfaces this token is used as text color against. */
+  --color-accent-deep: #047857;
   --color-accent-soft: #d1fae5;
   --color-ink: #0f172a;
   --color-text: #64748b;

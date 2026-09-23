@@ -279,18 +279,6 @@ export function Dashboard({ siteId }: DashboardProps) {
           change={previousTotals && percentChange(totals.revenue, previousTotals.revenue)}
           sparkline={dailySparklines.revenue}
         />
-        <KpiCard
-          label="Expenses"
-          value={formatCurrency(totals.expenses)}
-          change={previousTotals && percentChange(totals.expenses, previousTotals.expenses)}
-          sparkline={dailySparklines.expenses}
-        />
-        <KpiCard
-          label="Other"
-          value={formatCurrency(totals.other)}
-          change={previousTotals && percentChange(totals.other, previousTotals.other)}
-          sparkline={dailySparklines.other}
-        />
       </div>
 
       {filtered.length === 0 ? (

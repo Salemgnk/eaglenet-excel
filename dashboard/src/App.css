@@ -221,6 +221,34 @@ a.sidebar-item:hover {
   margin: 0 0 4px;
 }
 
+button.primary {
+  background: var(--color-accent);
+  color: var(--color-surface);
+  border: none;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  box-shadow: var(--shadow-resting);
+  cursor: pointer;
+  transition: background-color 0.15s ease-out;
+}
+
+button.primary:hover:not(:disabled) {
+  background: var(--color-accent-deep);
+}
+
+button.primary:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+button.primary:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 button.secondary {
   background: var(--color-surface);
   color: var(--color-accent-deep);
@@ -716,17 +744,45 @@ select:focus {
   .sidebar {
     width: 100%;
     flex-direction: row;
-    flex-wrap: wrap;
+    align-items: center;
     gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
   }
 
   .sidebar-brand {
-    width: 100%;
+    padding: 0 var(--space-sm) 0 0;
+    flex-shrink: 0;
   }
 
+  /* A single scrollable row instead of a wrapped grid — the wrapped
+     version could eat ~190px of vertical space above any page content
+     on a real phone before the user ever reaches what they came for. */
   .sidebar-nav {
     flex-direction: row;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: var(--space-xs);
+  }
+
+  .sidebar-item {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .sidebar-item.disabled {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .totals-band {
+    grid-template-columns: 1fr;
+  }
+
+  .kpi-card .stat-readout,
+  .totals-band-item .stat-readout {
+    font-size: 1.5rem;
+    overflow-wrap: anywhere;
   }
 }
 
