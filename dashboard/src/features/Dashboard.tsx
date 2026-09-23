@@ -120,6 +120,11 @@ interface DashboardProps {
 export function Dashboard({ siteId }: DashboardProps) {
   const { entries, loading } = useLiveEntries(siteId)
   const [period, setPeriod] = useState<Period>('7d')
+  // An explicit custom range overrides the quick period buttons entirely —
+  // picking either date clears `period` so only one filter is ever active
+  // (same pattern as Expenses).
+  const [dateFrom, setDateFrom] = useState('')
+  const [dateTo, setDateTo] = useState('')
   const [granularity, setGranularity] = useState<Granularity>('day')
   const [search, setSearch] = useState('')
   const [sortField, setSortField] = useState<SortField>('created_at')
@@ -127,11 +132,24 @@ export function Dashboard({ siteId }: DashboardProps) {
   const [showOther, setShowOther] = useState(true)
   const [showNotes, setShowNotes] = useState(true)
 
+  const usingCustomRange = dateFrom !== '' || dateTo !== ''
+
   const filtered = useMemo(() => {
-    const start = periodStart(period)
-    if (!start) return entries
-    return entries.filter((entry) => new Date(entry.created_at) >= start)
-  }, [entries, period])
+    const start = usingCustomRange ? (dateFrom ? new Date(`${dateFrom}T00:00:00`) : null) : periodStart(period)
+    const end = usingCustomRange && dateTo ? new Date(`${dateTo}T23:59:59.999`) : null
+    return entries.filter((entry) => {
+      const t = new Date(entry.created_at)
+      if (start && t < start) return false
+      if (end && t > end) return false
+      return true
+    })
+  }, [entries, period, usingCustomRange, dateFrom, dateTo])
+
+  function selectPeriod(p: Period) {
+    setPeriod(p)
+    setDateFrom('')
+    setDateTo('')
+  }
 
   const totals = useMemo(
     () => ({
@@ -146,6 +164,7 @@ export function Dashboard({ siteId }: DashboardProps) {
   const grouped = useMemo(() => groupedTotals(filtered, granularity), [filtered, granularity])
 
   const previousTotals = useMemo(() => {
+    if (usingCustomRange) return null
     const range = previousPeriodRange(period)
     if (!range) return null
     const previousEntries = entries.filter((entry) => {
@@ -158,7 +177,7 @@ export function Dashboard({ siteId }: DashboardProps) {
       expenses: sum(previousEntries, 'expenses'),
       other: sum(previousEntries, 'other'),
     }
-  }, [entries, period])
+  }, [entries, period, usingCustomRange])
 
   const dailySparklines = useMemo(() => {
     const daily = groupedTotals(filtered, 'day').slice().reverse()
@@ -214,17 +233,38 @@ export function Dashboard({ siteId }: DashboardProps) {
 
   return (
     <div className="dashboard">
-      <nav className="period-selector">
-        {PERIODS.map((p) => (
+      <div className="table-toolbar">
+        <nav className="period-selector">
+          {PERIODS.map((p) => (
+            <button
+              key={p.id}
+              className={!usingCustomRange && period === p.id ? 'active' : ''}
+              onClick={() => selectPeriod(p.id)}
+            >
+              {p.label}
+            </button>
+          ))}
+        </nav>
+        <label>
+          From
+          <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
+        </label>
+        <label>
+          To
+          <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
+        </label>
+        {usingCustomRange && (
           <button
-            key={p.id}
-            className={period === p.id ? 'active' : ''}
-            onClick={() => setPeriod(p.id)}
+            className="secondary"
+            onClick={() => {
+              setDateFrom('')
+              setDateTo('')
+            }}
           >
-            {p.label}
+            Clear range
           </button>
-        ))}
-      </nav>
+        )}
+      </div>
 
       <div className="totals-band">
         <KpiCard
