@@ -139,7 +139,7 @@ export function Achats({ siteId, userId }: AchatsProps) {
               <th className="numeric">Price/bag</th>
               <th className="numeric">Amount</th>
               <th>Notes</th>
-              <th></th>
+              <th className="actions-col"></th>
             </tr>
           </thead>
           <tbody>
@@ -151,7 +151,7 @@ export function Achats({ siteId, userId }: AchatsProps) {
                 <td className="numeric">{formatCurrency(purchase.unit_price)}</td>
                 <td className="numeric">{formatCurrency(purchase.total_amount)}</td>
                 <td>{purchase.notes}</td>
-                <td>
+                <td className="actions-col">
                   <DeleteRowButton onDelete={() => deletePurchase(purchase.id)} />
                 </td>
               </tr>

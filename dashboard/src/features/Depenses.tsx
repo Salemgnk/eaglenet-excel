@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { formatCurrency } from '../lib/format'
+import { PERIODS, periodStart, type Period } from '../lib/period'
 import { supabase } from '../lib/supabase'
 import { type Expense, type ExpenseCategory, useExpenses } from '../lib/useExpenses'
 import { DeleteRowButton } from './DeleteRowButton'
@@ -37,8 +38,6 @@ const CATEGORY_COLOR: Record<ExpenseCategory, string> = {
   other: '#64748b',
 }
 
-const PAGE_SIZE = 25
-
 function monthKeyAndLabel(iso: string): { key: string; label: string } {
   const d = new Date(iso)
   return {
@@ -51,7 +50,10 @@ export function Depenses({ siteId, userId }: DepensesProps) {
   const { expenses, loading } = useExpenses(siteId)
   const [employees, setEmployees] = useState<EmployeeOption[]>([])
   const [categoryFilter, setCategoryFilter] = useState<ExpenseCategory | 'all'>('all')
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
+  // Defaults to "All" rather than mirroring Dashboard's "7 days": this data
+  // is mostly historical (a 2023–2025 import), so a recent-days default
+  // would open on an empty list.
+  const [period, setPeriod] = useState<Period>('all')
 
   const [adding, setAdding] = useState(false)
   const [category, setCategory] = useState<ExpenseCategory>('other')
@@ -121,22 +123,14 @@ export function Depenses({ siteId, userId }: DepensesProps) {
     return { total: changeFor(thisMonthTotal, lastMonthTotal), byCategory }
   }, [expenses])
 
-  const visibleExpenses = useMemo(
-    () => (categoryFilter === 'all' ? expenses : expenses.filter((e) => e.category === categoryFilter)),
-    [expenses, categoryFilter],
-  )
-
-  // Switching the category filter starts the list over at one page — the
-  // old visibleCount could otherwise be far past the end of a smaller
-  // filtered set, or hide rows that would now fit on the first page.
-  useEffect(() => {
-    setVisibleCount(PAGE_SIZE)
-  }, [categoryFilter])
-
-  const displayedExpenses = useMemo(
-    () => visibleExpenses.slice(0, visibleCount),
-    [visibleExpenses, visibleCount],
-  )
+  const visibleExpenses = useMemo(() => {
+    const start = periodStart(period)
+    return expenses.filter((e) => {
+      if (categoryFilter !== 'all' && e.category !== categoryFilter) return false
+      if (start && new Date(e.created_at) < start) return false
+      return true
+    })
+  }, [expenses, categoryFilter, period])
 
   async function deleteExpense(id: string) {
     await supabase.from('expenses').delete().eq('id', id)
@@ -266,6 +260,13 @@ export function Depenses({ siteId, userId }: DepensesProps) {
       )}
 
       <div className="table-toolbar">
+        <nav className="period-selector small">
+          {PERIODS.map((p) => (
+            <button key={p.id} className={period === p.id ? 'active' : ''} onClick={() => setPeriod(p.id)}>
+              {p.label}
+            </button>
+          ))}
+        </nav>
         <label>
           Category
           <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value as ExpenseCategory | 'all')}>
@@ -304,43 +305,34 @@ export function Depenses({ siteId, userId }: DepensesProps) {
       )}
 
       {visibleExpenses.length === 0 ? (
-        <p>No expenses yet.</p>
+        <p>No expenses for this period.</p>
       ) : (
-        <>
-          <table className="entries-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Category</th>
-                <th>Employee</th>
-                <th className="numeric">Amount</th>
-                <th>Description</th>
-                <th></th>
+        <table className="entries-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Category</th>
+              <th>Employee</th>
+              <th className="numeric">Amount</th>
+              <th>Description</th>
+              <th className="actions-col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {visibleExpenses.map((expense: Expense) => (
+              <tr key={expense.id}>
+                <td>{new Date(expense.created_at).toLocaleString('en-GB')}</td>
+                <td>{CATEGORY_LABEL[expense.category]}</td>
+                <td>{employeeName(expense.employee_id) ?? '—'}</td>
+                <td className="numeric">{formatCurrency(expense.amount)}</td>
+                <td>{expense.description}</td>
+                <td className="actions-col">
+                  <DeleteRowButton onDelete={() => deleteExpense(expense.id)} />
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {displayedExpenses.map((expense: Expense) => (
-                <tr key={expense.id}>
-                  <td>{new Date(expense.created_at).toLocaleString('en-GB')}</td>
-                  <td>{CATEGORY_LABEL[expense.category]}</td>
-                  <td>{employeeName(expense.employee_id) ?? '—'}</td>
-                  <td className="numeric">{formatCurrency(expense.amount)}</td>
-                  <td>{expense.description}</td>
-                  <td>
-                    <DeleteRowButton onDelete={() => deleteExpense(expense.id)} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {visibleCount < visibleExpenses.length && (
-            <div className="load-more">
-              <button className="secondary" onClick={() => setVisibleCount((v) => v + PAGE_SIZE)}>
-                Load more ({visibleExpenses.length - visibleCount} remaining)
-              </button>
-            </div>
-          )}
-        </>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   )
