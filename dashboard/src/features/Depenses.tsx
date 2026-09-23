@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { downloadCsv } from '../lib/csv'
 import { formatCurrency } from '../lib/format'
 import { PERIODS, periodStart, type Period } from '../lib/period'
 import { supabase } from '../lib/supabase'
@@ -184,6 +185,20 @@ export function Depenses({ siteId, userId }: DepensesProps) {
     setDateTo('')
   }
 
+  // Exports exactly what's on screen — same category/date filters and
+  // sort order as the table, not the unfiltered full set.
+  function exportCsv() {
+    const rows = visibleExpenses.map((expense) => [
+      new Date(expense.created_at).toLocaleString('en-GB'),
+      CATEGORY_LABEL[expense.category],
+      employeeName(expense.employee_id) ?? '',
+      expense.amount,
+      expense.description ?? '',
+    ])
+    const today = new Date().toISOString().slice(0, 10)
+    downloadCsv(`eaglenet-expenses-${today}.csv`, ['Date', 'Category', 'Employee', 'Amount', 'Description'], rows)
+  }
+
   async function deleteExpense(id: string) {
     await supabase.from('expenses').delete().eq('id', id)
   }
@@ -257,9 +272,14 @@ export function Depenses({ siteId, userId }: DepensesProps) {
 
       <div className="section-header">
         <h2 className="section-title">Expenses</h2>
-        <button className="secondary" onClick={() => setAdding((v) => !v)}>
-          {adding ? 'Cancel' : '+ New expense'}
-        </button>
+        <div className="section-header-actions">
+          <button className="secondary" onClick={exportCsv}>
+            Export CSV
+          </button>
+          <button className="secondary" onClick={() => setAdding((v) => !v)}>
+            {adding ? 'Cancel' : '+ New expense'}
+          </button>
+        </div>
       </div>
 
       {adding && (

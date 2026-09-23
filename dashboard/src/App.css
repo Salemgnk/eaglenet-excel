@@ -352,6 +352,12 @@ button.secondary:hover:not(:disabled) {
   margin: 0;
 }
 
+.section-header-actions {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
 .table-toolbar {
   display: flex;
   align-items: center;
