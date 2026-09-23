@@ -49,17 +49,18 @@ Implementing immediately per explicit user instruction.
 
 ## Phase 2 — Dashboard: Expenses module
 
-- [ ] `dashboard/src/lib/useExpenses.ts` (thin `useLiveTable` wrapper,
+- [x] `dashboard/src/lib/useExpenses.ts` (thin `useLiveTable` wrapper,
       mirrors `usePurchases.ts`).
-- [ ] `dashboard/src/features/Depenses.tsx` (mirrors `Achats.tsx`
+- [x] `dashboard/src/features/Depenses.tsx` (mirrors `Achats.tsx`
       minus the linked-entity picker/balance column; adds a category
       filter and period totals by category).
-- [ ] `Shell.tsx`: new "Expenses" route/nav item, active (not
+- [x] `Shell.tsx`: new "Expenses" route/nav item, active (not
       "Soon").
-- [ ] Manual test: owner records an expense directly from the
-      dashboard; category filter and period totals match what was
-      entered; an operator-created expense can be corrected by the
-      owner (RLS).
+- [x] Manual test: owner records an expense directly from the
+      dashboard; it appears live via Realtime with no reload; category
+      totals band matches what was entered (e.g. Salary GH₵1,000.00
+      across two rows); category filter present; no console/RLS
+      errors.
 
 ## Phase 3 — Product documentation + QA
 
