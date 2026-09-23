@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { EntriesList } from './features/EntriesList'
 import { EntryForm } from './features/EntryForm'
+import { ExpenseForm } from './features/ExpenseForm'
 import { LoginForm } from './features/LoginForm'
 import { Pointage } from './features/Pointage'
 import { PurchaseForm } from './features/PurchaseForm'
 import { SaleForm } from './features/SaleForm'
 import { draftExists } from './lib/drafts'
+import { expenseDraftExists } from './lib/expenseDrafts'
 import { purchaseDraftExists } from './lib/purchaseDrafts'
 import { saleDraftExists } from './lib/salesDrafts'
 import { supabase } from './lib/supabase'
@@ -15,7 +17,7 @@ import { useSession } from './lib/useSession'
 import { useSync } from './lib/useSync'
 import './App.css'
 
-type Tab = 'new' | 'sale' | 'purchase' | 'pointage' | 'list'
+type Tab = 'new' | 'sale' | 'purchase' | 'expense' | 'pointage' | 'list'
 
 // Time clock is paused pending on-site location verification — hidden from
 // the tab bar for now, but the feature (Pointage, timeEntries, sync) stays
@@ -57,6 +59,12 @@ function App() {
     await refreshPendingCount()
     await runSync()
     return !(await purchaseDraftExists(draftId))
+  }
+
+  async function handleExpenseSaved(draftId: string): Promise<boolean> {
+    await refreshPendingCount()
+    await runSync()
+    return !(await expenseDraftExists(draftId))
   }
 
   return (
@@ -103,6 +111,9 @@ function App() {
           <button className={tab === 'purchase' ? 'active' : ''} onClick={() => setTab('purchase')}>
             Purchase
           </button>
+          <button className={tab === 'expense' ? 'active' : ''} onClick={() => setTab('expense')}>
+            Expense
+          </button>
           {TIME_CLOCK_ENABLED && (
             <button className={tab === 'pointage' ? 'active' : ''} onClick={() => setTab('pointage')}>
               Time clock
@@ -130,6 +141,9 @@ function App() {
           )}
           {tab === 'purchase' && profile?.site_id && (
             <PurchaseForm siteId={profile.site_id} online={online} onSaved={handlePurchaseSaved} />
+          )}
+          {tab === 'expense' && profile?.site_id && (
+            <ExpenseForm siteId={profile.site_id} online={online} onSaved={handleExpenseSaved} />
           )}
           {TIME_CLOCK_ENABLED && tab === 'pointage' && profile?.site_id && (
             <Pointage siteId={profile.site_id} employeeId={session.user.id} online={online} />

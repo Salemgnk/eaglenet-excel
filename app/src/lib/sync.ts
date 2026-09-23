@@ -1,6 +1,7 @@
 import { supabase } from './supabase'
 import { deleteDraft, listDrafts } from './drafts'
 import { deletePendingClient, listPendingClients } from './clientsCache'
+import { deleteExpenseDraft, listExpenseDrafts } from './expenseDrafts'
 import { deleteLeaveDraft, listLeaveDrafts } from './leaveRequests'
 import { deletePendingSupplier, listPendingSuppliers } from './suppliersCache'
 import { deletePurchaseDraft, listPurchaseDrafts } from './purchaseDrafts'
@@ -141,6 +142,40 @@ export async function syncPendingPurchases(
 
     if (!error || error.code === UNIQUE_VIOLATION) {
       await deletePurchaseDraft(draft.id)
+      synced++
+    } else {
+      failed++
+    }
+  }
+
+  return { synced, failed }
+}
+
+// Unlike syncPendingSales/syncPendingPurchases, there's no linked entity
+// to pre-sync: employee_id (when set) already points at an existing
+// profile, never one created offline from this app.
+export async function syncPendingExpenses(
+  operatorId: string,
+  siteId: string,
+): Promise<SyncResult> {
+  const drafts = await listExpenseDrafts()
+  let synced = 0
+  let failed = 0
+
+  for (const draft of drafts) {
+    const { error } = await supabase.from('expenses').insert({
+      id: draft.id,
+      site_id: siteId,
+      category: draft.category,
+      amount: draft.amount,
+      employee_id: draft.employee_id,
+      description: draft.description || null,
+      recorded_by: operatorId,
+      created_at: draft.created_at,
+    })
+
+    if (!error || error.code === UNIQUE_VIOLATION) {
+      await deleteExpenseDraft(draft.id)
       synced++
     } else {
       failed++

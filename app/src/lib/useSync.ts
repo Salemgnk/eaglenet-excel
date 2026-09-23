@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
 import { countPendingClients } from './clientsCache'
 import { countDrafts } from './drafts'
+import { countExpenseDrafts } from './expenseDrafts'
 import { countLeaveDrafts } from './leaveRequests'
 import { countPendingSuppliers } from './suppliersCache'
 import { countPurchaseDrafts } from './purchaseDrafts'
 import { countSaleDrafts } from './salesDrafts'
 import {
   syncPendingDrafts,
+  syncPendingExpenses,
   syncPendingLeaveRequests,
   syncPendingPurchases,
   syncPendingSales,
@@ -29,16 +31,18 @@ export function useSync(operatorId: string | undefined, siteId: string | undefin
   const [syncVersion, setSyncVersion] = useState(0)
 
   const refreshPendingCount = useCallback(async () => {
-    const [entries, sales, clients, purchases, suppliers, shifts, leave] = await Promise.all([
-      countDrafts(),
-      countSaleDrafts(),
-      countPendingClients(),
-      countPurchaseDrafts(),
-      countPendingSuppliers(),
-      countShiftDrafts(),
-      countLeaveDrafts(),
-    ])
-    setPendingCount(entries + sales + clients + purchases + suppliers + shifts + leave)
+    const [entries, sales, clients, purchases, suppliers, expenses, shifts, leave] =
+      await Promise.all([
+        countDrafts(),
+        countSaleDrafts(),
+        countPendingClients(),
+        countPurchaseDrafts(),
+        countPendingSuppliers(),
+        countExpenseDrafts(),
+        countShiftDrafts(),
+        countLeaveDrafts(),
+      ])
+    setPendingCount(entries + sales + clients + purchases + suppliers + expenses + shifts + leave)
   }, [])
 
   const runSync = useCallback(async () => {
@@ -47,6 +51,7 @@ export function useSync(operatorId: string | undefined, siteId: string | undefin
     await syncPendingDrafts(operatorId, siteId)
     await syncPendingSales(operatorId, siteId)
     await syncPendingPurchases(operatorId, siteId)
+    await syncPendingExpenses(operatorId, siteId)
     await syncPendingShifts(operatorId, siteId)
     await syncPendingLeaveRequests(operatorId, siteId)
     await refreshPendingCount()
