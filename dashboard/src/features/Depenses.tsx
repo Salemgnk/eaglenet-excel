@@ -29,6 +29,9 @@ const CATEGORY_LABEL: Record<ExpenseCategory, string> = {
 
 const CATEGORIES = Object.keys(CATEGORY_LABEL) as ExpenseCategory[]
 
+type SortField = 'created_at' | 'category' | 'amount'
+type SortDir = 'asc' | 'desc'
+
 const CATEGORY_COLOR: Record<ExpenseCategory, string> = {
   salary: '#10b981',
   electricity: '#f59e0b',
@@ -54,6 +57,12 @@ export function Depenses({ siteId, userId }: DepensesProps) {
   // is mostly historical (a 2023–2025 import), so a recent-days default
   // would open on an empty list.
   const [period, setPeriod] = useState<Period>('all')
+  // An explicit custom range overrides the quick period buttons entirely —
+  // picking either date clears `period` so only one filter is ever active.
+  const [dateFrom, setDateFrom] = useState('')
+  const [dateTo, setDateTo] = useState('')
+  const [sortField, setSortField] = useState<SortField>('created_at')
+  const [sortDir, setSortDir] = useState<SortDir>('desc')
 
   const [adding, setAdding] = useState(false)
   const [category, setCategory] = useState<ExpenseCategory>('other')
@@ -123,14 +132,57 @@ export function Depenses({ siteId, userId }: DepensesProps) {
     return { total: changeFor(thisMonthTotal, lastMonthTotal), byCategory }
   }, [expenses])
 
-  const visibleExpenses = useMemo(() => {
-    const start = periodStart(period)
+  const usingCustomRange = dateFrom !== '' || dateTo !== ''
+
+  const filteredExpenses = useMemo(() => {
+    const start = usingCustomRange ? (dateFrom ? new Date(`${dateFrom}T00:00:00`) : null) : periodStart(period)
+    const end = usingCustomRange && dateTo ? new Date(`${dateTo}T23:59:59.999`) : null
     return expenses.filter((e) => {
       if (categoryFilter !== 'all' && e.category !== categoryFilter) return false
-      if (start && new Date(e.created_at) < start) return false
+      const t = new Date(e.created_at)
+      if (start && t < start) return false
+      if (end && t > end) return false
       return true
     })
-  }, [expenses, categoryFilter, period])
+  }, [expenses, categoryFilter, period, usingCustomRange, dateFrom, dateTo])
+
+  const visibleExpenses = useMemo(() => {
+    const dir = sortDir === 'asc' ? 1 : -1
+    return [...filteredExpenses].sort((a, b) => {
+      if (sortField === 'created_at') return a.created_at.localeCompare(b.created_at) * dir
+      if (sortField === 'category') return a.category.localeCompare(b.category) * dir
+      return (a.amount - b.amount) * dir
+    })
+  }, [filteredExpenses, sortField, sortDir])
+
+  function toggleSort(field: SortField) {
+    if (sortField === field) {
+      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
+    } else {
+      setSortField(field)
+      setSortDir('desc')
+    }
+  }
+
+  function sortIndicator(field: SortField) {
+    if (sortField !== field) return null
+    return <span className="sort-arrow">{sortDir === 'asc' ? '▲' : '▼'}</span>
+  }
+
+  function sortableHeader(field: SortField, label: string, numeric = false) {
+    return (
+      <th className={numeric ? 'sortable numeric' : 'sortable'} onClick={() => toggleSort(field)}>
+        {label}
+        {sortIndicator(field)}
+      </th>
+    )
+  }
+
+  function selectPeriod(p: Period) {
+    setPeriod(p)
+    setDateFrom('')
+    setDateTo('')
+  }
 
   async function deleteExpense(id: string) {
     await supabase.from('expenses').delete().eq('id', id)
@@ -262,11 +314,34 @@ export function Depenses({ siteId, userId }: DepensesProps) {
       <div className="table-toolbar">
         <nav className="period-selector small">
           {PERIODS.map((p) => (
-            <button key={p.id} className={period === p.id ? 'active' : ''} onClick={() => setPeriod(p.id)}>
+            <button
+              key={p.id}
+              className={!usingCustomRange && period === p.id ? 'active' : ''}
+              onClick={() => selectPeriod(p.id)}
+            >
               {p.label}
             </button>
           ))}
         </nav>
+        <label>
+          From
+          <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
+        </label>
+        <label>
+          To
+          <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
+        </label>
+        {usingCustomRange && (
+          <button
+            className="secondary"
+            onClick={() => {
+              setDateFrom('')
+              setDateTo('')
+            }}
+          >
+            Clear range
+          </button>
+        )}
         <label>
           Category
           <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value as ExpenseCategory | 'all')}>
@@ -305,15 +380,15 @@ export function Depenses({ siteId, userId }: DepensesProps) {
       )}
 
       {visibleExpenses.length === 0 ? (
-        <p>No expenses for this period.</p>
+        <p>No expenses match these filters.</p>
       ) : (
         <table className="entries-table">
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Category</th>
+              {sortableHeader('created_at', 'Date')}
+              {sortableHeader('category', 'Category')}
               <th>Employee</th>
-              <th className="numeric">Amount</th>
+              {sortableHeader('amount', 'Amount', true)}
               <th>Description</th>
               <th className="actions-col"></th>
             </tr>

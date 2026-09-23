@@ -359,6 +359,31 @@ button.secondary:hover:not(:disabled) {
   flex-wrap: wrap;
 }
 
+.table-toolbar label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.table-toolbar input[type='date'] {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  padding: 5px 10px;
+  font-size: 0.85rem;
+  font-family: var(--font-body);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.table-toolbar input[type='date']:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
 .search-input {
   background: var(--color-surface);
   color: var(--color-ink);
