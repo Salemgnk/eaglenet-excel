@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { formatCount, formatCurrency } from '../lib/format'
 import { useLiveEntries, type Entry, type EntryType } from '../lib/useLiveEntries'
 
@@ -237,6 +238,20 @@ export function Dashboard({ siteId }: DashboardProps) {
                     </button>
                   ))}
                 </nav>
+              </div>
+              <div className="chart-card">
+                <ResponsiveContainer width="100%" height={220}>
+                  <LineChart data={[...grouped].reverse()}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                    <XAxis dataKey="label" tick={{ fontSize: 11 }} />
+                    <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => formatCurrency(v)} width={80} />
+                    <Tooltip formatter={(value: any) => formatCurrency(Number(value))} />
+                    <Legend wrapperStyle={{ fontSize: 12 }} />
+                    <Line type="monotone" dataKey="revenue" name="Revenue" stroke="#10b981" strokeWidth={2} dot={false} />
+                    <Line type="monotone" dataKey="expenses" name="Expenses" stroke="#dc2626" strokeWidth={2} dot={false} />
+                    <Line type="monotone" dataKey="other" name="Other" stroke="#64748b" strokeWidth={2} dot={false} />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
               <table className="entries-table">
                 <thead>

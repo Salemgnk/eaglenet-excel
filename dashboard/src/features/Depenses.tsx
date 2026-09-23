@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { formatCurrency } from '../lib/format'
 import { supabase } from '../lib/supabase'
 import { type Expense, type ExpenseCategory, useExpenses } from '../lib/useExpenses'
@@ -24,6 +25,23 @@ const CATEGORY_LABEL: Record<ExpenseCategory, string> = {
 }
 
 const CATEGORIES = Object.keys(CATEGORY_LABEL) as ExpenseCategory[]
+
+const CATEGORY_COLOR: Record<ExpenseCategory, string> = {
+  salary: '#10b981',
+  electricity: '#f59e0b',
+  fuel: '#dc2626',
+  maintenance: '#3b82f6',
+  transport: '#8b5cf6',
+  other: '#64748b',
+}
+
+function monthKeyAndLabel(iso: string): { key: string; label: string } {
+  const d = new Date(iso)
+  return {
+    key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`,
+    label: d.toLocaleDateString('en-GB', { month: 'short', year: '2-digit' }),
+  }
+}
 
 export function Depenses({ siteId, userId }: DepensesProps) {
   const { expenses, loading } = useExpenses(siteId)
@@ -66,6 +84,27 @@ export function Depenses({ siteId, userId }: DepensesProps) {
   const visibleExpenses = useMemo(
     () => (categoryFilter === 'all' ? expenses : expenses.filter((e) => e.category === categoryFilter)),
     [expenses, categoryFilter],
+  )
+
+  // Only categories actually present in the (already category-filtered)
+  // visible set get a bar segment — a single-category filter naturally
+  // collapses this to one series instead of five empty ones.
+  const monthlyByCategory = useMemo(() => {
+    const byMonth = new Map<string, { label: string } & Partial<Record<ExpenseCategory, number>>>()
+    for (const exp of visibleExpenses) {
+      const { key, label } = monthKeyAndLabel(exp.created_at)
+      const bucket = byMonth.get(key) ?? { label }
+      bucket[exp.category] = (bucket[exp.category] ?? 0) + exp.amount
+      byMonth.set(key, bucket)
+    }
+    return Array.from(byMonth.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([, bucket]) => bucket)
+  }, [visibleExpenses])
+
+  const chartCategories = useMemo(
+    () => CATEGORIES.filter((cat) => visibleExpenses.some((e) => e.category === cat)),
+    [visibleExpenses],
   )
 
   const amountValue = Number(amount.trim())
@@ -184,6 +223,23 @@ export function Depenses({ siteId, userId }: DepensesProps) {
           </select>
         </label>
       </div>
+
+      {monthlyByCategory.length > 1 && (
+        <div className="chart-card">
+          <ResponsiveContainer width="100%" height={240}>
+            <BarChart data={monthlyByCategory}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+              <XAxis dataKey="label" tick={{ fontSize: 11 }} />
+              <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => formatCurrency(v)} width={80} />
+              <Tooltip formatter={(value: any) => formatCurrency(Number(value))} />
+              <Legend wrapperStyle={{ fontSize: 12 }} />
+              {chartCategories.map((cat) => (
+                <Bar key={cat} dataKey={cat} name={CATEGORY_LABEL[cat]} stackId="expenses" fill={CATEGORY_COLOR[cat]} />
+              ))}
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
 
       {visibleExpenses.length === 0 ? (
         <p>No expenses yet.</p>
