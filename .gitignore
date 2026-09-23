@@ -2,3 +2,4 @@ node_modules
 .claude/
 .env
 .superpowers/
+old_data/

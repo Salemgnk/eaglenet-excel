@@ -64,9 +64,11 @@ Implementing immediately per explicit user instruction.
 
 ## Phase 3 — Product documentation + QA
 
-- [ ] `PRODUCT.md`: Dépenses générales capability — explicitly note
+- [x] `PRODUCT.md`: Dépenses générales capability — explicitly note
       this doesn't reopen the payroll decision (no rate calculation,
       no payslip; `salary` is just a category like any other).
-- [ ] Typecheck + lint both apps.
-- [ ] Confirm the main Dashboard (entries-based revenue/expenses
-      cards) and Stock are both unaffected — no query touches them.
+- [x] Typecheck + lint both apps — clean, only pre-existing warnings.
+- [x] Confirm the main Dashboard (entries-based revenue/expenses
+      cards) and Stock are both unaffected — grepped both files,
+      every `expenses` reference is the pre-existing `entries.expenses`
+      field, not the new table.
