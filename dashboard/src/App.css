@@ -288,6 +288,41 @@ button.secondary:hover:not(:disabled) {
   box-shadow: var(--shadow-resting);
 }
 
+.kpi-card {
+  position: relative;
+}
+
+.kpi-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.kpi-sparkline {
+  width: 56px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.kpi-change {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin: 4px 0 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.kpi-change.up {
+  color: var(--color-success);
+}
+
+.kpi-change.down {
+  color: var(--color-error);
+}
+
 .stat-readout {
   font-family: var(--font-readout);
   font-variant-numeric: tabular-nums;

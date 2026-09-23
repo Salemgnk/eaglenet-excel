@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { formatCount, formatCurrency } from '../lib/format'
 import { useLiveEntries, type Entry, type EntryType } from '../lib/useLiveEntries'
+import { KpiCard } from './KpiCard'
 
 const ENTRY_TYPE_LABEL: Record<EntryType, string> = {
   own_production: 'Own production',
@@ -53,6 +54,21 @@ function periodStart(period: Period): Date | null {
 
 function sum(entries: Entry[], field: keyof Pick<Entry, 'bags_milled' | 'revenue' | 'expenses' | 'other'>) {
   return entries.reduce((total, entry) => total + entry[field], 0)
+}
+
+// The window immediately before the current one, same duration — "All" has
+// no meaningful prior window to compare against.
+function previousPeriodRange(period: Period): { start: Date; end: Date } | null {
+  const start = periodStart(period)
+  if (!start) return null
+  const end = new Date()
+  const durationMs = end.getTime() - start.getTime()
+  return { start: new Date(start.getTime() - durationMs), end: start }
+}
+
+function percentChange(current: number, previous: number): number | null {
+  if (previous === 0) return current === 0 ? null : 100
+  return ((current - previous) / Math.abs(previous)) * 100
 }
 
 interface GroupTotal {
@@ -144,6 +160,31 @@ export function Dashboard({ siteId }: DashboardProps) {
 
   const grouped = useMemo(() => groupedTotals(filtered, granularity), [filtered, granularity])
 
+  const previousTotals = useMemo(() => {
+    const range = previousPeriodRange(period)
+    if (!range) return null
+    const previousEntries = entries.filter((entry) => {
+      const t = new Date(entry.created_at)
+      return t >= range.start && t < range.end
+    })
+    return {
+      bags_milled: sum(previousEntries, 'bags_milled'),
+      revenue: sum(previousEntries, 'revenue'),
+      expenses: sum(previousEntries, 'expenses'),
+      other: sum(previousEntries, 'other'),
+    }
+  }, [entries, period])
+
+  const dailySparklines = useMemo(() => {
+    const daily = groupedTotals(filtered, 'day').slice().reverse()
+    return {
+      bags_milled: daily.map((d) => d.bags_milled),
+      revenue: daily.map((d) => d.revenue),
+      expenses: daily.map((d) => d.expenses),
+      other: daily.map((d) => d.other),
+    }
+  }, [filtered])
+
   const searched = useMemo(() => {
     const q = search.trim().toLowerCase()
     if (!q) return filtered
@@ -201,22 +242,30 @@ export function Dashboard({ siteId }: DashboardProps) {
       </nav>
 
       <div className="totals-band">
-        <div className="totals-band-item">
-          <p className="field-hint">Bags milled</p>
-          <p className="stat-readout">{formatCount(totals.bags_milled)}</p>
-        </div>
-        <div className="totals-band-item">
-          <p className="field-hint">Revenue</p>
-          <p className="stat-readout">{formatCurrency(totals.revenue)}</p>
-        </div>
-        <div className="totals-band-item">
-          <p className="field-hint">Expenses</p>
-          <p className="stat-readout">{formatCurrency(totals.expenses)}</p>
-        </div>
-        <div className="totals-band-item">
-          <p className="field-hint">Other</p>
-          <p className="stat-readout">{formatCurrency(totals.other)}</p>
-        </div>
+        <KpiCard
+          label="Bags milled"
+          value={formatCount(totals.bags_milled)}
+          change={previousTotals && percentChange(totals.bags_milled, previousTotals.bags_milled)}
+          sparkline={dailySparklines.bags_milled}
+        />
+        <KpiCard
+          label="Revenue"
+          value={formatCurrency(totals.revenue)}
+          change={previousTotals && percentChange(totals.revenue, previousTotals.revenue)}
+          sparkline={dailySparklines.revenue}
+        />
+        <KpiCard
+          label="Expenses"
+          value={formatCurrency(totals.expenses)}
+          change={previousTotals && percentChange(totals.expenses, previousTotals.expenses)}
+          sparkline={dailySparklines.expenses}
+        />
+        <KpiCard
+          label="Other"
+          value={formatCurrency(totals.other)}
+          change={previousTotals && percentChange(totals.other, previousTotals.other)}
+          sparkline={dailySparklines.other}
+        />
       </div>
 
       {filtered.length === 0 ? (

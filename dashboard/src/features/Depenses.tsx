@@ -3,6 +3,7 @@ import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAx
 import { formatCurrency } from '../lib/format'
 import { supabase } from '../lib/supabase'
 import { type Expense, type ExpenseCategory, useExpenses } from '../lib/useExpenses'
+import { KpiCard } from './KpiCard'
 
 interface DepensesProps {
   siteId: string
@@ -81,6 +82,41 @@ export function Depenses({ siteId, userId }: DepensesProps) {
 
   const grandTotal = useMemo(() => expenses.reduce((sum, e) => sum + e.amount, 0), [expenses])
 
+  // This-calendar-month vs. the one before, per category and overall — the
+  // KPI band's "vs last period" badges, independent of the category filter.
+  const monthChange = useMemo(() => {
+    const now = new Date()
+    const thisMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+    const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+    const lastMonthKey = `${lastMonthDate.getFullYear()}-${String(lastMonthDate.getMonth() + 1).padStart(2, '0')}`
+
+    const thisMonth = new Map<ExpenseCategory, number>()
+    const lastMonth = new Map<ExpenseCategory, number>()
+    let thisMonthTotal = 0
+    let lastMonthTotal = 0
+    for (const exp of expenses) {
+      const { key } = monthKeyAndLabel(exp.created_at)
+      if (key === thisMonthKey) {
+        thisMonth.set(exp.category, (thisMonth.get(exp.category) ?? 0) + exp.amount)
+        thisMonthTotal += exp.amount
+      } else if (key === lastMonthKey) {
+        lastMonth.set(exp.category, (lastMonth.get(exp.category) ?? 0) + exp.amount)
+        lastMonthTotal += exp.amount
+      }
+    }
+
+    const changeFor = (current: number, previous: number): number | null => {
+      if (previous === 0) return current === 0 ? null : 100
+      return ((current - previous) / Math.abs(previous)) * 100
+    }
+
+    const byCategory = new Map<ExpenseCategory, number | null>()
+    for (const cat of CATEGORIES) {
+      byCategory.set(cat, changeFor(thisMonth.get(cat) ?? 0, lastMonth.get(cat) ?? 0))
+    }
+    return { total: changeFor(thisMonthTotal, lastMonthTotal), byCategory }
+  }, [expenses])
+
   const visibleExpenses = useMemo(
     () => (categoryFilter === 'all' ? expenses : expenses.filter((e) => e.category === categoryFilter)),
     [expenses, categoryFilter],
@@ -142,15 +178,14 @@ export function Depenses({ siteId, userId }: DepensesProps) {
   return (
     <div className="clients-page">
       <div className="totals-band">
-        <div className="totals-band-item">
-          <p className="field-hint">Total</p>
-          <p className="stat-readout">{formatCurrency(grandTotal)}</p>
-        </div>
+        <KpiCard label="Total" value={formatCurrency(grandTotal)} change={monthChange.total} />
         {CATEGORIES.map((cat) => (
-          <div className="totals-band-item" key={cat}>
-            <p className="field-hint">{CATEGORY_LABEL[cat]}</p>
-            <p className="stat-readout">{formatCurrency(totalsByCategory.get(cat) ?? 0)}</p>
-          </div>
+          <KpiCard
+            key={cat}
+            label={CATEGORY_LABEL[cat]}
+            value={formatCurrency(totalsByCategory.get(cat) ?? 0)}
+            change={monthChange.byCategory.get(cat)}
+          />
         ))}
       </div>
 
@@ -234,7 +269,14 @@ export function Depenses({ siteId, userId }: DepensesProps) {
               <Tooltip formatter={(value: any) => formatCurrency(Number(value))} />
               <Legend wrapperStyle={{ fontSize: 12 }} />
               {chartCategories.map((cat) => (
-                <Bar key={cat} dataKey={cat} name={CATEGORY_LABEL[cat]} stackId="expenses" fill={CATEGORY_COLOR[cat]} />
+                <Bar
+                  key={cat}
+                  dataKey={cat}
+                  name={CATEGORY_LABEL[cat]}
+                  stackId="expenses"
+                  fill={CATEGORY_COLOR[cat]}
+                  radius={[4, 4, 0, 0]}
+                />
               ))}
             </BarChart>
           </ResponsiveContainer>
