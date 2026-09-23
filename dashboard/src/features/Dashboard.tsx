@@ -1,7 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { formatCount, formatCurrency } from '../lib/format'
+import { supabase } from '../lib/supabase'
 import { useLiveEntries, type Entry, type EntryType } from '../lib/useLiveEntries'
+import { DeleteRowButton } from './DeleteRowButton'
 import { KpiCard } from './KpiCard'
 
 const ENTRY_TYPE_LABEL: Record<EntryType, string> = {
@@ -36,6 +38,12 @@ const GROUP_SECTION_TITLE: Record<Granularity, string> = {
   day: 'By day',
   week: 'By week',
   month: 'By month',
+}
+
+const PAGE_SIZE = 25
+
+async function deleteEntry(id: string) {
+  await supabase.from('entries').delete().eq('id', id)
 }
 
 function periodStart(period: Period): Date | null {
@@ -141,6 +149,7 @@ export function Dashboard({ siteId }: DashboardProps) {
   const [sortDir, setSortDir] = useState<SortDir>('desc')
   const [showOther, setShowOther] = useState(true)
   const [showNotes, setShowNotes] = useState(true)
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
 
   const filtered = useMemo(() => {
     const start = periodStart(period)
@@ -198,6 +207,14 @@ export function Dashboard({ siteId }: DashboardProps) {
       return (a[sortField] - b[sortField]) * dir
     })
   }, [searched, sortField, sortDir])
+
+  // A new period, search, or sort starts the entry-detail list over at one
+  // page rather than leaving visibleCount pointing past a now-smaller list.
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE)
+  }, [period, search, sortField, sortDir])
+
+  const displayedEntries = useMemo(() => sorted.slice(0, visibleCount), [sorted, visibleCount])
 
   function toggleSort(field: SortField) {
     if (sortField === field) {
@@ -361,34 +378,47 @@ export function Dashboard({ siteId }: DashboardProps) {
           {sorted.length === 0 ? (
             <p>No results for this search.</p>
           ) : (
-            <table className="entries-table">
-              <thead>
-                <tr>
-                  {sortableHeader('created_at', 'Date')}
-                  <th>Type</th>
-                  {sortableHeader('bags_milled', 'Bags', true)}
-                  {sortableHeader('revenue', 'Revenue', true)}
-                  {sortableHeader('expenses', 'Expenses', true)}
-                  {showOther && sortableHeader('other', 'Other', true)}
-                  {showNotes && <th>Notes</th>}
-                </tr>
-              </thead>
-              <tbody>
-                {sorted.map((entry) => (
-                  <tr key={entry.id}>
-                    <td>{new Date(entry.created_at).toLocaleString('en-GB')}</td>
-                    <td>
-                      <TypeBadge entryType={entry.entry_type} />
-                    </td>
-                    <td className="numeric">{formatCount(entry.bags_milled)}</td>
-                    <td className="numeric">{formatCurrency(entry.revenue)}</td>
-                    <td className="numeric">{formatCurrency(entry.expenses)}</td>
-                    {showOther && <td className="numeric">{formatCurrency(entry.other)}</td>}
-                    {showNotes && <td>{entry.notes}</td>}
+            <>
+              <table className="entries-table">
+                <thead>
+                  <tr>
+                    {sortableHeader('created_at', 'Date')}
+                    <th>Type</th>
+                    {sortableHeader('bags_milled', 'Bags', true)}
+                    {sortableHeader('revenue', 'Revenue', true)}
+                    {sortableHeader('expenses', 'Expenses', true)}
+                    {showOther && sortableHeader('other', 'Other', true)}
+                    {showNotes && <th>Notes</th>}
+                    <th></th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {displayedEntries.map((entry) => (
+                    <tr key={entry.id}>
+                      <td>{new Date(entry.created_at).toLocaleString('en-GB')}</td>
+                      <td>
+                        <TypeBadge entryType={entry.entry_type} />
+                      </td>
+                      <td className="numeric">{formatCount(entry.bags_milled)}</td>
+                      <td className="numeric">{formatCurrency(entry.revenue)}</td>
+                      <td className="numeric">{formatCurrency(entry.expenses)}</td>
+                      {showOther && <td className="numeric">{formatCurrency(entry.other)}</td>}
+                      {showNotes && <td>{entry.notes}</td>}
+                      <td>
+                        <DeleteRowButton onDelete={() => deleteEntry(entry.id)} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {visibleCount < sorted.length && (
+                <div className="load-more">
+                  <button className="secondary" onClick={() => setVisibleCount((v) => v + PAGE_SIZE)}>
+                    Load more ({sorted.length - visibleCount} remaining)
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </>
       )}

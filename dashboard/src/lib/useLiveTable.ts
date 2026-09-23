@@ -9,7 +9,9 @@ interface Row {
 // Shared by every "live list scoped to a site" hook (clients, sales,
 // payments — entries has its own copy, predating this, left as-is).
 // Fetches once, then keeps the list current via a Realtime subscription:
-// INSERT prepends (de-duplicated, re-sorted), UPDATE replaces by id.
+// INSERT prepends (de-duplicated, re-sorted), UPDATE replaces by id,
+// DELETE removes by id (Postgres always sends the primary key in `old`,
+// even without REPLICA IDENTITY FULL).
 export function useLiveTable<T extends Row>(table: string, columns: string, siteId: string | undefined) {
   const [rows, setRows] = useState<T[]>([])
   const [loading, setLoading] = useState(true)
@@ -45,6 +47,10 @@ export function useLiveTable<T extends Row>(table: string, columns: string, site
             if (payload.eventType === 'UPDATE') {
               const updated = payload.new as T
               return current.map((r) => (r.id === updated.id ? updated : r))
+            }
+            if (payload.eventType === 'DELETE') {
+              const removedId = (payload.old as Partial<T>).id
+              return current.filter((r) => r.id !== removedId)
             }
             return current
           })

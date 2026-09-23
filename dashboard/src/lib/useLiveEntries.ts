@@ -52,6 +52,10 @@ export function useLiveEntries(siteId: string | undefined) {
               const updated = payload.new as Entry
               return current.map((e) => (e.id === updated.id ? updated : e))
             }
+            if (payload.eventType === 'DELETE') {
+              const removedId = (payload.old as Partial<Entry>).id
+              return current.filter((e) => e.id !== removedId)
+            }
             return current
           })
         },

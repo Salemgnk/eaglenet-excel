@@ -3,6 +3,7 @@ import { formatCount, formatCurrency } from '../lib/format'
 import { supabase } from '../lib/supabase'
 import { useClients } from '../lib/useClients'
 import { useSales } from '../lib/useSales'
+import { DeleteRowButton } from './DeleteRowButton'
 
 interface VentesProps {
   siteId: string
@@ -61,6 +62,10 @@ export function Ventes({ siteId, userId }: VentesProps) {
     setUnitPrice('')
     setNotes('')
     setAdding(false)
+  }
+
+  async function deleteSale(id: string) {
+    await supabase.from('sales').delete().eq('id', id)
   }
 
   if (salesLoading || clientsLoading) return <p className="loading">Loading…</p>
@@ -134,6 +139,7 @@ export function Ventes({ siteId, userId }: VentesProps) {
               <th className="numeric">Price/bag</th>
               <th className="numeric">Amount</th>
               <th>Notes</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -145,6 +151,9 @@ export function Ventes({ siteId, userId }: VentesProps) {
                 <td className="numeric">{formatCurrency(sale.unit_price)}</td>
                 <td className="numeric">{formatCurrency(sale.total_amount)}</td>
                 <td>{sale.notes}</td>
+                <td>
+                  <DeleteRowButton onDelete={() => deleteSale(sale.id)} />
+                </td>
               </tr>
             ))}
           </tbody>

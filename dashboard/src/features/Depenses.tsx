@@ -3,6 +3,7 @@ import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAx
 import { formatCurrency } from '../lib/format'
 import { supabase } from '../lib/supabase'
 import { type Expense, type ExpenseCategory, useExpenses } from '../lib/useExpenses'
+import { DeleteRowButton } from './DeleteRowButton'
 import { KpiCard } from './KpiCard'
 
 interface DepensesProps {
@@ -36,6 +37,8 @@ const CATEGORY_COLOR: Record<ExpenseCategory, string> = {
   other: '#64748b',
 }
 
+const PAGE_SIZE = 25
+
 function monthKeyAndLabel(iso: string): { key: string; label: string } {
   const d = new Date(iso)
   return {
@@ -48,6 +51,7 @@ export function Depenses({ siteId, userId }: DepensesProps) {
   const { expenses, loading } = useExpenses(siteId)
   const [employees, setEmployees] = useState<EmployeeOption[]>([])
   const [categoryFilter, setCategoryFilter] = useState<ExpenseCategory | 'all'>('all')
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
 
   const [adding, setAdding] = useState(false)
   const [category, setCategory] = useState<ExpenseCategory>('other')
@@ -121,6 +125,22 @@ export function Depenses({ siteId, userId }: DepensesProps) {
     () => (categoryFilter === 'all' ? expenses : expenses.filter((e) => e.category === categoryFilter)),
     [expenses, categoryFilter],
   )
+
+  // Switching the category filter starts the list over at one page — the
+  // old visibleCount could otherwise be far past the end of a smaller
+  // filtered set, or hide rows that would now fit on the first page.
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE)
+  }, [categoryFilter])
+
+  const displayedExpenses = useMemo(
+    () => visibleExpenses.slice(0, visibleCount),
+    [visibleExpenses, visibleCount],
+  )
+
+  async function deleteExpense(id: string) {
+    await supabase.from('expenses').delete().eq('id', id)
+  }
 
   // Only categories actually present in the (already category-filtered)
   // visible set get a bar segment — a single-category filter naturally
@@ -286,28 +306,41 @@ export function Depenses({ siteId, userId }: DepensesProps) {
       {visibleExpenses.length === 0 ? (
         <p>No expenses yet.</p>
       ) : (
-        <table className="entries-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Category</th>
-              <th>Employee</th>
-              <th className="numeric">Amount</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            {visibleExpenses.map((expense: Expense) => (
-              <tr key={expense.id}>
-                <td>{new Date(expense.created_at).toLocaleString('en-GB')}</td>
-                <td>{CATEGORY_LABEL[expense.category]}</td>
-                <td>{employeeName(expense.employee_id) ?? '—'}</td>
-                <td className="numeric">{formatCurrency(expense.amount)}</td>
-                <td>{expense.description}</td>
+        <>
+          <table className="entries-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Category</th>
+                <th>Employee</th>
+                <th className="numeric">Amount</th>
+                <th>Description</th>
+                <th></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {displayedExpenses.map((expense: Expense) => (
+                <tr key={expense.id}>
+                  <td>{new Date(expense.created_at).toLocaleString('en-GB')}</td>
+                  <td>{CATEGORY_LABEL[expense.category]}</td>
+                  <td>{employeeName(expense.employee_id) ?? '—'}</td>
+                  <td className="numeric">{formatCurrency(expense.amount)}</td>
+                  <td>{expense.description}</td>
+                  <td>
+                    <DeleteRowButton onDelete={() => deleteExpense(expense.id)} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {visibleCount < visibleExpenses.length && (
+            <div className="load-more">
+              <button className="secondary" onClick={() => setVisibleCount((v) => v + PAGE_SIZE)}>
+                Load more ({visibleExpenses.length - visibleCount} remaining)
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   )
