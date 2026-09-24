@@ -3,6 +3,7 @@ import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, X
 import { formatCount, formatCurrency } from '../lib/format'
 import { PERIODS, periodStart, type Period } from '../lib/period'
 import { supabase } from '../lib/supabase'
+import { useExpenses } from '../lib/useExpenses'
 import { useLiveEntries, type Entry, type EntryType } from '../lib/useLiveEntries'
 import { DeleteRowButton } from './DeleteRowButton'
 import { KpiCard } from './KpiCard'
@@ -54,6 +55,21 @@ function previousPeriodRange(period: Period): { start: Date; end: Date } | null 
 function percentChange(current: number, previous: number): number | null {
   if (previous === 0) return current === 0 ? null : 100
   return ((current - previous) / Math.abs(previous)) * 100
+}
+
+// Shared by entries and expenses — both filter to the same active window
+// (period preset or custom range) so the Expenses KPI card tracks the same
+// dates as the rest of the Dashboard.
+function filterByRange<T extends { created_at: string }>(
+  rows: T[],
+  range: { start: Date | null; end: Date | null },
+): T[] {
+  return rows.filter((row) => {
+    const t = new Date(row.created_at)
+    if (range.start && t < range.start) return false
+    if (range.end && t > range.end) return false
+    return true
+  })
 }
 
 interface GroupTotal {
@@ -119,6 +135,7 @@ interface DashboardProps {
 
 export function Dashboard({ siteId }: DashboardProps) {
   const { entries, loading } = useLiveEntries(siteId)
+  const { expenses, loading: expensesLoading } = useExpenses(siteId)
   const [period, setPeriod] = useState<Period>('7d')
   // An explicit custom range overrides the quick period buttons entirely —
   // picking either date clears `period` so only one filter is ever active
@@ -134,16 +151,17 @@ export function Dashboard({ siteId }: DashboardProps) {
 
   const usingCustomRange = dateFrom !== '' || dateTo !== ''
 
-  const filtered = useMemo(() => {
-    const start = usingCustomRange ? (dateFrom ? new Date(`${dateFrom}T00:00:00`) : null) : periodStart(period)
-    const end = usingCustomRange && dateTo ? new Date(`${dateTo}T23:59:59.999`) : null
-    return entries.filter((entry) => {
-      const t = new Date(entry.created_at)
-      if (start && t < start) return false
-      if (end && t > end) return false
-      return true
-    })
-  }, [entries, period, usingCustomRange, dateFrom, dateTo])
+  const activeRange = useMemo(
+    () => ({
+      start: usingCustomRange ? (dateFrom ? new Date(`${dateFrom}T00:00:00`) : null) : periodStart(period),
+      end: usingCustomRange && dateTo ? new Date(`${dateTo}T23:59:59.999`) : null,
+    }),
+    [period, usingCustomRange, dateFrom, dateTo],
+  )
+
+  const filtered = useMemo(() => filterByRange(entries, activeRange), [entries, activeRange])
+
+  const filteredExpenses = useMemo(() => filterByRange(expenses, activeRange), [expenses, activeRange])
 
   function selectPeriod(p: Period) {
     setPeriod(p)
@@ -179,6 +197,22 @@ export function Dashboard({ siteId }: DashboardProps) {
     }
   }, [entries, period, usingCustomRange])
 
+  // The real operating-expenses total, from the Expenses ledger — not
+  // entries.expenses, which is a dead per-batch field for this account.
+  const expensesTotal = useMemo(() => filteredExpenses.reduce((sum, e) => sum + e.amount, 0), [filteredExpenses])
+
+  const previousExpensesTotal = useMemo(() => {
+    if (usingCustomRange) return null
+    const range = previousPeriodRange(period)
+    if (!range) return null
+    return expenses
+      .filter((e) => {
+        const t = new Date(e.created_at)
+        return t >= range.start && t < range.end
+      })
+      .reduce((sum, e) => sum + e.amount, 0)
+  }, [expenses, period, usingCustomRange])
+
   const dailySparklines = useMemo(() => {
     const daily = groupedTotals(filtered, 'day').slice().reverse()
     return {
@@ -188,6 +222,17 @@ export function Dashboard({ siteId }: DashboardProps) {
       other: daily.map((d) => d.other),
     }
   }, [filtered])
+
+  const expensesDailySparkline = useMemo(() => {
+    const byDay = new Map<string, number>()
+    for (const e of filteredExpenses) {
+      const key = new Date(e.created_at).toLocaleDateString('en-CA')
+      byDay.set(key, (byDay.get(key) ?? 0) + e.amount)
+    }
+    return Array.from(byDay.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([, total]) => total)
+  }, [filteredExpenses])
 
   const searched = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -229,7 +274,7 @@ export function Dashboard({ siteId }: DashboardProps) {
     )
   }
 
-  if (loading) return <p className="loading">Loading…</p>
+  if (loading || expensesLoading) return <p className="loading">Loading…</p>
 
   return (
     <div className="dashboard">
@@ -278,6 +323,12 @@ export function Dashboard({ siteId }: DashboardProps) {
           value={formatCurrency(totals.revenue)}
           change={previousTotals && percentChange(totals.revenue, previousTotals.revenue)}
           sparkline={dailySparklines.revenue}
+        />
+        <KpiCard
+          label="Expenses"
+          value={formatCurrency(expensesTotal)}
+          change={previousExpensesTotal !== null ? percentChange(expensesTotal, previousExpensesTotal) : null}
+          sparkline={expensesDailySparkline}
         />
       </div>
 
