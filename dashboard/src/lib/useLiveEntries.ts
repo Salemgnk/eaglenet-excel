@@ -12,6 +12,7 @@ export interface Entry {
   other: number
   notes: string | null
   created_at: string
+  operator_id: string
 }
 
 export function useLiveEntries(siteId: string | undefined) {
@@ -26,7 +27,7 @@ export function useLiveEntries(siteId: string | undefined) {
 
     supabase
       .from('entries')
-      .select('id, entry_type, bags_milled, revenue, expenses, other, notes, created_at')
+      .select('id, entry_type, bags_milled, revenue, expenses, other, notes, created_at, operator_id')
       .eq('site_id', siteId)
       .order('created_at', { ascending: false })
       .then(({ data, error }) => {
