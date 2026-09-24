@@ -13,6 +13,11 @@
      accent-soft — both fail WCAG AA's 4.5:1 for text). #047857 clears
      4.5:1 on both surfaces this token is used as text color against. */
   --color-accent-deep: #047857;
+  /* One step darker than accent-deep — the hover shade for surfaces that
+     now use accent-deep as their resting background (white-on-accent was
+     2.54:1, failing WCAG AA; accent-deep clears it, so it moved from
+     hover-only to resting, and needed its own hover shade in turn). */
+  --color-accent-deeper: #065f46;
   --color-accent-soft: #d1fae5;
   --color-ink: #0f172a;
   --color-text: #64748b;

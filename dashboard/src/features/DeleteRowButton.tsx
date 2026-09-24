@@ -1,5 +1,5 @@
 import { Trash2 } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface DeleteRowButtonProps {
   onDelete: () => Promise<void>
@@ -11,10 +11,19 @@ interface DeleteRowButtonProps {
 export function DeleteRowButton({ onDelete }: DeleteRowButtonProps) {
   const [confirming, setConfirming] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const cancelRef = useRef<HTMLButtonElement>(null)
+
+  // The icon button that had focus is replaced by this pair on confirm —
+  // without moving focus explicitly it lands on <body>, stranding a
+  // keyboard user with no visible cue anything changed. Cancel (not
+  // Delete) gets it, so a second Enter press is the safe default.
+  useEffect(() => {
+    if (confirming) cancelRef.current?.focus()
+  }, [confirming])
 
   if (confirming) {
     return (
-      <span className="delete-confirm">
+      <span className="delete-confirm" role="alert" aria-live="polite">
         <button
           type="button"
           className="delete-confirm-yes"
@@ -27,6 +36,7 @@ export function DeleteRowButton({ onDelete }: DeleteRowButtonProps) {
           {deleting ? 'Deleting…' : 'Delete'}
         </button>
         <button
+          ref={cancelRef}
           type="button"
           className="delete-confirm-cancel"
           disabled={deleting}

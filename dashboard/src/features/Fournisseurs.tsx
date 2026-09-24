@@ -153,7 +153,11 @@ export function Fournisseurs({ siteId, userId }: FournisseursProps) {
                         >
                           Cancel
                         </button>
-                        {paymentError && <span className="field-error">{paymentError}</span>}
+                        {paymentError && (
+                          <span className="error" role="alert">
+                            {paymentError}
+                          </span>
+                        )}
                       </span>
                     ) : (
                       <button
