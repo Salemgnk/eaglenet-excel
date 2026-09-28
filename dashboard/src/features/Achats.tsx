@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { formatCount, formatCurrency } from '../lib/format'
 import { supabase } from '../lib/supabase'
 import { usePurchases } from '../lib/usePurchases'
+import { useProfileNames } from '../lib/useProfileNames'
 import { useSuppliers } from '../lib/useSuppliers'
 import { DeleteRowButton } from './DeleteRowButton'
 
@@ -13,6 +14,7 @@ interface AchatsProps {
 export function Achats({ siteId, userId }: AchatsProps) {
   const { purchases, loading: purchasesLoading } = usePurchases(siteId)
   const { suppliers, loading: suppliersLoading } = useSuppliers(siteId)
+  const createdByName = useProfileNames(siteId, 'operator,owner')
 
   const [adding, setAdding] = useState(false)
   const [supplierId, setSupplierId] = useState('')
@@ -134,6 +136,7 @@ export function Achats({ siteId, userId }: AchatsProps) {
           <thead>
             <tr>
               <th>Date</th>
+              <th>Submitted by</th>
               <th>Supplier</th>
               <th className="numeric">Bags</th>
               <th className="numeric">Price/bag</th>
@@ -146,6 +149,7 @@ export function Achats({ siteId, userId }: AchatsProps) {
             {purchases.map((purchase) => (
               <tr key={purchase.id}>
                 <td>{new Date(purchase.created_at).toLocaleString('en-GB')}</td>
+                <td>{createdByName(purchase.created_by)}</td>
                 <td>{supplierName(purchase.supplier_id)}</td>
                 <td className="numeric">{formatCount(purchase.bags_bought)}</td>
                 <td className="numeric">{formatCurrency(purchase.unit_price)}</td>

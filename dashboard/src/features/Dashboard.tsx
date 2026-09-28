@@ -1,18 +1,13 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { formatCount, formatCurrency } from '../lib/format'
 import { PERIODS, periodStart, type Period } from '../lib/period'
 import { supabase } from '../lib/supabase'
 import { useExpenses } from '../lib/useExpenses'
 import { useLiveEntries, type Entry, type EntryType } from '../lib/useLiveEntries'
+import { useProfileNames } from '../lib/useProfileNames'
 import { DeleteRowButton } from './DeleteRowButton'
 import { KpiCard } from './KpiCard'
-
-interface OperatorProfile {
-  id: string
-  name: string | null
-  email: string | null
-}
 
 const ENTRY_TYPE_LABEL: Record<EntryType, string> = {
   own_production: 'Own production',
@@ -142,7 +137,7 @@ interface DashboardProps {
 export function Dashboard({ siteId }: DashboardProps) {
   const { entries, loading } = useLiveEntries(siteId)
   const { expenses, loading: expensesLoading } = useExpenses(siteId)
-  const [operators, setOperators] = useState<OperatorProfile[]>([])
+  const operatorName = useProfileNames(siteId, 'operator,owner')
   const [period, setPeriod] = useState<Period>('7d')
   // An explicit custom range overrides the quick period buttons entirely —
   // picking either date clears `period` so only one filter is ever active
@@ -155,22 +150,6 @@ export function Dashboard({ siteId }: DashboardProps) {
   const [sortDir, setSortDir] = useState<SortDir>('desc')
   const [showOther, setShowOther] = useState(true)
   const [showNotes, setShowNotes] = useState(true)
-
-  useEffect(() => {
-    supabase
-      .from('profiles')
-      .select('id, name, email')
-      .eq('site_id', siteId)
-      .in('role', ['operator', 'owner'])
-      .then(({ data }) => {
-        if (data) setOperators(data)
-      })
-  }, [siteId])
-
-  const operatorName = useMemo(() => {
-    const byId = new Map(operators.map((o) => [o.id, o.name ?? o.email ?? 'Unknown']))
-    return (id: string) => byId.get(id) ?? 'Unknown'
-  }, [operators])
 
   const usingCustomRange = dateFrom !== '' || dateTo !== ''
 

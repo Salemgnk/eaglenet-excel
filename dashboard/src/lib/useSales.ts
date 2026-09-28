@@ -8,12 +8,13 @@ export interface Sale {
   total_amount: number
   notes: string | null
   created_at: string
+  created_by: string
 }
 
 export function useSales(siteId: string | undefined) {
   const { rows, loading } = useLiveTable<Sale>(
     'sales',
-    'id, client_id, bags_sold, unit_price, total_amount, notes, created_at',
+    'id, client_id, bags_sold, unit_price, total_amount, notes, created_at, created_by',
     siteId,
   )
   return { sales: rows, loading }

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { formatCount, formatCurrency } from '../lib/format'
 import { supabase } from '../lib/supabase'
 import { useClients } from '../lib/useClients'
+import { useProfileNames } from '../lib/useProfileNames'
 import { useSales } from '../lib/useSales'
 import { DeleteRowButton } from './DeleteRowButton'
 
@@ -13,6 +14,7 @@ interface VentesProps {
 export function Ventes({ siteId, userId }: VentesProps) {
   const { sales, loading: salesLoading } = useSales(siteId)
   const { clients, loading: clientsLoading } = useClients(siteId)
+  const createdByName = useProfileNames(siteId, 'operator,owner')
 
   const [adding, setAdding] = useState(false)
   const [clientId, setClientId] = useState('')
@@ -134,6 +136,7 @@ export function Ventes({ siteId, userId }: VentesProps) {
           <thead>
             <tr>
               <th>Date</th>
+              <th>Submitted by</th>
               <th>Client</th>
               <th className="numeric">Bags</th>
               <th className="numeric">Price/bag</th>
@@ -146,6 +149,7 @@ export function Ventes({ siteId, userId }: VentesProps) {
             {sales.map((sale) => (
               <tr key={sale.id}>
                 <td>{new Date(sale.created_at).toLocaleString('en-GB')}</td>
+                <td>{createdByName(sale.created_by)}</td>
                 <td>{clientName(sale.client_id)}</td>
                 <td className="numeric">{formatCount(sale.bags_sold)}</td>
                 <td className="numeric">{formatCurrency(sale.unit_price)}</td>
