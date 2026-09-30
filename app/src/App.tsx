@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { ChangePasswordForm } from './features/ChangePasswordForm'
 import { EntriesList } from './features/EntriesList'
 import { EntryForm } from './features/EntryForm'
 import { ExpenseForm } from './features/ExpenseForm'
@@ -26,7 +27,7 @@ const TIME_CLOCK_ENABLED = false
 
 function App() {
   const { session, loading: sessionLoading } = useSession()
-  const { profile } = useProfile(session)
+  const { profile, refresh: refreshProfile } = useProfile(session)
   const { pendingCount, syncing, syncVersion, refreshPendingCount, runSync } = useSync(
     session?.user.id,
     profile?.site_id,
@@ -41,6 +42,10 @@ function App() {
 
   if (!session) {
     return <LoginForm />
+  }
+
+  if (profile?.must_change_password) {
+    return <ChangePasswordForm onChanged={refreshProfile} />
   }
 
   async function handleSaved(draftId: string): Promise<boolean> {

@@ -6,11 +6,13 @@ export interface Profile {
   id: string
   role: 'operator' | 'owner' | 'employee'
   site_id: string
+  must_change_password: boolean
 }
 
 export function useProfile(session: Session | null) {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
+  const [refreshIndex, setRefreshIndex] = useState(0)
 
   useEffect(() => {
     if (!session) {
@@ -24,7 +26,7 @@ export function useProfile(session: Session | null) {
 
     supabase
       .from('profiles')
-      .select('id, role, site_id')
+      .select('id, role, site_id, must_change_password')
       .eq('id', session.user.id)
       .single()
       .then(({ data, error }) => {
@@ -38,7 +40,9 @@ export function useProfile(session: Session | null) {
     return () => {
       cancelled = true
     }
-  }, [session])
+  }, [session, refreshIndex])
 
-  return { profile, loading }
+  const refresh = () => setRefreshIndex((n) => n + 1)
+
+  return { profile, loading, refresh }
 }

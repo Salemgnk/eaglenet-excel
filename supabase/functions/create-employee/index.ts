@@ -94,6 +94,7 @@ Deno.serve(async (req) => {
       site_id: callerProfile.site_id,
       name: name.trim(),
       email: email.trim(),
+      must_change_password: true,
     })
     if (profileError) {
       // Roll back the auth user so a failed profile insert doesn't leave
