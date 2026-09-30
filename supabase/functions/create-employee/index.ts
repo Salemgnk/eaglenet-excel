@@ -1,8 +1,8 @@
-// Creates an employee account: verifies the caller is an owner on
-// their own site, then uses the service-role key (never exposed to
-// the browser) to create the auth user and its profile row. Returns
-// the generated temporary password once — it is never stored or
-// logged in plaintext.
+// Creates an operator or employee account: verifies the caller is an
+// owner on their own site, then uses the service-role key (never
+// exposed to the browser) to create the auth user and its profile
+// row. Returns the generated temporary password once — it is never
+// stored or logged in plaintext.
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 
 const CORS_HEADERS = {
@@ -63,13 +63,14 @@ Deno.serve(async (req) => {
       })
     }
 
-    const { name, email } = await req.json()
+    const { name, email, role } = await req.json()
     if (!name?.trim() || !email?.trim()) {
       return new Response(JSON.stringify({ error: 'name and email are required' }), {
         status: 400,
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
       })
     }
+    const accountRole = role === 'operator' ? 'operator' : 'employee'
 
     const admin = createClient(supabaseUrl, serviceRoleKey)
     const password = randomPassword()
@@ -89,7 +90,7 @@ Deno.serve(async (req) => {
 
     const { error: profileError } = await admin.from('profiles').insert({
       id: created.user.id,
-      role: 'employee',
+      role: accountRole,
       site_id: callerProfile.site_id,
       name: name.trim(),
       email: email.trim(),

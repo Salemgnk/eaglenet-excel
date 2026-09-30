@@ -45,6 +45,7 @@ export function Employes({ siteId, userId }: EmployesProps) {
   const [adding, setAdding] = useState(false)
   const [newName, setNewName] = useState('')
   const [newEmail, setNewEmail] = useState('')
+  const [newRole, setNewRole] = useState<'operator' | 'employee'>('operator')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [createdPassword, setCreatedPassword] = useState<{ email: string; password: string } | null>(
@@ -98,7 +99,7 @@ export function Employes({ siteId, userId }: EmployesProps) {
     setSaving(true)
     setError(null)
     const { data, error: invokeError } = await supabase.functions.invoke('create-employee', {
-      body: { name: newName.trim(), email: newEmail.trim() },
+      body: { name: newName.trim(), email: newEmail.trim(), role: newRole },
     })
     setSaving(false)
     if (invokeError || data?.error) {
@@ -108,6 +109,7 @@ export function Employes({ siteId, userId }: EmployesProps) {
     setCreatedPassword({ email: data.email, password: data.password })
     setNewName('')
     setNewEmail('')
+    setNewRole('operator')
     setAdding(false)
     await loadProfiles()
   }
@@ -126,7 +128,7 @@ export function Employes({ siteId, userId }: EmployesProps) {
       <div className="section-header">
         <h2 className="section-title">Employees</h2>
         <button className="secondary" onClick={() => setAdding((v) => !v)}>
-          {adding ? 'Cancel' : '+ Add an employee'}
+          {adding ? 'Cancel' : '+ Add an account'}
         </button>
       </div>
 
@@ -139,6 +141,13 @@ export function Employes({ siteId, userId }: EmployesProps) {
           <label>
             Email
             <input type="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} />
+          </label>
+          <label>
+            Role
+            <select value={newRole} onChange={(e) => setNewRole(e.target.value as 'operator' | 'employee')}>
+              <option value="operator">Operator (submits milling entries)</option>
+              <option value="employee">Employee (clock-in/out only)</option>
+            </select>
           </label>
           {error && (
             <p className="error" role="alert">
