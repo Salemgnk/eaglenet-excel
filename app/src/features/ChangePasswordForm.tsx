@@ -13,17 +13,18 @@ export function ChangePasswordForm({ onChanged }: ChangePasswordFormProps) {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    if (password.length < 8) {
+    const trimmedPassword = password.trim()
+    if (trimmedPassword.length < 8) {
       setError('Password must be at least 8 characters')
       return
     }
-    if (password !== confirm) {
+    if (trimmedPassword !== confirm.trim()) {
       setError('Passwords do not match')
       return
     }
     setSubmitting(true)
     setError(null)
-    const { error: updateError } = await supabase.auth.updateUser({ password })
+    const { error: updateError } = await supabase.auth.updateUser({ password: trimmedPassword })
     if (updateError) {
       setError(updateError.message)
       setSubmitting(false)
