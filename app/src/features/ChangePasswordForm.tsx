@@ -3,9 +3,12 @@ import { supabase } from '../lib/supabase'
 
 interface ChangePasswordFormProps {
   onChanged: () => void
+  // Set when the user opens the form voluntarily (not forced by a
+  // temporary password), so they can back out.
+  onCancel?: () => void
 }
 
-export function ChangePasswordForm({ onChanged }: ChangePasswordFormProps) {
+export function ChangePasswordForm({ onChanged, onCancel }: ChangePasswordFormProps) {
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -42,8 +45,10 @@ export function ChangePasswordForm({ onChanged }: ChangePasswordFormProps) {
   return (
     <div className="login-page">
       <form onSubmit={handleSubmit} className="login-form">
-        <h1>Choose a password</h1>
-        <p>This account was created with a temporary password. Set your own before continuing.</p>
+        <h1>{onCancel ? 'Change password' : 'Choose a password'}</h1>
+        {!onCancel && (
+          <p>This account was created with a temporary password. Set your own before continuing.</p>
+        )}
         <label>
           New password
           <input
@@ -76,6 +81,11 @@ export function ChangePasswordForm({ onChanged }: ChangePasswordFormProps) {
         <button type="submit" disabled={submitting}>
           {submitting ? 'Saving…' : 'Set password'}
         </button>
+        {onCancel && (
+          <button type="button" className="secondary" onClick={onCancel}>
+            Cancel
+          </button>
+        )}
       </form>
     </div>
   )

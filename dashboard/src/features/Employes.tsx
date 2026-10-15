@@ -48,9 +48,12 @@ export function Employes({ siteId, userId }: EmployesProps) {
   const [newRole, setNewRole] = useState<'operator' | 'employee'>('operator')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [createdPassword, setCreatedPassword] = useState<{ email: string; password: string } | null>(
-    null,
-  )
+  const [createdPassword, setCreatedPassword] = useState<{
+    email: string
+    password: string
+    reset?: boolean
+  } | null>(null)
+  const [resettingId, setResettingId] = useState<string | null>(null)
 
   async function loadProfiles() {
     setProfilesLoading(true)
@@ -114,6 +117,24 @@ export function Employes({ siteId, userId }: EmployesProps) {
     await loadProfiles()
   }
 
+  async function resetPassword(profile: EmployeeProfile) {
+    const label = profile.name ?? profile.email ?? 'this account'
+    if (!window.confirm(`Reset the password for ${label}? Their current password will stop working.`)) {
+      return
+    }
+    setResettingId(profile.id)
+    setError(null)
+    const { data, error: invokeError } = await supabase.functions.invoke('reset-password', {
+      body: { userId: profile.id },
+    })
+    setResettingId(null)
+    if (invokeError || data?.error) {
+      setError(data?.error ?? invokeError?.message ?? 'Unknown error')
+      return
+    }
+    setCreatedPassword({ email: data.email, password: data.password, reset: true })
+  }
+
   async function decideLeave(id: string, status: 'approved' | 'rejected') {
     await supabase
       .from('leave_requests')
@@ -163,14 +184,21 @@ export function Employes({ siteId, userId }: EmployesProps) {
       {createdPassword && (
         <div className="inline-form">
           <p>
-            Account created for <strong>{createdPassword.email}</strong>. Temporary password
-            (share it with the employee, shown only once):
+            {createdPassword.reset ? 'Password reset for' : 'Account created for'}{' '}
+            <strong>{createdPassword.email}</strong>. Temporary password (share it with the
+            employee, shown only once — they must choose a new one at next login):
           </p>
           <p className="temp-password">{createdPassword.password}</p>
           <button className="secondary" onClick={() => setCreatedPassword(null)}>
             I've noted the password
           </button>
         </div>
+      )}
+
+      {!adding && error && (
+        <p className="error" role="alert">
+          {error}
+        </p>
       )}
 
       {profiles.length === 0 ? (
@@ -182,6 +210,7 @@ export function Employes({ siteId, userId }: EmployesProps) {
               <th>Name</th>
               <th>Role</th>
               <th>Today</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -190,6 +219,15 @@ export function Employes({ siteId, userId }: EmployesProps) {
                 <td>{p.name ?? p.email ?? p.id.slice(0, 8)}</td>
                 <td>{ROLE_LABEL[p.role]}</td>
                 <td>{todayStatus.get(p.id) ?? 'Not clocked in today'}</td>
+                <td>
+                  <button
+                    className="secondary"
+                    onClick={() => resetPassword(p)}
+                    disabled={resettingId === p.id}
+                  >
+                    {resettingId === p.id ? 'Resetting…' : 'Reset password'}
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

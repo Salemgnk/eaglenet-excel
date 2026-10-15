@@ -34,6 +34,7 @@ function App() {
   )
   const online = useOnlineStatus()
   const [tab, setTab] = useState<Tab>('new')
+  const [changingPassword, setChangingPassword] = useState(false)
   const isEmployeeOnly = profile?.role === 'employee'
 
   if (sessionLoading) {
@@ -46,6 +47,15 @@ function App() {
 
   if (profile?.must_change_password) {
     return <ChangePasswordForm onChanged={refreshProfile} />
+  }
+
+  if (changingPassword) {
+    return (
+      <ChangePasswordForm
+        onChanged={() => setChangingPassword(false)}
+        onCancel={() => setChangingPassword(false)}
+      />
+    )
   }
 
   async function handleSaved(draftId: string): Promise<boolean> {
@@ -84,6 +94,9 @@ function App() {
         </div>
         <div className="app-header-user">
           <span>{session.user.email}</span>
+          <button className="secondary" onClick={() => setChangingPassword(true)}>
+            Change password
+          </button>
           <button className="secondary" onClick={() => supabase.auth.signOut()}>
             Sign out
           </button>
