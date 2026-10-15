@@ -61,7 +61,7 @@ export function Employes({ siteId, userId }: EmployesProps) {
       .from('profiles')
       .select('id, role, name, email')
       .eq('site_id', siteId)
-      .in('role', ['operator', 'employee'])
+      .in('role', ['owner', 'operator', 'employee'])
     if (data) setProfiles(data)
     setProfilesLoading(false)
   }
@@ -220,13 +220,15 @@ export function Employes({ siteId, userId }: EmployesProps) {
                 <td>{ROLE_LABEL[p.role]}</td>
                 <td>{todayStatus.get(p.id) ?? 'Not clocked in today'}</td>
                 <td>
-                  <button
-                    className="secondary"
-                    onClick={() => resetPassword(p)}
-                    disabled={resettingId === p.id}
-                  >
-                    {resettingId === p.id ? 'Resetting…' : 'Reset password'}
-                  </button>
+                  {p.id !== userId && (
+                    <button
+                      className="secondary"
+                      onClick={() => resetPassword(p)}
+                      disabled={resettingId === p.id}
+                    >
+                      {resettingId === p.id ? 'Resetting…' : 'Reset password'}
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

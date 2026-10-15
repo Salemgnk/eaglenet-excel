@@ -1,4 +1,5 @@
-// Resets the password of an operator/employee account: verifies the caller
+// Resets the password of another account on the same site (operator,
+// employee or owner): verifies the caller
 // is an owner on the same site as the target, then uses the service-role key
 // (never exposed to the browser) to set a new generated password and flag the
 // profile so the app forces a change on next login. Returns the temporary
@@ -69,7 +70,7 @@ Deno.serve(async (req) => {
       .select('id, role, site_id, email')
       .eq('id', userId)
       .single()
-    if (!target || target.site_id !== callerProfile.site_id || target.role === 'owner') {
+    if (!target || target.site_id !== callerProfile.site_id) {
       return json({ error: 'Account not found on your site' }, 404)
     }
 
